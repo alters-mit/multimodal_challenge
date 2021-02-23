@@ -6,7 +6,7 @@ from tdw.controller import Controller
 from tdw.object_init_data import AudioInitData
 from tdw.py_impact import ObjectInfo
 from tdw.output_data import Transforms
-from magnebot.scene_environment import SceneEnvironment
+from magnebot.scene_environment import SceneEnvironment, Room
 from magnebot.util import get_data
 from multimodal_challenge.util import DROP_OBJECTS, get_object_init_commands
 from multimodal_challenge.paths import DROP_ZONE_DIRECTORY, AUDIO_DATASET_DROPS_DIRECTORY
@@ -75,15 +75,14 @@ class AudioRehearsal(Controller):
         # Get the next object.
         name = self._rng.choice(DROP_OBJECTS)
         scale = float(self._rng.uniform(0.75, 1.2))
+        room: Room = self._rng.choice(self._scene_environment.rooms)
         # Get the init data.
         a = AudioInitData(name=name,
                           library="models_core.json",
                           scale_factor={"x": scale, "y": scale, "z": scale},
-                          position={"x": float(self._rng.uniform(self._scene_environment.x_min,
-                                                                 self._scene_environment.x_max)),
+                          position={"x": float(self._rng.uniform(room.x_0, room.x_1)),
                                     "y": float(self._rng.uniform(3, 3.8)),
-                                    "z": float(self._rng.uniform(self._scene_environment.z_min,
-                                                                 self._scene_environment.z_max))},
+                                    "z": float(self._rng.uniform(room.z_0, room.z_1))},
                           rotation={"x": float(self._rng.uniform(-360, 360)),
                                     "y": float(self._rng.uniform(-360, 360)),
                                     "z": float(self._rng.uniform(-360, 360))},
