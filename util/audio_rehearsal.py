@@ -1,0 +1,175 @@
+from json import loads, dumps
+from tqdm import tqdm
+import numpy as np
+from typing import Optional, List
+from tdw.controller import Controller
+from tdw.object_init_data import AudioInitData
+from tdw.py_impact import ObjectInfo
+from tdw.output_data import Transforms
+from magnebot.scene_environment import SceneEnvironment
+from magnebot.util import get_data
+from multimodal_challenge.util import DROP_OBJECTS, get_object_init_commands
+from multimodal_challenge.paths import DROP_ZONE_DIRECTORY, AUDIO_DATASET_DROPS_DIRECTORY
+from multimodal_challenge.dataset_generation.drop import Drop
+from multimodal_challenge.dataset_generation.drop_zone import DropZone
+from multimodal_challenge.encoder import Encoder
+
+
+class AudioRehearsal(Controller):
+    """
+    "Rehearse" the audio dataset by running a series of random trials.
+
+    Per scenes_layout combination, all of the objects are made kinematic. A target object is dropped.
+    Each scene_layout combination has a number of "drop zones" which are stored in `data/scenes/drop_zones/`
+    If the target object lands in a drop zone, then this is a "good" trial and the result is recorded.
+
+    After a target number of good "drops" has been reached, the parameters used to initialize the trial are saved.
+    They will be used for the actual dataset generation.
+
+    Advantages to this system:
+
+    - We can randomly choose start parameters but because we're only recording 1 Transform, this will be VERY fast.
+    - We can procedurally generate scenarios to avoid having to choose them by hand.
+
+    Disadvantage to this system:
+
+    - Each object is kinematic to make scene re-initialization as fast as possible.
+      However, this means that there will be a discrepancy between the physics behavior in the rehearsal and the actual
+      physics behavior in the dataset generation. Ideally, the discrepancy is quite minimal.
+    """
+
+    def __init__(self, port: int = 1071, random_seed: int = None):
+        """
+        Create the network socket and bind the socket to the port.
+
+        :param port: The port number.
+        :param random_seed: The seed used for random numbers. If None, this is chosen randomly.
+        """
+
+        super().__init__(port=port, launch_build=False, check_version=True)
+        """:field
+        The ID of the dropped object. This changes per trial.
+        """
+        self.drop_object: Optional[int] = None
+        # Get a random seed.
+        if random_seed is None:
+            random_seed = self.get_unique_id()
+        self._rng = np.random.RandomState(random_seed)
+        # Environment data used for setting drop positions.
+        self._scene_environment: Optional[SceneEnvironment] = None
+        # The drop zones for the current scene.
+        self._drop_zones: List[DropZone] = list()
+
+    def do_trial(self) -> Optional[Drop]:
+        """
+        Choose a random object. Assign a random (constrained) scale, position, rotation, and force.
+        Let the object fall. When it stops moving, determine if the object is in a drop zone.
+
+        :return: If the object is in the drop zone, a `Drop` object of trial initialization parameters. Otherwise, None.
+        """
+
+        commands = []
+        if self.drop_object is not None:
+            commands.append({"$type": "destroy_object",
+                             "id": self.drop_object})
+        # Get the next object.
+        name = self._rng.choice(DROP_OBJECTS)
+        scale = float(self._rng.uniform(0.75, 1.2))
+        # Get the init data.
+        a = AudioInitData(name=name,
+                          library="models_core.json",
+                          scale_factor={"x": scale, "y": scale, "z": scale},
+                          position={"x": float(self._rng.uniform(self._scene_environment.x_min,
+                                                                 self._scene_environment.x_max)),
+                                    "y": float(self._rng.uniform(3, 3.8)),
+                                    "z": float(self._rng.uniform(self._scene_environment.z_min,
+                                                                 self._scene_environment.z_max))},
+                          rotation={"x": float(self._rng.uniform(-360, 360)),
+                                    "y": float(self._rng.uniform(-360, 360)),
+                                    "z": float(self._rng.uniform(-360, 360))},
+                          gravity=True,
+                          kinematic=False,
+                          audio=self._get_audio_info())
+        # Define the drop force.
+        force = {"x": float(self._rng.uniform(-8, 8)),
+                 "y": float(self._rng.uniform(-20, 10)),
+                 "z": float(self._rng.uniform(-8, 8))}
+        # Add the initialization commands.
+        self.drop_object, object_commands = a.get_commands()
+        commands.extend(object_commands)
+        # Apply the force. Request Transforms data for this object.
+        commands.extend([{"$type": "apply_force_to_object",
+                          "id": self.drop_object,
+                          "force": force},
+                         {"$type": "send_transforms",
+                          "ids": [self.drop_object],
+                          "frequency": "always"}])
+        # Send the commands!
+        resp = self.communicate(commands)
+        p_0 = np.array(get_data(resp=resp, d_type=Transforms).get_position(0))
+        done = False
+        good = False
+        while not done:
+            resp = self.communicate([])
+            p_1 = np.array(get_data(resp=resp, d_type=Transforms).get_position(0))
+            # The object fell below the floor.
+            if p_1[1] < -0.1:
+                done = True
+                good = False
+            # The object stopped moving.
+            elif np.linalg.norm(p_0 - p_1) < 0.001:
+                done = True
+                good = True
+            p_0 = p_1
+        if not good:
+            return None
+        # Check if this object is in a drop zone.
+        for drop_zone in self._drop_zones:
+            if p_0[1] >= drop_zone.center[1] and np.linalg.norm(p_0, drop_zone.center) < drop_zone.radius:
+                return Drop(init_data=a, force=force)
+        return None
+
+    def run(self, scene: str, layout: int, num_trials: int = 5000) -> None:
+        """
+        Load a scene_layout combination, and its objects, and its drop zones.
+        Run random trials until we have enough "good" trials, where "good" means that the object landed in a drop zone.
+        Save the result to disk.
+
+        :param scene: The scene name.
+        :param layout: The object layout variant of the scene.
+        :param num_trials: How many trials we want to save to disk.
+        """
+
+        # Get the drop zones.
+        drop_zone_data = loads(DROP_ZONE_DIRECTORY.joinpath(f"{scene}_{layout}.json").read_text(encoding="utf-8"))
+        self._drop_zones.clear()
+        for drop_zone in drop_zone_data["drop_zones"]:
+            self._drop_zones.append(DropZone(**drop_zone))
+        commands = [self.get_add_scene(scene_name=scene),
+                    {"$type": "send_environments"}]
+        commands.extend(get_object_init_commands(scene=scene, layout=layout))
+        # Make all objects kinematic.
+        for i in range(len(commands)):
+            if commands[i]["$type"] == "set_kinematic_state":
+                commands[i]["is_kinematic"] = True
+        resp = self.communicate(commands)
+        # Set the scene environment.
+        self._scene_environment = SceneEnvironment(resp=resp)
+        drops: List[Drop] = list()
+        pbar = tqdm(total=num_trials)
+        while len(drops) < num_trials:
+            # Do a trial.
+            drop: Drop = self.do_trial()
+            # If we got an object back, then this was a good trial.
+            if drop is not None:
+                drops.append(drop)
+                pbar.update(1)
+        pbar.close()
+        # Save the drop data as a json file.
+        AUDIO_DATASET_DROPS_DIRECTORY.joinpath(f"{scene}_{layout}.json").write_text(dumps({"drops": drops},
+                                                                                          cls=Encoder),
+                                                                                    encoding="utf-8")
+
+    def _get_audio_info(self) -> ObjectInfo:
+        # TODO
+        raise Exception()
