@@ -4,7 +4,6 @@ from csv import DictReader
 from tqdm import tqdm
 import numpy as np
 from tdw.controller import Controller
-from tdw.object_init_data import AudioInitData
 from tdw.py_impact import ObjectInfo
 from tdw.output_data import Transforms
 from magnebot.scene_environment import SceneEnvironment, Room
@@ -14,6 +13,7 @@ from multimodal_challenge.paths import DROP_ZONE_DIRECTORY, AUDIO_DATASET_DROPS_
 from multimodal_challenge.dataset_generation.drop import Drop
 from multimodal_challenge.dataset_generation.drop_zone import DropZone
 from multimodal_challenge.encoder import Encoder
+from multimodal_challenge.multimodal_object_init_data import MultiModalObjectInitData
 
 
 class Rehearsal(Controller):
@@ -85,18 +85,17 @@ class Rehearsal(Controller):
         scale = float(self.rng.uniform(0.75, 1.2))
         room: Room = self.rng.choice(self.scene_environment.rooms)
         # Get the init data.
-        a = AudioInitData(name=name,
-                          library="models_core.json",
-                          scale_factor={"x": scale, "y": scale, "z": scale},
-                          position={"x": float(self.rng.uniform(room.x_0, room.x_1)),
-                                    "y": float(self.rng.uniform(3, 3.8)),
-                                    "z": float(self.rng.uniform(room.z_0, room.z_1))},
-                          rotation={"x": float(self.rng.uniform(-360, 360)),
-                                    "y": float(self.rng.uniform(-360, 360)),
-                                    "z": float(self.rng.uniform(-360, 360))},
-                          gravity=True,
-                          kinematic=False,
-                          audio=self._get_audio_info())
+        a = MultiModalObjectInitData(name=name,
+                                     scale_factor={"x": scale, "y": scale, "z": scale},
+                                     position={"x": float(self.rng.uniform(room.x_0, room.x_1)),
+                                               "y": float(self.rng.uniform(3, 3.8)),
+                                               "z": float(self.rng.uniform(room.z_0, room.z_1))},
+                                     rotation={"x": float(self.rng.uniform(-360, 360)),
+                                               "y": float(self.rng.uniform(-360, 360)),
+                                               "z": float(self.rng.uniform(-360, 360))},
+                                     gravity=True,
+                                     kinematic=False,
+                                     audio=self._get_audio_info())
         # Define the drop force.
         force = {"x": float(self.rng.uniform(-8, 8)),
                  "y": float(self.rng.uniform(-20, 10)),

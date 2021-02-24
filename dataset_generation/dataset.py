@@ -9,7 +9,6 @@ import numpy as np
 import pyaudio
 from tqdm import tqdm
 from tdw.tdw_utils import AudioUtils, TDWUtils
-from tdw.object_init_data import AudioInitData
 from tdw.py_impact import PyImpact, AudioMaterial
 from magnebot import Magnebot
 from magnebot.scene_state import SceneState
@@ -19,6 +18,7 @@ from multimodal_challenge.trial import Trial
 from multimodal_challenge.dataset_generation.drop import Drop
 from multimodal_challenge.paths import AUDIO_DATASET_DROPS_DIRECTORY, ENV_AUDIO_MATERIALS_PATH, SCENE_LAYOUT_PATH
 from multimodal_challenge.util import get_object_init_commands
+from multimodal_challenge.multimodal_object_init_data import MultiModalObjectInitData
 
 
 class Dataset(MultiModalBase):
@@ -316,17 +316,17 @@ class Dataset(MultiModalBase):
 
         # Convert the current state of each object to initialization data.
         state = SceneState(resp=self.communicate([]))
-        object_init_data: List[AudioInitData] = list()
+        object_init_data: List[MultiModalObjectInitData] = list()
         for o_id in self.objects_static:
             name = self.objects_static[o_id].name
             # TODO the target object might have different data?
-            o = AudioInitData(name=name,
-                              audio=Magnebot._OBJECT_AUDIO[name],
-                              position=TDWUtils.array_to_vector3(state.object_transforms[o_id].position),
-                              rotation=TDWUtils.array_to_vector4(state.object_transforms[o_id].rotation),
-                              gravity=True,
-                              kinematic=self.objects_static[o_id].kinematic,
-                              scale_factor=self.scale_factors[o_id])
+            o = MultiModalObjectInitData(name=name,
+                                         audio=Magnebot._OBJECT_AUDIO[name],
+                                         position=TDWUtils.array_to_vector3(state.object_transforms[o_id].position),
+                                         rotation=TDWUtils.array_to_vector4(state.object_transforms[o_id].rotation),
+                                         gravity=True,
+                                         kinematic=self.objects_static[o_id].kinematic,
+                                         scale_factor=self.scale_factors[o_id])
             object_init_data.append(o)
 
         # Cache the result of the trial.

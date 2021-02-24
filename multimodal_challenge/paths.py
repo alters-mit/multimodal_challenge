@@ -15,6 +15,8 @@ ASSET_BUNDLES_DIRECTORY = Path(__ASSET_BUNDLES_CONFIG_PATH.read_text(encoding="u
 DATA_DIRECTORY = Path(resource_filename(__name__, "data"))
 # The path to object data.
 OBJECT_DATA_DIRECTORY = DATA_DIRECTORY.joinpath("objects")
+# The path to the object librarian metadata.
+OBJECT_LIBRARY_PATH = OBJECT_DATA_DIRECTORY.joinpath("library.json")
 # The path to the list of droppable objects.
 DROP_OBJECTS_PATH = OBJECT_DATA_DIRECTORY.joinpath("drop_objects.txt")
 # The path to scene data.

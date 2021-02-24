@@ -1,10 +1,10 @@
 from typing import List, Tuple, Optional
 from abc import ABC, abstractmethod
 import numpy as np
-from tdw.object_init_data import AudioInitData
 from tdw.tdw_utils import TDWUtils
 from magnebot import Magnebot, ActionStatus, ArmJoint
 from multimodal_challenge.util import get_scene_librarian
+from multimodal_challenge.multimodal_object_init_data import MultiModalObjectInitData
 
 
 class MultiModalBase(Magnebot, ABC):
@@ -21,7 +21,7 @@ class MultiModalBase(Magnebot, ABC):
         commands.extend(self._get_object_init_commands())
 
         # Add the target object.
-        target_object: AudioInitData = self._get_target_object()
+        target_object: MultiModalObjectInitData = self._get_target_object()
         if target_object is not None:
             target_object_id, target_object_commands = target_object.get_commands()
             commands.extend(target_object_commands)
@@ -121,7 +121,7 @@ class MultiModalBase(Magnebot, ABC):
         raise Exception()
 
     @abstractmethod
-    def _get_target_object(self) -> Optional[AudioInitData]:
+    def _get_target_object(self) -> Optional[MultiModalObjectInitData]:
         """
         :return: Object initialization data for the target object.
         """
