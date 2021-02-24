@@ -9,9 +9,8 @@ from tdw.py_impact import ObjectInfo
 from tdw.output_data import Transforms
 from magnebot.scene_environment import SceneEnvironment, Room
 from magnebot.util import get_data
-from multimodal_challenge.util import DROP_OBJECTS, get_object_init_commands
-from multimodal_challenge.paths import DROP_ZONE_DIRECTORY, AUDIO_DATASET_DROPS_DIRECTORY, SCENE_LIBRARY_PATH, \
-    SCENE_LAYOUT_PATH
+from multimodal_challenge.util import DROP_OBJECTS, get_object_init_commands, get_scene_librarian
+from multimodal_challenge.paths import DROP_ZONE_DIRECTORY, AUDIO_DATASET_DROPS_DIRECTORY, SCENE_LAYOUT_PATH
 from multimodal_challenge.dataset_generation.drop import Drop
 from multimodal_challenge.dataset_generation.drop_zone import DropZone
 from multimodal_challenge.encoder import Encoder
@@ -145,6 +144,7 @@ class Rehearsal(Controller):
         :param num_trials: The total number of trials.
         """
 
+        self.scene_librarian = get_scene_librarian()
         scene_layouts: Dict[str, int] = dict()
         num_layouts: int = 0
         with open(str(SCENE_LAYOUT_PATH.resolve()), newline='') as f:
@@ -174,7 +174,10 @@ class Rehearsal(Controller):
         self.drop_zones.clear()
         for drop_zone in drop_zone_data["drop_zones"]:
             self.drop_zones.append(DropZone(**drop_zone))
-        commands: List[dict] = [self.get_add_scene(scene_name=scene, library=str(SCENE_LIBRARY_PATH.resolve())),
+        scene_record = self.scene_librarian.get_record(scene)
+        commands: List[dict] = [{"$type": "add_scene",
+                                 "name": scene_record.name,
+                                 "url": scene_record.get_url()},
                                 {"$type": "send_environments"},
                                 {"$type": "enable_reflection_probes",
                                  "enable": False}]

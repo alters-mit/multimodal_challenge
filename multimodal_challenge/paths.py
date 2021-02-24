@@ -5,6 +5,12 @@ from pkg_resources import resource_filename
 Paths to data files in this Python module.
 """
 
+# The path to the file describing the root directory of the asset bundles.
+__ASSET_BUNDLES_CONFIG_PATH = Path.home().joinpath("multimodal_challenge/asset_bundles_path.txt")
+assert __ASSET_BUNDLES_CONFIG_PATH.exists(), f"File not found: {__ASSET_BUNDLES_CONFIG_PATH} (see README)"
+# The root directory of the asset bundles.
+ASSET_BUNDLES_DIRECTORY = Path(__ASSET_BUNDLES_CONFIG_PATH.read_text(encoding="utf-8"))
+
 # The path to the data files.
 DATA_DIRECTORY = Path(resource_filename(__name__, "data"))
 # The path to object data.

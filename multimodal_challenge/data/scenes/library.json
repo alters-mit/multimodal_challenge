@@ -9,7 +9,7 @@
             "urls": {
                 "Darwin": "",
                 "Linux": "",
-                "Windows": "D:/multimodal_challenge/mm_kitchen_1_a"
+                "Windows": "ROOT/scenes/windows/mm_kitchen_1_a"
             }
         }
     }
