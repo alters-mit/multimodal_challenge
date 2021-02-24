@@ -35,9 +35,9 @@ class Dataset(MultiModalBase):
     """
 
     """:class_var
-    The PyAudio object. This is used to 
+    The PyAudio object. This is used to determine when a trial ends (when the audio stops playing).
     """
-    PY_AUDIO = pyaudio.PyAudio()
+    PY_AUDIO: pyaudio.PyAudio = pyaudio.PyAudio()
     """:class_var
     True if there is currently audio playing. Don't set this value manually! It is handled in a separate thread.
     """
@@ -47,9 +47,9 @@ class Dataset(MultiModalBase):
     """
     LISTEN_TO_AUDIO: bool = False
     """:class_var
-    The PyImpact object used to generate audio.
+    The PyImpact object used to generate impact sound audio at runtime.
     """
-    PY_IMPACT = PyImpact()
+    PY_IMPACT: PyImpact = PyImpact()
     """:class_var
     A dictionary. Key = A PyImpact `AudioMaterial`. Value = The corresponding Resonance Audio material.
     """
@@ -152,9 +152,19 @@ class Dataset(MultiModalBase):
         """
         self.env_id: int = -1
 
-    def do_trials(self, scene: str, layout: int) -> None:
+    def run(self) -> None:
         """
-        Get the cached scenarios (drops) for the scene_layout combination and do each drop trial.
+        Generate the entire dataset for each scene_layout combination.
+        """
+
+        data = loads(ENV_AUDIO_MATERIALS_PATH.read_text(encoding="utf-8"))
+        for scene in data:
+            for layout in data[scene]:
+                self.do_trials(scene=scene, layout=layout)
+
+    def do_trials(self, scene: str, layout: str) -> None:
+        """
+        Get the cached scenarios (drops) for a scene_layout combination and do each drop trial.
         This will try to avoid overwriting existing trial results.
         This will start a thread to listen to audio on the sound card to determine if a trial is done.
 
@@ -164,11 +174,11 @@ class Dataset(MultiModalBase):
 
         # Remember the name of the scene.
         self.scene = scene
-        self.layout = layout
+        self.layout = int(layout)
 
         # Get the environment audio materials.
         self.env_audio_materials.clear()
-        data = loads(ENV_AUDIO_MATERIALS_PATH.joinpath(f"{scene}_{layout}.json"))
+        data = loads(ENV_AUDIO_MATERIALS_PATH)
         for room in data[scene][layout]:
             self.env_audio_materials[int(room)] = (AudioMaterial[data[scene][layout][room["floor"]]],
                                                    AudioMaterial[data[scene][layout][room["wall"]]])
@@ -179,6 +189,9 @@ class Dataset(MultiModalBase):
                 tc = int(f.name.replace(".json", ""))
                 if tc > self.trial_count:
                     self.trial_count = tc + 1
+        # We already completed this portion of the dataset.
+        if self.trial_count == len(self.drops):
+            return
         # Load the cached drop data.
         drops = AUDIO_DATASET_DROPS_DIRECTORY.joinpath(f"{scene}_{layout}.json").read_text(encoding="utf-8")
         self.drops = [Drop(**d) for d in drops["drops"]]
@@ -189,6 +202,7 @@ class Dataset(MultiModalBase):
         t = Thread(target=Dataset._listen_for_audio)
         t.daemon = True
         try:
+            t.start()
             # Initialize the scene and do the trial.
             for i in range(self.trial_count, len(self.drops)):
                 pbar.set_description(f"{scene}_{layout} {i}")
@@ -456,3 +470,6 @@ class Dataset(MultiModalBase):
             print("STOPPED LISTENING TO AUDIO")
 
 
+if __name__ == "__main__":
+    dataset_generator = Dataset()
+    dataset_generator.run()
