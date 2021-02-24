@@ -4,12 +4,13 @@ import numpy as np
 from tdw.object_init_data import AudioInitData
 from tdw.tdw_utils import TDWUtils
 from magnebot import Magnebot, ActionStatus, ArmJoint
+from multimodal_challenge.paths import SCENE_LIBRARY_PATH
 
 
 class MultiModalBase(Magnebot, ABC):
     def init_scene(self, scene: str, layout: int, room: int = None) -> ActionStatus:
         # Add the scene.
-        commands: List[dict] = [self.get_add_scene(scene_name=scene)]
+        commands: List[dict] = [self.get_add_scene(scene_name=scene, library=str(SCENE_LIBRARY_PATH.resolve()))]
         # Set the post-processing.
         commands.extend(self._get_start_trial_commands())
         # Initialize the objects.

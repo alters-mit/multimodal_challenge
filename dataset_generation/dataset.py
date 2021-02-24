@@ -1,6 +1,7 @@
 from time import sleep
-from typing import List, Tuple, Dict
+from typing import List, Tuple, Dict, Optional
 from pathlib import Path
+from json import loads
 from threading import Thread
 from array import array
 import numpy as np
@@ -11,11 +12,12 @@ from tdw.object_init_data import AudioInitData
 from tdw.py_impact import PyImpact, AudioMaterial
 from magnebot import Magnebot
 from magnebot.scene_state import SceneState
+from magnebot.scene_environment import SceneEnvironment
 from multimodal_challenge.multimodal_base import MultiModalBase
 from multimodal_challenge.trial import Trial
 from multimodal_challenge.dataset_generation.drop import Drop
-from multimodal_challenge.paths import AUDIO_DATASET_DROPS_DIRECTORY
-from multimodal_challenge.util import get_object_init_commands, get_env_audio_materials
+from multimodal_challenge.paths import AUDIO_DATASET_DROPS_DIRECTORY, ENV_AUDIO_MATERIALS_PATH
+from multimodal_challenge.util import get_object_init_commands
 
 
 class Dataset(MultiModalBase):
@@ -48,6 +50,15 @@ class Dataset(MultiModalBase):
     The PyImpact object used to generate audio.
     """
     PY_IMPACT = PyImpact()
+    """:class_var
+    A dictionary. Key = A PyImpact `AudioMaterial`. Value = The corresponding Resonance Audio material.
+    """
+    PY_IMPACT_TO_RESONANCE_AUDIO: Dict[AudioMaterial, str] = {AudioMaterial.cardboard: "roughPlaster",
+                                                              AudioMaterial.ceramic: "tile",
+                                                              AudioMaterial.glass: "glass",
+                                                              AudioMaterial.hardwood: "parquet",
+                                                              AudioMaterial.metal: "metal",
+                                                              AudioMaterial.wood: "wood"}
 
     def __init__(self, port: int = 1071, random_seed: int = 0, output_directory: str = "D:/multimodal_dataset"):
         """
@@ -128,13 +139,18 @@ class Dataset(MultiModalBase):
         """
         self.scale_factors: Dict[int, Dict[str, float]] = dict()
         """:field
-        The PyImpact audio material for the floor for the current trial.
+        The PyImpact audio materials used for the environment. 
+        Key = The room index. Value = A tuple: floor material; wall material.
         """
-        self.floor_audio_material: AudioMaterial = AudioMaterial.wood
+        self.env_audio_materials: Dict[int, Tuple[AudioMaterial, AudioMaterial]] = dict()
         """:field
-        The PyImpact audio material for the wall for the current trial.
+        Environment data used for setting drop positions.
         """
-        self.wall_audio_material: AudioMaterial = AudioMaterial.wood
+        self.scene_environment: Optional[SceneEnvironment] = None
+        """:field
+        A dummy object ID for the environment. This is reassigned per trial.
+        """
+        self.env_id: int = -1
 
     def do_trials(self, scene: str, layout: int) -> None:
         """
@@ -149,8 +165,13 @@ class Dataset(MultiModalBase):
         # Remember the name of the scene.
         self.scene = scene
         self.layout = layout
-        # Remember the environment audio info.
-        self.floor_audio_material, self.wall_audio_material = get_env_audio_materials(scene=scene, layout=layout)
+
+        # Get the environment audio materials.
+        self.env_audio_materials.clear()
+        data = loads(ENV_AUDIO_MATERIALS_PATH.joinpath(f"{scene}_{layout}.json"))
+        for room in data[scene][layout]:
+            self.env_audio_materials[int(room)] = (AudioMaterial[data[scene][layout][room["floor"]]],
+                                                   AudioMaterial[data[scene][layout][room["wall"]]])
         self.trial_count: int = 0
         # Get the last trial number, to prevent overwriting files.
         for f in self.output_directory.iterdir():
@@ -235,17 +256,26 @@ class Dataset(MultiModalBase):
                     if collision.get_state() == "enter":
                         o = self.objects_static[collision.get_object_id()]
                         a = Magnebot._OBJECT_AUDIO[o.name]
-                        # Get the correct floor material.
+                        room_id = -1
+                        for i in range(collision.get_num_contacts()):
+                            if room_id != -1:
+                                break
+                            cx, cy, cz = collision.get_contact_point(i)
+                            room_id = self.scene_environment.get_room(x=cx, z=cz).room_id
+                        # Somehow, the collision wasn't in a room. Ignore this collision.
+                        if room_id == -1:
+                            continue
+                        # Get the correct environment material, given a) the room and b) if this is the floor or wall.
                         if collision.get_floor():
-                            env_mat = self.floor_audio_material
+                            env_mat = self.env_audio_materials[room_id][0]
                         else:
-                            env_mat = self.wall_audio_material
+                            env_mat = self.env_audio_materials[room_id][1]
                         commands.append(Dataset.PY_IMPACT.get_impact_sound_command(collision=collision,
                                                                                    rigidbodies=rigidbodies,
                                                                                    target_id=o.object_id,
                                                                                    target_amp=a.amp,
                                                                                    target_mat=a.material.name,
-                                                                                   other_id=1,
+                                                                                   other_id=self.env_id,
                                                                                    other_amp=0.01,
                                                                                    other_mat=env_mat.name,
                                                                                    resonance=a.resonance,
@@ -297,6 +327,19 @@ class Dataset(MultiModalBase):
         ci.write(path=self.output_directory.joinpath(f"{self.trial_count}.json"))
         self.trial_count += 1
 
+    def _cache_static_data(self, resp: List[bytes]) -> None:
+        super()._cache_static_data(resp=resp)
+        self.scene_environment = SceneEnvironment(resp=resp)
+        num_attempts = 0
+
+        # Get a unique env ID.
+        got_env_id = False
+        while not got_env_id and num_attempts < 100:
+            self.env_id = self.get_unique_id()
+            got_env_id = self.env_id in self.objects_static
+            num_attempts += 1
+        assert got_env_id, f"Failed to get an environment ID for PyImpact (this should never happen!)"
+
     def _get_object_init_commands(self) -> List[dict]:
         # Get the commands for the scene objects.
         commands = get_object_init_commands(scene=self.scene, layout=self.layout)
@@ -314,17 +357,35 @@ class Dataset(MultiModalBase):
         return commands
 
     def _get_start_trial_commands(self) -> List[dict]:
-        # TODO add audio!
-        return [{"$type": "set_post_process",
-                 "value": False},
-                {"$type": "enable_reflection_probes",
-                 "enable": False},
-                {"$type": "set_immovable",
-                 "immovable": True},
-                {"$type": "send_audio_sources",
-                 "frequency": "never"},
-                {"$type": "send_rigidbodies",
-                 "frequency": "never"}]
+        commands = [{"$type": "set_post_process",
+                     "value": False},
+                    {"$type": "enable_reflection_probes",
+                     "enable": False},
+                    {"$type": "set_immovable",
+                     "immovable": True},
+                    {"$type": "send_audio_sources",
+                     "frequency": "never"},
+                    {"$type": "send_rigidbodies",
+                     "frequency": "never"},
+                    {"$type": "send_environments",
+                     "frequency": "once"}]
+        # Add reverb spaces per room.
+        for room in self.scene_environment.rooms:
+            # Get the floor and wall materials and convert them from PyImpact to Resonance Audio.
+            floor_material = Dataset.PY_IMPACT_TO_RESONANCE_AUDIO[AudioMaterial[
+                self.env_audio_materials[room.room_id][0]]]
+            wall_material = Dataset.PY_IMPACT_TO_RESONANCE_AUDIO[AudioMaterial[
+                self.env_audio_materials[room.room_id][1]]]
+            # Append the command.
+            commands.append({"$type": "set_reverb_space_simple",
+                             "env_id": room.room_id,
+                             "reverb_floor_material": floor_material,
+                             "reverb_ceiling_material": wall_material,
+                             "reverb_front_wall_material": wall_material,
+                             "reverb_back_wall_material": wall_material,
+                             "reverb_left_wall_material": wall_material,
+                             "reverb_right_wall_material": wall_material})
+        return commands
 
     def _get_end_init_commands(self) -> List[dict]:
         # Add an audio sensor and turn off the image sensor.
@@ -393,3 +454,5 @@ class Dataset(MultiModalBase):
             stream.stop_stream()
             stream.close()
             print("STOPPED LISTENING TO AUDIO")
+
+

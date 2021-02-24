@@ -1,0 +1,16 @@
+{
+    "description": "Scenes for the Multi-Modal Challenge",
+    "records": {
+        "monkey_physics_room": {
+            "description": "A custom lab-style room for the Monkey Physics project.",
+            "hdri": false,
+            "location": "interior",
+            "name": "monkey_physics_room",
+            "urls": {
+                "Darwin": "https://tdw-public.s3.amazonaws.com/scenes/osx/2019.1/monkey_physics_room",
+                "Linux": "https://tdw-public.s3.amazonaws.com/scenes/linux/2019.1/monkey_physics_room",
+                "Windows": "https://tdw-public.s3.amazonaws.com/scenes/windows/2019.1/monkey_physics_room"
+            }
+        }
+    }
+}
