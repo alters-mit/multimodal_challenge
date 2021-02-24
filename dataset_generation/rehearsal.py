@@ -15,7 +15,7 @@ from multimodal_challenge.dataset_generation.drop_zone import DropZone
 from multimodal_challenge.encoder import Encoder
 
 
-class AudioRehearsal(Controller):
+class Rehearsal(Controller):
     """
     "Rehearse" the audio dataset by running a series of random trials.
 
@@ -140,12 +140,15 @@ class AudioRehearsal(Controller):
         """
 
         # Get the drop zones.
-        drop_zone_data = loads(DROP_ZONE_DIRECTORY.joinpath(f"{scene}_{layout}.json").read_text(encoding="utf-8"))
+        filename = f"{scene}_{layout}.json"
+        drop_zone_data = loads(DROP_ZONE_DIRECTORY.joinpath(filename).read_text(encoding="utf-8"))
         self._drop_zones.clear()
         for drop_zone in drop_zone_data["drop_zones"]:
             self._drop_zones.append(DropZone(**drop_zone))
         commands = [self.get_add_scene(scene_name=scene),
-                    {"$type": "send_environments"}]
+                    {"$type": "send_environments"},
+                    {"$type": "enable_reflection_probes",
+                     "enable": False}]
         commands.extend(get_object_init_commands(scene=scene, layout=layout))
         # Make all objects kinematic.
         for i in range(len(commands)):
@@ -165,9 +168,8 @@ class AudioRehearsal(Controller):
                 pbar.update(1)
         pbar.close()
         # Save the drop data as a json file.
-        AUDIO_DATASET_DROPS_DIRECTORY.joinpath(f"{scene}_{layout}.json").write_text(dumps({"drops": drops},
-                                                                                          cls=Encoder),
-                                                                                    encoding="utf-8")
+        AUDIO_DATASET_DROPS_DIRECTORY.joinpath(filename).write_text(dumps({"drops": drops}, cls=Encoder),
+                                                                    encoding="utf-8")
 
     def _get_audio_info(self) -> ObjectInfo:
         # TODO

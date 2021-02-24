@@ -8,7 +8,7 @@ from tdw.py_impact import ObjectInfo, AudioMaterial
 from multimodal_challenge.encoder import Encoder
 
 
-class CachedTrialInitialization:
+class Trial:
     """
     Data used to initialize a trial. In a trial, the object has already been dropped and generated audio.
     This class will place the object at the position at which it stopped moving.

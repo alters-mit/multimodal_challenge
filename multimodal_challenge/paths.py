@@ -13,6 +13,8 @@ OBJECT_DATA_DIRECTORY = DATA_DIRECTORY.joinpath("objects")
 DROP_OBJECTS_PATH = OBJECT_DATA_DIRECTORY.joinpath("drop_objects.txt")
 # The path to scene data.
 SCENE_DATA_DIRECTORY = DATA_DIRECTORY.joinpath("scenes")
+# The path to the environment audio materials.
+ENV_AUDIO_MATERIALS_PATH = SCENE_DATA_DIRECTORY.joinpath("audio_materials.json")
 # The path to the .json files containing object init data.
 OBJECT_INIT_DIRECTORY = SCENE_DATA_DIRECTORY.joinpath("object_init")
 # The path to the .json files containing drop zone data.
