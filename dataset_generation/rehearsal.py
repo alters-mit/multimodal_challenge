@@ -1,7 +1,8 @@
 from json import loads, dumps
+from typing import Optional, List, Dict
+from csv import DictReader
 from tqdm import tqdm
 import numpy as np
-from typing import Optional, List
 from tdw.controller import Controller
 from tdw.object_init_data import AudioInitData
 from tdw.py_impact import ObjectInfo
@@ -9,7 +10,8 @@ from tdw.output_data import Transforms
 from magnebot.scene_environment import SceneEnvironment, Room
 from magnebot.util import get_data
 from multimodal_challenge.util import DROP_OBJECTS, get_object_init_commands
-from multimodal_challenge.paths import DROP_ZONE_DIRECTORY, AUDIO_DATASET_DROPS_DIRECTORY, SCENE_LIBRARY_PATH
+from multimodal_challenge.paths import DROP_ZONE_DIRECTORY, AUDIO_DATASET_DROPS_DIRECTORY, SCENE_LIBRARY_PATH, \
+    SCENE_LAYOUT_PATH
 from multimodal_challenge.dataset_generation.drop import Drop
 from multimodal_challenge.dataset_generation.drop_zone import DropZone
 from multimodal_challenge.encoder import Encoder
@@ -54,11 +56,18 @@ class Rehearsal(Controller):
         # Get a random seed.
         if random_seed is None:
             random_seed = self.get_unique_id()
-        self._rng = np.random.RandomState(random_seed)
-        # Environment data used for setting drop positions.
-        self._scene_environment: Optional[SceneEnvironment] = None
-        # The drop zones for the current scene.
-        self._drop_zones: List[DropZone] = list()
+        """:field
+        The random number generator.
+        """
+        self.rng: np.random.RandomState = np.random.RandomState(random_seed)
+        """:field
+        Environment data used for setting drop positions.
+        """
+        self.scene_environment: Optional[SceneEnvironment] = None
+        """:field
+        The drop zones for the current scene.
+        """
+        self.drop_zones: List[DropZone] = list()
 
     def do_trial(self) -> Optional[Drop]:
         """
@@ -73,26 +82,26 @@ class Rehearsal(Controller):
             commands.append({"$type": "destroy_object",
                              "id": self.drop_object})
         # Get the next object.
-        name = self._rng.choice(DROP_OBJECTS)
-        scale = float(self._rng.uniform(0.75, 1.2))
-        room: Room = self._rng.choice(self._scene_environment.rooms)
+        name = self.rng.choice(DROP_OBJECTS)
+        scale = float(self.rng.uniform(0.75, 1.2))
+        room: Room = self.rng.choice(self.scene_environment.rooms)
         # Get the init data.
         a = AudioInitData(name=name,
                           library="models_core.json",
                           scale_factor={"x": scale, "y": scale, "z": scale},
-                          position={"x": float(self._rng.uniform(room.x_0, room.x_1)),
-                                    "y": float(self._rng.uniform(3, 3.8)),
-                                    "z": float(self._rng.uniform(room.z_0, room.z_1))},
-                          rotation={"x": float(self._rng.uniform(-360, 360)),
-                                    "y": float(self._rng.uniform(-360, 360)),
-                                    "z": float(self._rng.uniform(-360, 360))},
+                          position={"x": float(self.rng.uniform(room.x_0, room.x_1)),
+                                    "y": float(self.rng.uniform(3, 3.8)),
+                                    "z": float(self.rng.uniform(room.z_0, room.z_1))},
+                          rotation={"x": float(self.rng.uniform(-360, 360)),
+                                    "y": float(self.rng.uniform(-360, 360)),
+                                    "z": float(self.rng.uniform(-360, 360))},
                           gravity=True,
                           kinematic=False,
                           audio=self._get_audio_info())
         # Define the drop force.
-        force = {"x": float(self._rng.uniform(-8, 8)),
-                 "y": float(self._rng.uniform(-20, 10)),
-                 "z": float(self._rng.uniform(-8, 8))}
+        force = {"x": float(self.rng.uniform(-8, 8)),
+                 "y": float(self.rng.uniform(-20, 10)),
+                 "z": float(self.rng.uniform(-8, 8))}
         # Add the initialization commands.
         self.drop_object, object_commands = a.get_commands()
         commands.extend(object_commands)
@@ -123,12 +132,32 @@ class Rehearsal(Controller):
         if not good:
             return None
         # Check if this object is in a drop zone.
-        for drop_zone in self._drop_zones:
-            if p_0[1] >= drop_zone.center[1] and np.linalg.norm(p_0, drop_zone.center) < drop_zone.radius:
+        for drop_zone in self.drop_zones:
+            if drop_zone.center[1] + 0.1 >= p_0[1] >= drop_zone.center[1] and \
+                    np.linalg.norm(p_0, drop_zone.center) < drop_zone.radius:
                 return Drop(init_data=a, force=force)
         return None
 
-    def run(self, scene: str, layout: int, num_trials: int = 5000) -> None:
+    def run(self, num_trials: int = 10000) -> None:
+        """
+        Generate results for each scene_layout combination.
+
+        :param num_trials: The total number of trials.
+        """
+
+        scene_layouts: Dict[str, int] = dict()
+        num_layouts: int = 0
+        with open(str(SCENE_LAYOUT_PATH.resolve()), newline='') as f:
+            reader = DictReader(f)
+            for row in reader:
+                layouts = int(row["layout"])
+                scene_layouts[row["scene"]] = layouts
+                num_layouts += layouts
+        for scene in scene_layouts:
+            for i in range(scene_layouts[scene]):
+                self.do_trials(scene=scene, layout=i, num_trials=int(num_trials / num_layouts))
+
+    def do_trials(self, scene: str, layout: int, num_trials: int) -> None:
         """
         Load a scene_layout combination, and its objects, and its drop zones.
         Run random trials until we have enough "good" trials, where "good" means that the object landed in a drop zone.
@@ -142,13 +171,13 @@ class Rehearsal(Controller):
         # Get the drop zones.
         filename = f"{scene}_{layout}.json"
         drop_zone_data = loads(DROP_ZONE_DIRECTORY.joinpath(filename).read_text(encoding="utf-8"))
-        self._drop_zones.clear()
+        self.drop_zones.clear()
         for drop_zone in drop_zone_data["drop_zones"]:
-            self._drop_zones.append(DropZone(**drop_zone))
-        commands = [self.get_add_scene(scene_name=scene, library=str(SCENE_LIBRARY_PATH.resolve())),
-                    {"$type": "send_environments"},
-                    {"$type": "enable_reflection_probes",
-                     "enable": False}]
+            self.drop_zones.append(DropZone(**drop_zone))
+        commands: List[dict] = [self.get_add_scene(scene_name=scene, library=str(SCENE_LIBRARY_PATH.resolve())),
+                                {"$type": "send_environments"},
+                                {"$type": "enable_reflection_probes",
+                                 "enable": False}]
         commands.extend(get_object_init_commands(scene=scene, layout=layout))
         # Make all objects kinematic.
         for i in range(len(commands)):
@@ -156,7 +185,7 @@ class Rehearsal(Controller):
                 commands[i]["is_kinematic"] = True
         resp = self.communicate(commands)
         # Set the scene environment.
-        self._scene_environment = SceneEnvironment(resp=resp)
+        self.scene_environment = SceneEnvironment(resp=resp)
         drops: List[Drop] = list()
         pbar = tqdm(total=num_trials)
         while len(drops) < num_trials:

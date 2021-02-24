@@ -1,3 +1,4 @@
+from csv import DictReader
 from time import sleep
 from typing import List, Tuple, Dict, Optional
 from pathlib import Path
@@ -16,7 +17,7 @@ from magnebot.scene_environment import SceneEnvironment
 from multimodal_challenge.multimodal_base import MultiModalBase
 from multimodal_challenge.trial import Trial
 from multimodal_challenge.dataset_generation.drop import Drop
-from multimodal_challenge.paths import AUDIO_DATASET_DROPS_DIRECTORY, ENV_AUDIO_MATERIALS_PATH
+from multimodal_challenge.paths import AUDIO_DATASET_DROPS_DIRECTORY, ENV_AUDIO_MATERIALS_PATH, SCENE_LAYOUT_PATH
 from multimodal_challenge.util import get_object_init_commands
 
 
@@ -157,10 +158,14 @@ class Dataset(MultiModalBase):
         Generate the entire dataset for each scene_layout combination.
         """
 
-        data = loads(ENV_AUDIO_MATERIALS_PATH.read_text(encoding="utf-8"))
-        for scene in data:
-            for layout in data[scene]:
-                self.do_trials(scene=scene, layout=layout)
+        scene_layouts: Dict[str, int] = dict()
+        with open(str(SCENE_LAYOUT_PATH.resolve()), newline='') as f:
+            reader = DictReader(f)
+            for row in reader:
+                scene_layouts[row["scene"]] = int(row["layout"])
+        for scene in scene_layouts:
+            for i in range(scene_layouts[scene]):
+                self.do_trials(scene=scene, layout=str(i))
 
     def do_trials(self, scene: str, layout: str) -> None:
         """
@@ -179,9 +184,9 @@ class Dataset(MultiModalBase):
         # Get the environment audio materials.
         self.env_audio_materials.clear()
         data = loads(ENV_AUDIO_MATERIALS_PATH)
-        for room in data[scene][layout]:
-            self.env_audio_materials[int(room)] = (AudioMaterial[data[scene][layout][room["floor"]]],
-                                                   AudioMaterial[data[scene][layout][room["wall"]]])
+        for room in data[scene]:
+            self.env_audio_materials[int(room)] = (AudioMaterial[data[scene][room.id]["floor"]],
+                                                   AudioMaterial[data[scene][room.id]["wall"]])
         self.trial_count: int = 0
         # Get the last trial number, to prevent overwriting files.
         for f in self.output_directory.iterdir():

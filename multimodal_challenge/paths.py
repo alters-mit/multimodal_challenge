@@ -15,6 +15,8 @@ DROP_OBJECTS_PATH = OBJECT_DATA_DIRECTORY.joinpath("drop_objects.txt")
 SCENE_DATA_DIRECTORY = DATA_DIRECTORY.joinpath("scenes")
 # The path to the scene librarian metadata.
 SCENE_LIBRARY_PATH = SCENE_DATA_DIRECTORY.joinpath("library.json")
+# The path to the expected scene_layout combinations.
+SCENE_LAYOUT_PATH = SCENE_DATA_DIRECTORY.joinpath("scene_layout.csv")
 # The path to the .json files containing object init data.
 OBJECT_INIT_DIRECTORY = SCENE_DATA_DIRECTORY.joinpath("object_init")
 # The path to the audio dataset files.
