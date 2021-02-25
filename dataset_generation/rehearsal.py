@@ -18,25 +18,56 @@ from multimodal_challenge.multimodal_object_init_data import MultiModalObjectIni
 
 class Rehearsal(Controller):
     """
-    "Rehearse" the audio dataset_generation by running a series of random trials.
+    "Rehearse" the audio dataset_generation by running randomly-generated trials and saving the "valid" trials.
 
-    Per scenes_layout combination, all of the objects are made kinematic. A target object is dropped.
-    Each scene_layout combination has a number of "drop zones" which are stored in `data/scenes/drop_zones/`
-    If the target object lands in a drop zone, then this is a "good" trial and the result is recorded.
+    This is meant only for backend developers; the Python module already has cached rehearsal data.
 
-    After a target number of good "drops" has been reached, the parameters used to initialize the trial are saved.
-    They will be used for the actual dataset_generation generation.
+    Each scene has a corresponding list of [`DropZones`](../api/drop_zone.md). These are already cached. If the target object lands in a `DropZone`, then this was a valid trial. As a result, this script will cut down on dev time (we don't need to set drop parameters manually) and generation time (because we don't have to discard any audio recordings).
 
-    Advantages to this system:
+    # Requirements
 
-    - We can randomly choose start parameters but because we're only recording 1 Transform, this will be VERY fast.
-    - We can procedurally generate scenarios to avoid having to choose them by hand.
+    - The `multimodal_challenge` Python module.
 
-    Disadvantage to this system:
+    # Usage
 
-    - Each object is kinematic to make scene re-initialization as fast as possible.
-      However, this means that there will be a discrepancy between the physics behavior in the rehearsal and the actual
-      physics behavior in the dataset_generation generation. Ideally, the discrepancy is quite minimal.
+    1. `cd dataset_generation`
+    2. `python3 rehearsal.py`
+    3. Run build
+
+    # How it works
+
+    **Per scene_layout combination** (i.e. scene `mm_kitchen_1_a` layout `0`):
+
+    1. Load the corresponding object init data and `DropZone` data.
+    2. Run trials per scene_layout combination until there's enough (for example, 2000 per scene_layout combination).
+
+    **Per trial:**
+
+    1. Randomly set the parameters of a new [`Drop`](../api/drop.md) which is used here as initialization data.
+    2. Let the target object fall. **The only output data is the `Transform` of the target object.**
+    3. When the target object stops falling, check if the target object is in a `DropZone`. If so, record the `Drop`.
+
+    **Result:** A list of `Drop` initialization objects per scene_layout combination:
+
+    ```
+    multimodal_challenge/
+    ....data/
+    ........objects/
+    ........scenes/
+    ........dataset/
+    ............drops/
+    ................1_0.json  # scene_layout
+    ................1_1.json
+    ```
+
+    ### Advantages
+
+    - This is a VERY fast process. It saves dev time (we don't need to manually set trial init values) and audio recording time (we don't need to discard any recordings).
+
+    ### Disadvantages
+
+    - All objects in the scene are kinematic because re-initializing the scene per trial would be too slow. Therefore, there will be a small discrepancy between physics behavior in the rehearsal and physics behavior in the dataset.
+
     """
 
     def __init__(self, port: int = 1071, random_seed: int = None):
@@ -205,3 +236,8 @@ class Rehearsal(Controller):
     def _get_audio_info(self) -> ObjectInfo:
         # TODO
         raise Exception()
+
+
+if __name__ == "__main__":
+    m = Rehearsal()
+    m.run()

@@ -20,12 +20,12 @@ class MultiModalObjectInitData(AudioInitData):
                  gravity: bool = True, audio: ObjectInfo = None):
         """
         :param name: The name of the model.
-        :param scale_factor: The [scale factor](../api/command_api.md#scale_object).
+        :param scale_factor: The scale factor.
         :param position: The initial position. If None, defaults to: `{"x": 0, "y": 0, "z": 0`}.
         :param rotation: The initial rotation as Euler angles or a quaternion. If None, defaults to: `{"w": 1, "x": 0, "y": 0, "z": 0}`
-        :param kinematic: If True, the object will be [kinematic](../api/command_api.md#set_kinematic_state).
-        :param gravity: If True, the object won't respond to [gravity](../api/command_api.md#set_kinematic_state).
-        :param audio: If None, derive physics data from the audio data in `PyImpact.get_object_info()` (if the object isn't in this dictionary, this constructor will throw an error). If not None, use these values instead of the default audio values.
+        :param kinematic: If True, the object will be kinematic.
+        :param gravity: If True, the object won't respond to gravity.
+        :param audio: If None, derive physics data from the audio data in `PyImpact.get_object_info()` If not None, use these values instead of the default audio values.
         """
 
         super().__init__(name=name, scale_factor=scale_factor, position=position, rotation=rotation,

@@ -1,0 +1,9 @@
+{
+  "MultiModal(Magnebot)":
+  {
+    "Multi-Modal": {
+      "description": "These functions are unique to the Multi-Modal API.",
+      "functions": ["set_torso"]
+    }
+  }
+}
