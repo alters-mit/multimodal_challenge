@@ -2,14 +2,14 @@
     "description": "Scenes for the Multi-Modal Challenge",
     "records": {
         "mm_kitchen_1_a": {
-            "description": "TEST SCENE",
-            "hdri": false,
+            "description": "An single-room interior space lit by sunlight from outside.",
+            "hdri": true,
             "location": "interior",
             "name": "mm_kitchen_1_a",
             "urls": {
-                "Darwin": "",
-                "Linux": "",
-                "Windows": "ROOT/scenes/windows/mm_kitchen_1_a"
+                "Darwin": "ROOT/scenes/osx/2020.2/mm_kitchen_1_a",
+                "Linux": "ROOT/scenes/linux/2020.2/mm_kitchen_1_a",
+                "Windows": "ROOT/scenes/windows/2020.2/mm_kitchen_1_a"
             }
         }
     }

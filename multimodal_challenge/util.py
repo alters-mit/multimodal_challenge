@@ -10,11 +10,18 @@ DROP_OBJECTS = DROP_OBJECTS_PATH.read_text(encoding="utf-8").split("\n")
 
 
 def get_scene_librarian() -> SceneLibrarian:
+    """
+    :return: The `SceneLibrarian`, which can point to local or remote asset bundles.
+    """
+
     lib = SceneLibrarian(library=str(SCENE_LIBRARY_PATH.resolve()))
     for i in range(len(lib.records)):
+        # Set all of the URLs based on the root path.
         for platform in lib.records[i].urls:
-            lib.records[i].urls[platform] = str(ASSET_BUNDLES_DIRECTORY.joinpath(lib.records[i].urls[platform].
-                                                                                 replace("ROOT", "")).resolve())
+            url = str(ASSET_BUNDLES_DIRECTORY.joinpath(lib.records[i].urls[platform].replace("ROOT", "")).resolve())
+            if not url.startswith("http"):
+                url = "file:///" + url
+            lib.records[i].urls[platform] = url
     return lib
 
 

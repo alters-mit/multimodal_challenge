@@ -1,1 +1,1 @@
-D:/multimodal_challenge
+https://tdw-public.s3.amazonaws.com
