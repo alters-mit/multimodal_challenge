@@ -367,20 +367,18 @@ class Dataset(MultiModalBase):
                      "frequency": "never"},
                     {"$type": "send_environments",
                      "frequency": "once"}]
-        # Add reverb spaces per room.
-        for room in self.scene_environment.rooms:
-            # Get the floor and wall materials and convert them from PyImpact to Resonance Audio.
-            floor_material = EnvAudioMaterials.PY_IMPACT_TO_RESONANCE_AUDIO[self.env_audio_materials.floor]
-            wall_material = EnvAudioMaterials.PY_IMPACT_TO_RESONANCE_AUDIO[self.env_audio_materials.wall]
-            # Append the command.
-            commands.append({"$type": "set_reverb_space_simple",
-                             "env_id": room.room_id,
-                             "reverb_floor_material": floor_material,
-                             "reverb_ceiling_material": wall_material,
-                             "reverb_front_wall_material": wall_material,
-                             "reverb_back_wall_material": wall_material,
-                             "reverb_left_wall_material": wall_material,
-                             "reverb_right_wall_material": wall_material})
+        # Add the Resonance Audio reverb space.
+        # Conver the PyImpact audio materials to Resonance Audio audio materials.
+        floor_material = EnvAudioMaterials.PY_IMPACT_TO_RESONANCE_AUDIO[self.env_audio_materials.floor]
+        wall_material = EnvAudioMaterials.PY_IMPACT_TO_RESONANCE_AUDIO[self.env_audio_materials.wall]
+        commands.append({"$type": "set_reverb_space_simple",
+                         "env_id": -1,
+                         "reverb_floor_material": floor_material,
+                         "reverb_ceiling_material": wall_material,
+                         "reverb_front_wall_material": wall_material,
+                         "reverb_back_wall_material": wall_material,
+                         "reverb_left_wall_material": wall_material,
+                         "reverb_right_wall_material": wall_material})
         return commands
 
     def _get_end_init_commands(self) -> List[dict]:
