@@ -174,7 +174,7 @@ class Dataset(MultiModalBase):
 
         # Get the environment audio materials.
         data = loads(ENV_AUDIO_MATERIALS_PATH)
-        self.env_audio_materials = EnvAudioMaterials(floor=data[scene]["floor"], wall=data[scene]["wall"])
+        self.env_audio_materials = EnvAudioMaterials(**data[scene])
         self.trial_count: int = 0
         # Get the last trial number, to prevent overwriting files.
         for f in self.output_directory.iterdir():
