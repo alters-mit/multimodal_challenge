@@ -18,14 +18,14 @@ from multimodal_challenge.multimodal_object_init_data import MultiModalObjectIni
 
 class Rehearsal(Controller):
     """
-    "Rehearse" the audio dataset by running a series of random trials.
+    "Rehearse" the audio dataset_generation by running a series of random trials.
 
     Per scenes_layout combination, all of the objects are made kinematic. A target object is dropped.
     Each scene_layout combination has a number of "drop zones" which are stored in `data/scenes/drop_zones/`
     If the target object lands in a drop zone, then this is a "good" trial and the result is recorded.
 
     After a target number of good "drops" has been reached, the parameters used to initialize the trial are saved.
-    They will be used for the actual dataset generation.
+    They will be used for the actual dataset_generation generation.
 
     Advantages to this system:
 
@@ -36,7 +36,7 @@ class Rehearsal(Controller):
 
     - Each object is kinematic to make scene re-initialization as fast as possible.
       However, this means that there will be a discrepancy between the physics behavior in the rehearsal and the actual
-      physics behavior in the dataset generation. Ideally, the discrepancy is quite minimal.
+      physics behavior in the dataset_generation generation. Ideally, the discrepancy is quite minimal.
     """
 
     def __init__(self, port: int = 1071, random_seed: int = None):

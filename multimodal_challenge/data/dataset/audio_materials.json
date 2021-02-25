@@ -1,10 +1,7 @@
 {
   "mm_kitchen_1_a":
   {
-    "0":
-      {
-        "floor": "ceramic",
-        "wall": "wood"
-      }
+    "floor": "ceramic",
+    "wall": "wood"
   }
 }

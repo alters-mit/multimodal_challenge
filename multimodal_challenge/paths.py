@@ -27,11 +27,11 @@ SCENE_LIBRARY_PATH = SCENE_DATA_DIRECTORY.joinpath("library.json")
 SCENE_LAYOUT_PATH = SCENE_DATA_DIRECTORY.joinpath("scene_layout.csv")
 # The path to the .json files containing object init data.
 OBJECT_INIT_DIRECTORY = SCENE_DATA_DIRECTORY.joinpath("object_init")
-# The path to the audio dataset files.
-AUDIO_DATASET_DIRECTORY = DATA_DIRECTORY.joinpath("dataset")
+# The path to the audio dataset_generation files.
+AUDIO_DATASET_DIRECTORY = DATA_DIRECTORY.joinpath("dataset_generation")
 # The path to the .json files containing drop zone data.
 DROP_ZONE_DIRECTORY = AUDIO_DATASET_DIRECTORY.joinpath("drop_zones")
-# THe path to the audio dataset drops .json files.
+# THe path to the audio dataset_generation drops .json files.
 AUDIO_DATASET_DROPS_DIRECTORY = AUDIO_DATASET_DIRECTORY.joinpath("drops")
 # The path to the environment audio materials.
 ENV_AUDIO_MATERIALS_PATH = AUDIO_DATASET_DIRECTORY.joinpath("audio_materials.json")
