@@ -3,6 +3,7 @@ from json import JSONEncoder
 import numpy as np
 from tdw.py_impact import AudioMaterial, ObjectInfo
 from multimodal_challenge.multimodal_object_init_data import MultiModalObjectInitData
+from multimodal_challenge.dataset_generation.drop import Drop
 
 
 class Encoder(JSONEncoder):
@@ -21,10 +22,11 @@ class Encoder(JSONEncoder):
             return obj.__dict__
         elif isinstance(obj, ObjectInfo):
             return obj.__dict__
+        elif isinstance(obj, Drop):
+            return obj.__dict__
         elif isinstance(obj, AudioMaterial):
             return obj.name
         elif isinstance(obj, bytes):
             return b64encode(obj).decode("utf-8")
         else:
-            print(obj)
             return super(Encoder, self).default(obj)
