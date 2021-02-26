@@ -6,12 +6,25 @@ Paths to data files in this Python module.
 """
 
 # The path to the file describing the root directory of the asset bundles.
-__ASSET_BUNDLES_CONFIG_PATH = Path.home().joinpath("multimodal_challenge/asset_bundles_path.txt")
-assert __ASSET_BUNDLES_CONFIG_PATH.exists(), f"File not found: {__ASSET_BUNDLES_CONFIG_PATH} (see README)"
+__CONFIG_PATH = Path.home().joinpath("multimodal_challenge/config.ini")
+assert __CONFIG_PATH.exists(), f"Config file not found: {__CONFIG_PATH} (see README)"
+__CONFIG_TEXT = __CONFIG_PATH.read_text(encoding="utf-8")
+__CONFIG = dict()
+for __row in __CONFIG_TEXT.split("\n"):
+    __cols = __row.split("=")
+    __CONFIG[__cols[0]] = __cols[1]
 # The root directory of the asset bundles.
-ASSET_BUNDLES_DIRECTORY: str = __ASSET_BUNDLES_CONFIG_PATH.read_text(encoding="utf-8")
+ASSET_BUNDLES_DIRECTORY: str = __CONFIG["asset_bundles"]
 if ASSET_BUNDLES_DIRECTORY.startswith("~"):
     ASSET_BUNDLES_DIRECTORY = str(Path.home().joinpath(ASSET_BUNDLES_DIRECTORY[2:]).resolve())
+# The path to where the dataset data will be generated.
+DATASET_ROOT_DIRECTORY: Path = Path(__CONFIG["dataset"])
+# The path to the rehearsal data.
+REHEARSAL_DIRECTORY: Path = DATASET_ROOT_DIRECTORY.joinpath("rehearsal")
+if not REHEARSAL_DIRECTORY.exists():
+    REHEARSAL_DIRECTORY.mkdir(parents=True)
+# The path to the audio dataset files.
+DATASET_DIRECTORY = DATASET_ROOT_DIRECTORY.joinpath("dataset")
 
 # The path to the data files.
 DATA_DIRECTORY: Path = Path(resource_filename(__name__, "data"))

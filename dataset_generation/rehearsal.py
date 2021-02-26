@@ -1,4 +1,3 @@
-from pathlib import Path
 from json import loads, dumps
 from typing import Optional, List, Dict
 from csv import DictReader
@@ -10,7 +9,7 @@ from tdw.tdw_utils import TDWUtils
 from magnebot.scene_environment import SceneEnvironment, Room
 from magnebot.util import get_data
 from multimodal_challenge.util import DROP_OBJECTS, get_object_init_commands, get_scene_librarian
-from multimodal_challenge.paths import DROP_ZONE_DIRECTORY, SCENE_LAYOUT_PATH
+from multimodal_challenge.paths import DROP_ZONE_DIRECTORY, SCENE_LAYOUT_PATH, REHEARSAL_DIRECTORY
 from multimodal_challenge.dataset_generation.drop import Drop
 from multimodal_challenge.dataset_generation.drop_zone import DropZone
 from multimodal_challenge.encoder import Encoder
@@ -51,14 +50,10 @@ class Rehearsal(Controller):
     **Result:** A list of `Drop` initialization objects per scene_layout combination:
 
     ```
-    multimodal_challenge/
-    ....data/
-    ........objects/
-    ........scenes/
-    ........dataset/
-    ............drops/
-    ................1_0.json  # scene_layout
-    ................1_1.json
+    D:/multimodal_challenge/dataset  # See dataset in config.ini
+    ....drops/
+    ........1_0.json  # scene_layout
+    ........1_1.json
     ```
 
     ### Advantages
@@ -71,14 +66,12 @@ class Rehearsal(Controller):
 
     """
 
-    def __init__(self, port: int = 1071, random_seed: int = None,
-                 output_directory: str = "D:/multimodal_challenge/drops"):
+    def __init__(self, port: int = 1071, random_seed: int = None):
         """
         Create the network socket and bind the socket to the port.
 
         :param port: The port number.
         :param random_seed: The seed used for random numbers. If None, this is chosen randomly.
-        :param output_directory: The root output directory.
         """
 
         super().__init__(port=port, launch_build=False, check_version=True)
@@ -101,12 +94,6 @@ class Rehearsal(Controller):
         The drop zones for the current scene.
         """
         self.drop_zones: List[DropZone] = list()
-        """:field
-        The root output directory.
-        """
-        self.output_directory: Path = Path(output_directory)
-        if not self.output_directory.exists():
-            self.output_directory.mkdir(parents=True)
 
     def do_trial(self) -> Optional[Drop]:
         """
@@ -261,7 +248,7 @@ class Rehearsal(Controller):
         finally:
             pbar.close()
             # Write the results to disk.
-            self.output_directory.joinpath(filename).write_text(dumps(drops, cls=Encoder, indent=2), encoding="utf-8")
+            REHEARSAL_DIRECTORY.joinpath(filename).write_text(dumps(drops, cls=Encoder, indent=2), encoding="utf-8")
 
 
 if __name__ == "__main__":

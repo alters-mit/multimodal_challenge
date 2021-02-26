@@ -4,6 +4,7 @@ import numpy as np
 from tdw.py_impact import AudioMaterial, ObjectInfo
 from multimodal_challenge.multimodal_object_init_data import MultiModalObjectInitData
 from multimodal_challenge.dataset_generation.drop import Drop
+from multimodal_challenge.trial import Trial
 
 
 class Encoder(JSONEncoder):
@@ -23,6 +24,8 @@ class Encoder(JSONEncoder):
         elif isinstance(obj, ObjectInfo):
             return obj.__dict__
         elif isinstance(obj, Drop):
+            return obj.__dict__
+        elif isinstance(obj, Trial):
             return obj.__dict__
         elif isinstance(obj, AudioMaterial):
             return obj.name

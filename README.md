@@ -4,8 +4,8 @@
 
 1. `git clone https://github.com/alters-mit/multimodal_challenge.git`
 2. `cd path/to/multimodal_challenge` (replace `path/to` with the actual path)
-3. If you're want to use local asset bundles,, modify the path in `asset_bundles_path.txt`  to point to a local directory, e.g. `~/multimodal_challenge_asset_bundles`
-4. `pip3 install -e .`
+3. `pip3 install -e .`
+4. `python3 config.py` You'll be prompted to set directories for the asset bundles (optional) and dataset (mandatory). This will generate a `config.ini` file.
 
 # Audio Dataset Generation
 

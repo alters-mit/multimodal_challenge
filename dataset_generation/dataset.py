@@ -2,7 +2,7 @@ from csv import DictReader
 from time import sleep
 from typing import List, Tuple, Dict, Optional
 from pathlib import Path
-from json import loads
+from json import loads, dumps
 from threading import Thread
 from array import array
 import numpy as np
@@ -15,7 +15,9 @@ from magnebot.scene_state import SceneState
 from magnebot.scene_environment import SceneEnvironment
 from multimodal_challenge.multimodal_base import MultiModalBase
 from multimodal_challenge.trial import Trial
-from multimodal_challenge.paths import AUDIO_DATASET_DROPS_DIRECTORY, ENV_AUDIO_MATERIALS_PATH, SCENE_LAYOUT_PATH
+from multimodal_challenge.encoder import Encoder
+from multimodal_challenge.paths import REHEARSAL_DIRECTORY, ENV_AUDIO_MATERIALS_PATH, SCENE_LAYOUT_PATH, \
+    DATASET_DIRECTORY
 from multimodal_challenge.util import get_object_init_commands
 from multimodal_challenge.multimodal_object_init_data import MultiModalObjectInitData
 from multimodal_challenge.dataset_generation.drop import Drop
@@ -61,16 +63,10 @@ class Dataset(MultiModalBase):
     **Result:** A directory of `Trial` objects per scene_layout combination:
 
     ```
-    D:/multimodal_challenge/  # See `output_directory` in the constructor.
-    ....data/
-    ........objects/
-    ........scenes/
-    ........dataset/
-    ............drops/
-    ............trials/
-    ................1_0/  # scene_layout
-    ....................0.json  # Store each trial as a separate .json file so we can stop/resume dataset generation.
-    ....................1.json
+    D:/multimodal_challenge/dataset  # See dataset in config.ini
+    ....1_0/  # scene_layout
+    ........0.json
+    ........1.json
     ```
     """
 
@@ -90,8 +86,10 @@ class Dataset(MultiModalBase):
     The PyImpact object used to generate impact sound audio at runtime.
     """
     PY_IMPACT: PyImpact = PyImpact()
+    # The path to the temporary audio file.
+    TEMP_AUDIO_PATH: Path = DATASET_DIRECTORY.joinpath("temp.wav")
 
-    def __init__(self, port: int = 1071, random_seed: int = 0, output_directory: str = "D:/multimodal_dataset"):
+    def __init__(self, port: int = 1071, random_seed: int = 0):
         """
         Create the network socket and bind the socket to the port.
 
@@ -106,25 +104,9 @@ class Dataset(MultiModalBase):
                           {"$type": "set_target_framerate",
                            "framerate": 60}])
         """:field
-        The dataset_generation output directory.
-        """
-        self.output_directory: Path = Path(output_directory)
-        if not self.output_directory.exists():
-            self.output_directory.mkdir(parents=True)
-        """:field
-        The path to the temporary audio file.
-        """
-        self.temp_audio_path: Path = self.output_directory.joinpath("temp.wav")
-        # The name of the next trial.
-        """:field
         The name of the next trial.
         """
         self.trial_count: int = 0
-        for f in self.output_directory.iterdir():
-            if f.is_file() and f.suffix == ".json":
-                q = int(f.name.replace(f.suffix, ""))
-                if q > self.trial_count:
-                    self.trial_count = q
         """:field
         The name of the scene in the current trial.
         """
@@ -209,13 +191,14 @@ class Dataset(MultiModalBase):
         # Remember the name of the scene.
         self.scene = scene
         self.layout = int(layout)
+        output_directory = DATASET_DIRECTORY.joinpath(f"{scene}_{layout}")
 
         # Get the environment audio materials.
         data = loads(ENV_AUDIO_MATERIALS_PATH)
         self.env_audio_materials = EnvAudioMaterials(**data[scene])
         self.trial_count: int = 0
         # Get the last trial number, to prevent overwriting files.
-        for f in self.output_directory.iterdir():
+        for f in output_directory.iterdir():
             if f.is_file() and f.suffix == ".json":
                 tc = int(f.name.replace(".json", ""))
                 if tc > self.trial_count:
@@ -224,8 +207,8 @@ class Dataset(MultiModalBase):
         if self.trial_count == len(self.drops):
             return
         # Load the cached drop data.
-        drops = AUDIO_DATASET_DROPS_DIRECTORY.joinpath(f"{scene}_{layout}.json").read_text(encoding="utf-8")
-        self.drops = [Drop(**d) for d in drops["drops"]]
+        drops: List[dict] = loads(REHEARSAL_DIRECTORY.joinpath(f"{scene}_{layout}.json").read_text(encoding="utf-8"))
+        self.drops = [Drop(**d) for d in drops]
         # Create a progress bar.
         pbar = tqdm(total=len(self.drops))
         pbar.update(self.trial_count)
@@ -237,7 +220,7 @@ class Dataset(MultiModalBase):
             # Initialize the scene and do the trial.
             for i in range(self.trial_count, len(self.drops)):
                 pbar.set_description(f"{scene}_{layout} {i}")
-                self.do_trial()
+                self.do_trial(output_directory=output_directory)
                 pbar.update(1)
         # Close the audio thread, stop fmedia, and stop the progress bar.
         finally:
@@ -245,19 +228,21 @@ class Dataset(MultiModalBase):
             AudioUtils.stop()
             pbar.close()
 
-    def do_trial(self) -> None:
+    def do_trial(self, output_directory: Path) -> None:
         """
         Initialize the scene. This will add the target (dropped) object, the scene objects, and the Magnebot,
         as well as set a position, rotation, torso height, column rotation, and camera angles for the Magnebot.
 
         Start recording audio and let the object fall. The simulation ends when there's no more audio or
         if the simulation continued for too long.
+
+        :param output_directory: The output directory for the trial data.
         """
 
         self.init_scene(scene=self.scene, layout=self.layout)
         try:
             # Start recording the audio.
-            AudioUtils.start(output_path=self.temp_audio_path)
+            AudioUtils.start(output_path=Dataset.TEMP_AUDIO_PATH)
             # These commands must be sent here because `init_scene()` will try to make the Magnebot moveable.
             self._next_frame_commands.extend([{"$type": "send_rigidbodies",
                                                "frequency": "always"},
@@ -282,8 +267,6 @@ class Dataset(MultiModalBase):
                         else:
                             target = o_1
                             other = o_0
-
-                        # TODO target object might have different properties.
                         target_audio = Magnebot._OBJECT_AUDIO[target.name]
                         other_audio = Magnebot._OBJECT_AUDIO[other.name]
                         commands.append(Dataset.PY_IMPACT.get_impact_sound_command(collision=collision,
@@ -336,7 +319,6 @@ class Dataset(MultiModalBase):
         object_init_data: List[MultiModalObjectInitData] = list()
         for o_id in self.objects_static:
             name = self.objects_static[o_id].name
-            # TODO the target object might have different data?
             o = MultiModalObjectInitData(name=name,
                                          audio=Magnebot._OBJECT_AUDIO[name],
                                          position=TDWUtils.array_to_vector3(state.object_transforms[o_id].position),
@@ -354,13 +336,14 @@ class Dataset(MultiModalBase):
                    column_rotation=self.torso_angle,
                    camera_pitch=self.camera_pitch,
                    camera_yaw=self.camera_yaw,
-                   audio=self.temp_audio_path.read_bytes(),
+                   audio=Dataset.TEMP_AUDIO_PATH.read_bytes(),
                    target_object=self.target_object_id,
                    object_init_data=object_init_data)
         # Remove the temp file.
-        self.temp_audio_path.unlink()
+        Dataset.TEMP_AUDIO_PATH.unlink()
         # Write the result to disk.
-        ci.write(path=self.output_directory.joinpath(f"{self.trial_count}.json"))
+        output_directory.joinpath(f"{self.trial_count}.json").write_text(dumps(ci.__dict__, cls=Encoder),
+                                                                         encoding="utf-8")
         self.trial_count += 1
 
     def _cache_static_data(self, resp: List[bytes]) -> None:
@@ -423,7 +406,7 @@ class Dataset(MultiModalBase):
         # Add an audio sensor and turn off the image sensor.
         return [{"$type": "add_environ_audio_sensor"},
                 {"$type": "enable_image_sensor",
-                 "enable": True}]
+                 "enable": False}]
 
     def _get_torso_height(self) -> float:
         self.torso_height = float(self._rng.random())

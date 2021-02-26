@@ -1,10 +1,7 @@
-from json import dumps
 from base64 import b64decode
-from pathlib import Path
 from typing import List
 import numpy as np
 from tdw.py_impact import ObjectInfo, AudioMaterial
-from multimodal_challenge.encoder import Encoder
 from multimodal_challenge.multimodal_object_init_data import MultiModalObjectInitData
 
 
@@ -86,12 +83,3 @@ class Trial:
             self.audio: bytes = b64decode(audio)
         else:
             self.audio: bytes = audio
-
-    def write(self, path: Path) -> None:
-        """
-        Serialize this object into JSON and write to disk.
-
-        :param path: The filepath.
-        """
-
-        path.write_text(dumps(self.__dict__, cls=Encoder), encoding="utf-8")
