@@ -6,7 +6,7 @@ from tdw.py_impact import PyImpact
 from tdw.librarian import ModelLibrarian, SceneLibrarian
 from tdw.controller import Controller
 from multimodal_challenge.paths import DROP_ZONE_DIRECTORY, OBJECT_INIT_DIRECTORY, OBJECT_LIBRARY_PATH, \
-    SCENE_LIBRARY_PATH
+    SCENE_LIBRARY_PATH, DROP_OBJECTS_PATH
 from multimodal_challenge.multimodal_object_init_data import MultiModalObjectInitData
 from multimodal_challenge.encoder import Encoder
 
@@ -59,7 +59,8 @@ class InitData:
         # Update the drop zone data.
         drop_zone_src = root_dir.joinpath(f"{filename}.json")
         drop_zone_dst = DROP_ZONE_DIRECTORY.joinpath(f"{filename}.json")
-        drop_zone_dst.write_text(drop_zone_src.read_text(encoding="utf-8"))
+        drop_zone_data = loads(drop_zone_src.read_text(encoding="utf-8"))
+        drop_zone_dst.write_text(dumps({"drop_zones": drop_zone_data["position_markers"]}), encoding="utf-8")
         # Show the drop zones.
         if drop_zones:
             dzs = loads(drop_zone_dst.read_text(encoding="utf-8"))["position_markers"]
@@ -143,10 +144,14 @@ class InitData:
             # Update the library.
             model_lib = ModelLibrarian(str(OBJECT_LIBRARY_PATH.resolve()))
             model_lib_core = ModelLibrarian()
-            for o in objects:
-                record = model_lib.get_record(o.name)
+            model_names = [o.name for o in objects]
+            # Get the drop objects.
+            model_names.extend(DROP_OBJECTS_PATH.read_text(encoding="utf-8").split("\n"))
+            model_names = list(sorted(model_names))
+            for o in model_names:
+                record = model_lib.get_record(o)
                 if record is None:
-                    record = model_lib_core.get_record(o.name)
+                    record = model_lib_core.get_record(o)
                     # Adjust the record URLs.
                     for platform in record.urls:
                         record.urls[platform] = record.urls[platform].replace(bucket, "ROOT")

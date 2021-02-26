@@ -1569,6 +1569,148 @@
             "wcategory": "wineglass",
             "wnid": "n04592099"
         },
+        "glass3": {
+            "asset_bundle_sizes": {
+                "Darwin": 204896,
+                "Linux": 298481,
+                "Windows": 145721
+            },
+            "bounds": {
+                "back": {
+                    "x": -0.005551703,
+                    "y": 0.1000596,
+                    "z": -0.03677166
+                },
+                "bottom": {
+                    "x": -0.005551703,
+                    "y": 0,
+                    "z": 0.005036473
+                },
+                "center": {
+                    "x": -0.005551703,
+                    "y": 0.1000596,
+                    "z": 0.005036473
+                },
+                "front": {
+                    "x": -0.005551703,
+                    "y": 0.1000596,
+                    "z": 0.04684461
+                },
+                "left": {
+                    "x": -0.04735984,
+                    "y": 0.1000596,
+                    "z": 0.005036473
+                },
+                "right": {
+                    "x": 0.03625643,
+                    "y": 0.1000596,
+                    "z": 0.005036473
+                },
+                "top": {
+                    "x": -0.005551703,
+                    "y": 0.2001192,
+                    "z": 0.005036473
+                }
+            },
+            "canonical_rotation": {
+                "x": 0,
+                "y": 0.0,
+                "z": 0
+            },
+            "composite_object": false,
+            "do_not_use": false,
+            "do_not_use_reason": "",
+            "flex": true,
+            "name": "glass3",
+            "physics_quality": 0.9759002779818583,
+            "scale_factor": 1.0,
+            "substructure": [
+                {
+                    "materials": [
+                        "Glass"
+                    ],
+                    "name": "glass3"
+                }
+            ],
+            "urls": {
+                "Darwin": "ROOT/models/osx/2018-2019.1/glass3",
+                "Linux": "ROOT/models/linux/2018-2019.1/glass3",
+                "Windows": "ROOT/models/windows/2018-2019.1/glass3"
+            },
+            "wcategory": "wineglass",
+            "wnid": "n04592099"
+        },
+        "half_circle_wood_block": {
+            "asset_bundle_sizes": {
+                "Darwin": 1197751,
+                "Linux": 1417797,
+                "Windows": 1036514
+            },
+            "bounds": {
+                "back": {
+                    "x": 0.0005791485,
+                    "y": 0.01947407,
+                    "z": -0.009701959
+                },
+                "bottom": {
+                    "x": 0.0005791485,
+                    "y": -1.964481e-08,
+                    "z": 0.003014982
+                },
+                "center": {
+                    "x": 0.0005791485,
+                    "y": 0.01947407,
+                    "z": 0.003014988
+                },
+                "front": {
+                    "x": 0.0005791485,
+                    "y": 0.01947407,
+                    "z": 0.01573194
+                },
+                "left": {
+                    "x": -0.03836901,
+                    "y": 0.01947407,
+                    "z": 0.003014988
+                },
+                "right": {
+                    "x": 0.03952731,
+                    "y": 0.01947407,
+                    "z": 0.003014988
+                },
+                "top": {
+                    "x": 0.0005791485,
+                    "y": 0.03894816,
+                    "z": 0.003014995
+                }
+            },
+            "canonical_rotation": {
+                "x": 0,
+                "y": 0.0,
+                "z": 0
+            },
+            "composite_object": false,
+            "do_not_use": false,
+            "do_not_use_reason": "",
+            "flex": true,
+            "name": "half_circle_wood_block",
+            "physics_quality": 1.0,
+            "scale_factor": 1.0,
+            "substructure": [
+                {
+                    "materials": [
+                        "wood_beech_red"
+                    ],
+                    "name": "half_circle_wood_block"
+                }
+            ],
+            "urls": {
+                "Darwin": "ROOT/models/osx/2018-2019.1/half_circle_wood_block",
+                "Linux": "ROOT/models/linux/2018-2019.1/half_circle_wood_block",
+                "Windows": "ROOT/models/windows/2018-2019.1/half_circle_wood_block"
+            },
+            "wcategory": "toy",
+            "wnid": "n04461879"
+        },
         "jug05": {
             "asset_bundle_sizes": {
                 "Darwin": 159369,
@@ -1793,6 +1935,79 @@
             },
             "wcategory": "suitcase",
             "wnid": "n02773838"
+        },
+        "pepper": {
+            "asset_bundle_sizes": {
+                "Darwin": 7010354,
+                "Linux": 7362581,
+                "Windows": 6722144
+            },
+            "bounds": {
+                "back": {
+                    "x": 0.02689504,
+                    "y": 0.05965305,
+                    "z": 5.587935e-09
+                },
+                "bottom": {
+                    "x": -1.303852e-07,
+                    "y": -7.450581e-09,
+                    "z": 7.450581e-09
+                },
+                "center": {
+                    "x": -1.257285e-07,
+                    "y": 0.05965305,
+                    "z": 7.450581e-09
+                },
+                "front": {
+                    "x": -0.0268953,
+                    "y": 0.05965306,
+                    "z": 9.313226e-09
+                },
+                "left": {
+                    "x": -1.275912e-07,
+                    "y": 0.05965305,
+                    "z": -0.02689516
+                },
+                "right": {
+                    "x": -1.238659e-07,
+                    "y": 0.05965305,
+                    "z": 0.02689518
+                },
+                "top": {
+                    "x": -1.210719e-07,
+                    "y": 0.1193061,
+                    "z": 7.450581e-09
+                }
+            },
+            "canonical_rotation": {
+                "x": 0,
+                "y": 0.0,
+                "z": 0
+            },
+            "composite_object": false,
+            "do_not_use": false,
+            "do_not_use_reason": "",
+            "flex": true,
+            "name": "pepper",
+            "physics_quality": 0.9887448675610687,
+            "scale_factor": 1.0,
+            "substructure": [
+                {
+                    "materials": [
+                        "Glass",
+                        "plastic_black",
+                        "Metal_copper"
+                    ],
+                    "name": "pepper"
+                }
+            ],
+            "urls": {
+                "Darwin": "ROOT/models/osx/2018-2019.1/pepper",
+                "Linux": "ROOT/models/linux/2018-2019.1/pepper",
+                "Windows": "ROOT/models/windows/2018-2019.1/pepper"
+            },
+            "wcategory": "pepper mill, pepper grinder",
+            "wnid": "n03914337"
         },
         "puzzle_box_composite": {
             "asset_bundle_sizes": {

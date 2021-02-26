@@ -4,7 +4,6 @@ from csv import DictReader
 from tqdm import tqdm
 import numpy as np
 from tdw.controller import Controller
-from tdw.py_impact import ObjectInfo
 from tdw.output_data import Transforms
 from magnebot.scene_environment import SceneEnvironment, Room
 from magnebot.util import get_data
@@ -125,8 +124,7 @@ class Rehearsal(Controller):
                                                "y": float(self.rng.uniform(-360, 360)),
                                                "z": float(self.rng.uniform(-360, 360))},
                                      gravity=True,
-                                     kinematic=False,
-                                     audio=self._get_audio_info())
+                                     kinematic=False)
         # Define the drop force.
         force = {"x": float(self.rng.uniform(-8, 8)),
                  "y": float(self.rng.uniform(-20, 10)),
@@ -203,7 +201,7 @@ class Rehearsal(Controller):
         drop_zone_data = loads(DROP_ZONE_DIRECTORY.joinpath(filename).read_text(encoding="utf-8"))
         self.drop_zones.clear()
         for drop_zone in drop_zone_data["drop_zones"]:
-            self.drop_zones.append(DropZone(**drop_zone))
+            self.drop_zones.append(DropZone(center=drop_zone["position"], radius=drop_zone["size"]))
         scene_record = self.scene_librarian.get_record(scene)
         commands: List[dict] = [{"$type": "add_scene",
                                  "name": scene_record.name,
@@ -232,10 +230,6 @@ class Rehearsal(Controller):
         # Save the drop data as a json file.
         AUDIO_DATASET_DROPS_DIRECTORY.joinpath(filename).write_text(dumps({"drops": drops}, cls=Encoder),
                                                                     encoding="utf-8")
-
-    def _get_audio_info(self) -> ObjectInfo:
-        # TODO
-        raise Exception()
 
 
 if __name__ == "__main__":

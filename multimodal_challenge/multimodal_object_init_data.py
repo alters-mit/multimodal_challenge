@@ -1,8 +1,9 @@
+from os.path import join
 from typing import Dict
 from tdw.object_init_data import AudioInitData, TransformInitData
 from tdw.py_impact import ObjectInfo
 from tdw.librarian import ModelLibrarian, ModelRecord
-from multimodal_challenge.paths import OBJECT_LIBRARY_PATH
+from multimodal_challenge.paths import OBJECT_LIBRARY_PATH, ASSET_BUNDLES_DIRECTORY
 
 
 class MultiModalObjectInitData(AudioInitData):
@@ -32,4 +33,15 @@ class MultiModalObjectInitData(AudioInitData):
                          kinematic=kinematic, gravity=gravity, audio=audio, library="")
 
     def _get_record(self) -> ModelRecord:
-        return TransformInitData.LIBRARIES[str(OBJECT_LIBRARY_PATH.resolve())].get_record(self.name)
+        record = TransformInitData.LIBRARIES[str(OBJECT_LIBRARY_PATH.resolve())].get_record(self.name)
+        # Set the URLs to point at a remote or local asset bundle.
+        for platform in record.urls:
+            if "ROOT/" in record.urls[platform]:
+                url = record.urls[platform].split("ROOT/")[1]
+                # Fix the URLs. A few asset bundles have weird URLs.
+                url = join(ASSET_BUNDLES_DIRECTORY, url).replace("\\", "/").replace("puzzle_box_composite",
+                                                                                    "/puzzle_box_composite")
+                if not url.startswith("http"):
+                    url = "file:///" + url
+                record.urls[platform] = url
+        return record
