@@ -12,6 +12,32 @@ from multimodal_challenge.encoder import Encoder
 
 
 class InitData:
+    """
+    This is a backend tool for TDW  developers to convert saved [TDW commands](https://github.com/threedworld-mit/tdw/blob/master/Documentation/api/command_api.md) into [initialization instructions](../api/multimodal_object_init_data.md) and [metadata records](https://github.com/threedworld-mit/tdw/blob/master/Documentation/python/librarian/librarian.md).
+
+    # Requirements
+
+    - The `multimodal_challenge` Python module.
+    - Two files of initialization data:
+        - `~/tdw_config/scene_layout.txt` The object initialization data
+        - `~/tdw_config/scene_layout.json` The drop zone data
+
+    `~` is the home directory and `scene_layout` is the scene_layout combination, e.g. `mm_kitchen_1_a_0`.
+
+    # Usage
+
+    1. `cd dataset_generation`
+    2. `python3 init_data.py ARGUMENTS`
+    3. Run build
+
+    | Argument | Type | Description |
+    | --- | --- | --- |
+    | `--scene` | str | The name of the scene. |
+    | `--layout` | int | The layout index. |
+    | `--load_scene` | | If included, load the scene. Don't update the init data. |
+    | `--drop_zones` | | If included, show the drop zones. Ignored unless there is a `--load_scene` flag present. |
+    """
+
     @staticmethod
     def get_commands(scene: str, layout: int, drop_zones: bool) -> List[dict]:
         """
@@ -48,6 +74,18 @@ class InitData:
 
     @staticmethod
     def get_init_data(scene: str, layout: int, write: bool = True) -> List[MultiModalObjectInitData]:
+        """
+        Create object initialization data and update drop zone data.
+
+        Update the scene and model metadata records in this repo's librarians.
+
+        :param scene: The name of the scene.
+        :param layout: The layout index.
+        :param write: If True, write the object init data to disk.
+
+        :return: A list of [`MultiModalObjectInitData`](../api/multimodal_object_init_data.md).
+        """
+
         bucket: str = "https://tdw-public.s3.amazonaws.com"
         # Update the scene library.
         scene_lib = SceneLibrarian(str(SCENE_LIBRARY_PATH.resolve()))
@@ -121,9 +159,10 @@ if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("--scene", type=str, help="The name of the scene.")
     parser.add_argument("--layout", type=int, help="The layout number.")
-    parser.add_argument("--load_scene", action="store_true", help="Load the scene. Don't update the init data.")
-    parser.add_argument("--drop_zones", action="store_true", help="Show the drop zones. "
-                                                                  "Used only if the --load_scene flag is included.")
+    parser.add_argument("--load_scene", action="store_true", help="If included load the scene. "
+                                                                  "Don't update the init data.")
+    parser.add_argument("--drop_zones", action="store_true", help="If included, show the drop zones. Ignored unless "
+                                                                  "there is a `--load_scene` flag present.")
     args = parser.parse_args()
     if args.load_scene:
         c = Controller(launch_build=False)

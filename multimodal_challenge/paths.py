@@ -9,10 +9,11 @@ Paths to data files in this Python module.
 __ASSET_BUNDLES_CONFIG_PATH = Path.home().joinpath("multimodal_challenge/asset_bundles_path.txt")
 assert __ASSET_BUNDLES_CONFIG_PATH.exists(), f"File not found: {__ASSET_BUNDLES_CONFIG_PATH} (see README)"
 # The root directory of the asset bundles.
-ASSET_BUNDLES_DIRECTORY = Path(__ASSET_BUNDLES_CONFIG_PATH.read_text(encoding="utf-8"))
+ASSET_BUNDLES_DIRECTORY: Path = Path(__ASSET_BUNDLES_CONFIG_PATH.read_text(encoding="utf-8").
+                                     replace("~", str(Path.home().resolve())))
 
 # The path to the data files.
-DATA_DIRECTORY = Path(resource_filename(__name__, "data"))
+DATA_DIRECTORY: Path = Path(resource_filename(__name__, "data"))
 # The path to object data.
 OBJECT_DATA_DIRECTORY = DATA_DIRECTORY.joinpath("objects")
 # The path to the object librarian metadata.

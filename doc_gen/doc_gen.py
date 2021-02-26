@@ -11,5 +11,5 @@ if __name__ == "__main__":
                  metadata_path=Path("doc_metadata.json"))
     md.get_docs(output_directory=Path("../doc/api"))
     # Dataset generation documentation.
-    md = PyMdDoc(input_directory=Path("../dataset_generation"), files=["dataset.py", "rehearsal.py"])
+    md = PyMdDoc(input_directory=Path("../dataset_generation"), files=["dataset.py", "rehearsal.py", "init_data.py"])
     md.get_docs(output_directory=Path("../doc/dataset"))
