@@ -1,7 +1,7 @@
 from typing import Dict
 from tdw.object_init_data import AudioInitData, TransformInitData
 from tdw.py_impact import ObjectInfo
-from tdw.librarian import ModelLibrarian
+from tdw.librarian import ModelLibrarian, ModelRecord
 from multimodal_challenge.paths import OBJECT_LIBRARY_PATH
 
 
@@ -29,4 +29,7 @@ class MultiModalObjectInitData(AudioInitData):
         """
 
         super().__init__(name=name, scale_factor=scale_factor, position=position, rotation=rotation,
-                         kinematic=kinematic, gravity=gravity, audio=audio, library=str(OBJECT_LIBRARY_PATH.resolve()))
+                         kinematic=kinematic, gravity=gravity, audio=audio, library="")
+
+    def _get_record(self) -> ModelRecord:
+        return TransformInitData.LIBRARIES[str(OBJECT_LIBRARY_PATH.resolve())].get_record(self.name)

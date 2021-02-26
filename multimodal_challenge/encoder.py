@@ -2,7 +2,7 @@ from base64 import b64encode
 from json import JSONEncoder
 import numpy as np
 from tdw.py_impact import AudioMaterial, ObjectInfo
-from tdw.object_init_data import AudioInitData
+from multimodal_challenge.multimodal_object_init_data import MultiModalObjectInitData
 
 
 class Encoder(JSONEncoder):
@@ -17,7 +17,7 @@ class Encoder(JSONEncoder):
             return float(obj)
         elif isinstance(obj, np.ndarray):
             return obj.tolist()
-        elif isinstance(obj, AudioInitData):
+        elif isinstance(obj, MultiModalObjectInitData):
             return obj.__dict__
         elif isinstance(obj, ObjectInfo):
             return obj.__dict__

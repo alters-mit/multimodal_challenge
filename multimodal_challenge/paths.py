@@ -28,7 +28,7 @@ SCENE_LAYOUT_PATH = SCENE_DATA_DIRECTORY.joinpath("scene_layout.csv")
 # The path to the .json files containing object init data.
 OBJECT_INIT_DIRECTORY = SCENE_DATA_DIRECTORY.joinpath("object_init")
 # The path to the audio dataset_generation files.
-AUDIO_DATASET_DIRECTORY = DATA_DIRECTORY.joinpath("dataset_generation")
+AUDIO_DATASET_DIRECTORY = DATA_DIRECTORY.joinpath("dataset")
 # The path to the .json files containing drop zone data.
 DROP_ZONE_DIRECTORY = AUDIO_DATASET_DIRECTORY.joinpath("drop_zones")
 # THe path to the audio dataset_generation drops .json files.

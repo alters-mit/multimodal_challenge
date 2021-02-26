@@ -1,0 +1,2654 @@
+{
+    "description": "Model Librarian for the Multi-Modal Challenge",
+    "records": {
+        "24_in_wall_cabinet_white_wood": {
+            "asset_bundle_sizes": {
+                "Darwin": 3735318,
+                "Linux": 4077592,
+                "Windows": 3449400
+            },
+            "bounds": {
+                "back": {
+                    "x": -0.0004367828,
+                    "y": 0.3813176,
+                    "z": -0.1921638
+                },
+                "bottom": {
+                    "x": -0.0004367828,
+                    "y": -3.06788e-10,
+                    "z": 0.007018492
+                },
+                "center": {
+                    "x": -0.0004367828,
+                    "y": 0.3813176,
+                    "z": 0.007018508
+                },
+                "front": {
+                    "x": -0.0004367828,
+                    "y": 0.3813176,
+                    "z": 0.2062008
+                },
+                "left": {
+                    "x": -0.3039454,
+                    "y": 0.3813176,
+                    "z": 0.007018508
+                },
+                "right": {
+                    "x": 0.3030719,
+                    "y": 0.3813176,
+                    "z": 0.007018508
+                },
+                "top": {
+                    "x": -0.0004367828,
+                    "y": 0.7626353,
+                    "z": 0.007018525
+                }
+            },
+            "canonical_rotation": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "composite_object": false,
+            "do_not_use": false,
+            "do_not_use_reason": "",
+            "flex": false,
+            "name": "24_in_wall_cabinet_white_wood",
+            "physics_quality": 0.9901694372343193,
+            "scale_factor": 1,
+            "substructure": [
+                {
+                    "materials": [
+                        "wood_oak_white"
+                    ],
+                    "name": "24_in_wall_cabinet 1"
+                },
+                {
+                    "materials": [
+                        "wood_oak_white"
+                    ],
+                    "name": "door_l_027"
+                },
+                {
+                    "materials": [
+                        "wood_oak_white"
+                    ],
+                    "name": "door_r_025"
+                },
+                {
+                    "materials": [
+                        "bronze_yellow"
+                    ],
+                    "name": "handle007"
+                },
+                {
+                    "materials": [
+                        "bronze_yellow"
+                    ],
+                    "name": "handle008"
+                }
+            ],
+            "urls": {
+                "Darwin": "ROOT/models/osx/2019.2/24_in_wall_cabinet_white_wood",
+                "Linux": "ROOT/models/linux/2019.2/24_in_wall_cabinet_white_wood",
+                "Windows": "ROOT/models/windows/2019.2/24_in_wall_cabinet_white_wood"
+            },
+            "wcategory": "cabinet",
+            "wnid": "n02933112"
+        },
+        "36_in_wall_cabinet_white_wood": {
+            "asset_bundle_sizes": {
+                "Darwin": 3733537,
+                "Linux": 4076636,
+                "Windows": 3446817
+            },
+            "bounds": {
+                "back": {
+                    "x": -0.0004367232,
+                    "y": 0.3812218,
+                    "z": -0.3078008
+                },
+                "bottom": {
+                    "x": -0.0004367232,
+                    "y": 4.544563e-09,
+                    "z": -0.1039675
+                },
+                "center": {
+                    "x": -0.0004367232,
+                    "y": 0.3812218,
+                    "z": -0.1039675
+                },
+                "front": {
+                    "x": -0.0004367232,
+                    "y": 0.3812218,
+                    "z": 0.0998659
+                },
+                "left": {
+                    "x": -0.4552296,
+                    "y": 0.3812218,
+                    "z": -0.1039675
+                },
+                "right": {
+                    "x": 0.4543562,
+                    "y": 0.3812218,
+                    "z": -0.1039675
+                },
+                "top": {
+                    "x": -0.0004367232,
+                    "y": 0.7624435,
+                    "z": -0.1039675
+                }
+            },
+            "canonical_rotation": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "composite_object": false,
+            "do_not_use": false,
+            "do_not_use_reason": "",
+            "flex": false,
+            "name": "36_in_wall_cabinet_white_wood",
+            "physics_quality": 0.9910154488681582,
+            "scale_factor": 1,
+            "substructure": [
+                {
+                    "materials": [
+                        "wood_oak_white"
+                    ],
+                    "name": "36_in_wall_cabinet 1"
+                },
+                {
+                    "materials": [
+                        "wood_oak_white"
+                    ],
+                    "name": "door_l001"
+                },
+                {
+                    "materials": [
+                        "wood_oak_white"
+                    ],
+                    "name": "door_r001"
+                },
+                {
+                    "materials": [
+                        "bronze_yellow"
+                    ],
+                    "name": "handle005"
+                },
+                {
+                    "materials": [
+                        "bronze_yellow"
+                    ],
+                    "name": "handle006"
+                }
+            ],
+            "urls": {
+                "Darwin": "ROOT/models/osx/2019.2/36_in_wall_cabinet_white_wood",
+                "Linux": "ROOT/models/linux/2019.2/36_in_wall_cabinet_white_wood",
+                "Windows": "ROOT/models/windows/2019.2/36_in_wall_cabinet_white_wood"
+            },
+            "wcategory": "cabinet",
+            "wnid": "n02933112"
+        },
+        "4ft_shelf_metal": {
+            "asset_bundle_sizes": {
+                "Darwin": 741947,
+                "Linux": 939573,
+                "Windows": 634616
+            },
+            "bounds": {
+                "back": {
+                    "x": -1.192093e-07,
+                    "y": 0.6095999,
+                    "z": -0.472584
+                },
+                "bottom": {
+                    "x": -1.192093e-07,
+                    "y": -0.0002043247,
+                    "z": 8.940697e-08
+                },
+                "center": {
+                    "x": -1.192093e-07,
+                    "y": 0.6095999,
+                    "z": 8.940697e-08
+                },
+                "front": {
+                    "x": -1.192093e-07,
+                    "y": 0.6095999,
+                    "z": 0.4725842
+                },
+                "left": {
+                    "x": -0.1928852,
+                    "y": 0.6095999,
+                    "z": 8.940697e-08
+                },
+                "right": {
+                    "x": 0.192885,
+                    "y": 0.6095999,
+                    "z": 8.940697e-08
+                },
+                "top": {
+                    "x": -1.192093e-07,
+                    "y": 1.219404,
+                    "z": 8.940697e-08
+                }
+            },
+            "canonical_rotation": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "composite_object": false,
+            "do_not_use": false,
+            "do_not_use_reason": "",
+            "flex": false,
+            "name": "4ft_shelf_metal",
+            "physics_quality": 0.9639830616871669,
+            "scale_factor": 1,
+            "substructure": [
+                {
+                    "materials": [
+                        "metal_grid_perforated",
+                        "metal"
+                    ],
+                    "name": "leg01"
+                },
+                {
+                    "materials": [
+                        "metal_grid_perforated",
+                        "metal"
+                    ],
+                    "name": "leg02"
+                },
+                {
+                    "materials": [
+                        "metal_grid_perforated",
+                        "metal"
+                    ],
+                    "name": "leg03"
+                },
+                {
+                    "materials": [
+                        "metal_grid_perforated",
+                        "metal"
+                    ],
+                    "name": "leg03 1"
+                },
+                {
+                    "materials": [
+                        "metal"
+                    ],
+                    "name": "shelf01"
+                },
+                {
+                    "materials": [
+                        "metal"
+                    ],
+                    "name": "shelf02"
+                },
+                {
+                    "materials": [
+                        "metal"
+                    ],
+                    "name": "shelf03"
+                }
+            ],
+            "urls": {
+                "Darwin": "ROOT/models/osx/2019.4/4ft_shelf_metal",
+                "Linux": "ROOT/models/linux/2019.4/4ft_shelf_metal",
+                "Windows": "ROOT/models/windows/2019.4/4ft_shelf_metal"
+            },
+            "wcategory": "shelf",
+            "wnid": "n04190052"
+        },
+        "alma_floor_lamp": {
+            "asset_bundle_sizes": {
+                "Darwin": 8931327,
+                "Linux": 9329038,
+                "Windows": 8663745
+            },
+            "bounds": {
+                "back": {
+                    "x": 0.05776992,
+                    "y": 0.8034626,
+                    "z": -0.2489125
+                },
+                "bottom": {
+                    "x": 0.05776992,
+                    "y": 0,
+                    "z": 0.002339691
+                },
+                "center": {
+                    "x": 0.05776992,
+                    "y": 0.8034626,
+                    "z": 0.002339691
+                },
+                "front": {
+                    "x": 0.05776992,
+                    "y": 0.8034626,
+                    "z": 0.2535919
+                },
+                "left": {
+                    "x": -0.2489125,
+                    "y": 0.8034626,
+                    "z": 0.002339691
+                },
+                "right": {
+                    "x": 0.3644524,
+                    "y": 0.8034626,
+                    "z": 0.002339691
+                },
+                "top": {
+                    "x": 0.05776992,
+                    "y": 1.606925,
+                    "z": 0.002339691
+                }
+            },
+            "canonical_rotation": {
+                "x": 0,
+                "y": 0.0,
+                "z": 0
+            },
+            "composite_object": false,
+            "do_not_use": false,
+            "do_not_use_reason": "",
+            "flex": true,
+            "name": "alma_floor_lamp",
+            "physics_quality": -1,
+            "scale_factor": 1.0,
+            "substructure": [
+                {
+                    "materials": [
+                        "steel_brushed",
+                        "linen_burlap_irregular_2sided",
+                        "rubber_black"
+                    ],
+                    "name": "ALMA_FLOOR_LAMP"
+                }
+            ],
+            "urls": {
+                "Darwin": "ROOT/models/osx/2018-2019.1/alma_floor_lamp",
+                "Linux": "ROOT/models/linux/2018-2019.1/alma_floor_lamp",
+                "Windows": "ROOT/models/windows/2018-2019.1/alma_floor_lamp"
+            },
+            "wcategory": "floor lamp",
+            "wnid": "n03367059"
+        },
+        "appliance-ge-profile-microwave3": {
+            "asset_bundle_sizes": {
+                "Darwin": 3691491,
+                "Linux": 4038370,
+                "Windows": 3421874
+            },
+            "bounds": {
+                "back": {
+                    "x": -5.960464e-08,
+                    "y": 0.2187982,
+                    "z": -0.1905619
+                },
+                "bottom": {
+                    "x": -5.960464e-08,
+                    "y": 0,
+                    "z": 0.02916254
+                },
+                "center": {
+                    "x": -5.960464e-08,
+                    "y": 0.2187982,
+                    "z": 0.02916254
+                },
+                "front": {
+                    "x": -5.960464e-08,
+                    "y": 0.2187982,
+                    "z": 0.2488869
+                },
+                "left": {
+                    "x": -0.3807431,
+                    "y": 0.2187982,
+                    "z": 0.02916254
+                },
+                "right": {
+                    "x": 0.3807429,
+                    "y": 0.2187982,
+                    "z": 0.02916254
+                },
+                "top": {
+                    "x": -5.960464e-08,
+                    "y": 0.4375964,
+                    "z": 0.02916254
+                }
+            },
+            "canonical_rotation": {
+                "x": 0,
+                "y": 0.0,
+                "z": 0
+            },
+            "composite_object": false,
+            "do_not_use": false,
+            "do_not_use_reason": "",
+            "flex": false,
+            "name": "appliance-ge-profile-microwave3",
+            "physics_quality": -1,
+            "scale_factor": 1.0,
+            "substructure": [
+                {
+                    "materials": [
+                        "resin_polyurethane_gloss_metallic",
+                        "steel_brushed"
+                    ],
+                    "name": "microwave 1"
+                }
+            ],
+            "urls": {
+                "Darwin": "ROOT/models/osx/2018-2019.1/appliance-ge-profile-microwave3",
+                "Linux": "ROOT/models/linux/2018-2019.1/appliance-ge-profile-microwave3",
+                "Windows": "ROOT/models/windows/2018-2019.1/appliance-ge-profile-microwave3"
+            },
+            "wcategory": "microwave, microwave oven",
+            "wnid": "n03761084"
+        },
+        "arflex_strips_sofa": {
+            "asset_bundle_sizes": {
+                "Darwin": 7688311,
+                "Linux": 7917835,
+                "Windows": 7530200
+            },
+            "bounds": {
+                "back": {
+                    "x": 0,
+                    "y": 0.3326795,
+                    "z": -0.4876193
+                },
+                "bottom": {
+                    "x": 0,
+                    "y": -5.960464e-08,
+                    "z": -2.980232e-08
+                },
+                "center": {
+                    "x": 0,
+                    "y": 0.3326795,
+                    "z": -2.980232e-08
+                },
+                "front": {
+                    "x": 0,
+                    "y": 0.3326795,
+                    "z": 0.4876192
+                },
+                "left": {
+                    "x": -0.9587985,
+                    "y": 0.3326795,
+                    "z": -2.980232e-08
+                },
+                "right": {
+                    "x": 0.9587985,
+                    "y": 0.3326795,
+                    "z": -2.980232e-08
+                },
+                "top": {
+                    "x": 0,
+                    "y": 0.665359,
+                    "z": -2.980232e-08
+                }
+            },
+            "canonical_rotation": {
+                "x": 0,
+                "y": 0.0,
+                "z": 0
+            },
+            "composite_object": false,
+            "do_not_use": false,
+            "do_not_use_reason": "",
+            "flex": false,
+            "name": "arflex_strips_sofa",
+            "physics_quality": -1,
+            "scale_factor": 1.0,
+            "substructure": [
+                {
+                    "materials": [
+                        "linen_burlap_irregular",
+                        "wood_wenge"
+                    ],
+                    "name": "Arflex_strips_95x190"
+                }
+            ],
+            "urls": {
+                "Darwin": "ROOT/models/osx/2018-2019.1/arflex_strips_sofa",
+                "Linux": "ROOT/models/linux/2018-2019.1/arflex_strips_sofa",
+                "Windows": "ROOT/models/windows/2018-2019.1/arflex_strips_sofa"
+            },
+            "wcategory": "sofa",
+            "wnid": "n04256520"
+        },
+        "bastone_floor_lamp": {
+            "asset_bundle_sizes": {
+                "Darwin": 8989513,
+                "Linux": 9394299,
+                "Windows": 8714167
+            },
+            "bounds": {
+                "back": {
+                    "x": 0.0006809235,
+                    "y": 0.6990929,
+                    "z": -0.319826
+                },
+                "bottom": {
+                    "x": 0.0006809235,
+                    "y": 0,
+                    "z": -0.06767488
+                },
+                "center": {
+                    "x": 0.0006809235,
+                    "y": 0.6990929,
+                    "z": -0.06767488
+                },
+                "front": {
+                    "x": 0.0006809235,
+                    "y": 0.6990929,
+                    "z": 0.1844763
+                },
+                "left": {
+                    "x": -0.2811666,
+                    "y": 0.6990929,
+                    "z": -0.06767488
+                },
+                "right": {
+                    "x": 0.2825284,
+                    "y": 0.6990929,
+                    "z": -0.06767488
+                },
+                "top": {
+                    "x": 0.0006809235,
+                    "y": 1.398186,
+                    "z": -0.06767488
+                }
+            },
+            "canonical_rotation": {
+                "x": 0,
+                "y": 0.0,
+                "z": 0
+            },
+            "composite_object": false,
+            "do_not_use": false,
+            "do_not_use_reason": "",
+            "flex": true,
+            "name": "bastone_floor_lamp",
+            "physics_quality": -1,
+            "scale_factor": 1.0,
+            "substructure": [
+                {
+                    "materials": [
+                        "cotton_polyester_jersey_ss_2_sided",
+                        "iron_rusty",
+                        "wood_mahogany"
+                    ],
+                    "name": "Bastone_floor_lamp"
+                }
+            ],
+            "urls": {
+                "Darwin": "ROOT/models/osx/2018-2019.1/bastone_floor_lamp",
+                "Linux": "ROOT/models/linux/2018-2019.1/bastone_floor_lamp",
+                "Windows": "ROOT/models/windows/2018-2019.1/bastone_floor_lamp"
+            },
+            "wcategory": "floor lamp",
+            "wnid": "n03367059"
+        },
+        "cabinet_24_two_drawer_white_wood": {
+            "asset_bundle_sizes": {
+                "Darwin": 4177627,
+                "Linux": 4526062,
+                "Windows": 3899730
+            },
+            "bounds": {
+                "back": {
+                    "x": -0.0004368722,
+                    "y": 0.4583918,
+                    "z": -0.3137041
+                },
+                "bottom": {
+                    "x": -0.0004368722,
+                    "y": -1.643683e-10,
+                    "z": 0.003760308
+                },
+                "center": {
+                    "x": -0.0004368722,
+                    "y": 0.4583918,
+                    "z": 0.003760328
+                },
+                "front": {
+                    "x": -0.0004368722,
+                    "y": 0.4583918,
+                    "z": 0.3212248
+                },
+                "left": {
+                    "x": -0.3040921,
+                    "y": 0.4583918,
+                    "z": 0.003760328
+                },
+                "right": {
+                    "x": 0.3032184,
+                    "y": 0.4583918,
+                    "z": 0.003760328
+                },
+                "top": {
+                    "x": -0.0004368722,
+                    "y": 0.9167836,
+                    "z": 0.003760348
+                }
+            },
+            "canonical_rotation": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "composite_object": false,
+            "do_not_use": false,
+            "do_not_use_reason": "",
+            "flex": false,
+            "name": "cabinet_24_two_drawer_white_wood",
+            "physics_quality": 1.0,
+            "scale_factor": 1,
+            "substructure": [
+                {
+                    "materials": [
+                        "wood_oak_white"
+                    ],
+                    "name": "24_in_cabinet003"
+                },
+                {
+                    "materials": [
+                        "granite_beige_french"
+                    ],
+                    "name": "countertop_027"
+                },
+                {
+                    "materials": [
+                        "wood_oak_white",
+                        "bronze_yellow"
+                    ],
+                    "name": "drawer001"
+                },
+                {
+                    "materials": [
+                        "wood_oak_white",
+                        "bronze_yellow"
+                    ],
+                    "name": "drawer002"
+                }
+            ],
+            "urls": {
+                "Darwin": "ROOT/models/osx/2019.2/cabinet_24_two_drawer_white_wood",
+                "Linux": "ROOT/models/linux/2019.2/cabinet_24_two_drawer_white_wood",
+                "Windows": "ROOT/models/windows/2019.2/cabinet_24_two_drawer_white_wood"
+            },
+            "wcategory": "cabinet",
+            "wnid": "n02933112"
+        },
+        "cabinet_24_white_wood": {
+            "asset_bundle_sizes": {
+                "Darwin": 4186308,
+                "Linux": 4529647,
+                "Windows": 3901942
+            },
+            "bounds": {
+                "back": {
+                    "x": -0.0002901256,
+                    "y": 0.4583918,
+                    "z": -0.3212248
+                },
+                "bottom": {
+                    "x": -0.0002901256,
+                    "y": -1.588253e-15,
+                    "z": 0
+                },
+                "center": {
+                    "x": -0.0002901256,
+                    "y": 0.4583918,
+                    "z": 2.003694e-08
+                },
+                "front": {
+                    "x": -0.0002901256,
+                    "y": 0.4583918,
+                    "z": 0.3212249
+                },
+                "left": {
+                    "x": -0.3039455,
+                    "y": 0.4583918,
+                    "z": 2.003694e-08
+                },
+                "right": {
+                    "x": 0.3033652,
+                    "y": 0.4583918,
+                    "z": 2.003694e-08
+                },
+                "top": {
+                    "x": -0.0002901256,
+                    "y": 0.9167836,
+                    "z": 4.007388e-08
+                }
+            },
+            "canonical_rotation": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "composite_object": false,
+            "do_not_use": false,
+            "do_not_use_reason": "",
+            "flex": false,
+            "name": "cabinet_24_white_wood",
+            "physics_quality": 1.0,
+            "scale_factor": 1,
+            "substructure": [
+                {
+                    "materials": [
+                        "wood_oak_white"
+                    ],
+                    "name": "24_in_cabinet"
+                },
+                {
+                    "materials": [
+                        "granite_beige_french"
+                    ],
+                    "name": "countertop_24"
+                },
+                {
+                    "materials": [
+                        "wood_oak_white"
+                    ],
+                    "name": "door_l_24"
+                },
+                {
+                    "materials": [
+                        "wood_oak_white"
+                    ],
+                    "name": "door_r_24"
+                },
+                {
+                    "materials": [
+                        "bronze_yellow"
+                    ],
+                    "name": "handle"
+                },
+                {
+                    "materials": [
+                        "bronze_yellow"
+                    ],
+                    "name": "handle2"
+                },
+                {
+                    "materials": [
+                        "wood_oak_white"
+                    ],
+                    "name": "toekick_24"
+                }
+            ],
+            "urls": {
+                "Darwin": "ROOT/models/osx/2019.2/cabinet_24_white_wood",
+                "Linux": "ROOT/models/linux/2019.2/cabinet_24_white_wood",
+                "Windows": "ROOT/models/windows/2019.2/cabinet_24_white_wood"
+            },
+            "wcategory": "cabinet",
+            "wnid": "n02933112"
+        },
+        "cabinet_36_white_wood": {
+            "asset_bundle_sizes": {
+                "Darwin": 4183676,
+                "Linux": 4530793,
+                "Windows": 3899290
+            },
+            "bounds": {
+                "back": {
+                    "x": -0.0004367232,
+                    "y": 0.4585204,
+                    "z": -0.3212248
+                },
+                "bottom": {
+                    "x": -0.0004367232,
+                    "y": -2.361536e-15,
+                    "z": 2.980232e-08
+                },
+                "center": {
+                    "x": -0.0004367232,
+                    "y": 0.4585204,
+                    "z": 4.984489e-08
+                },
+                "front": {
+                    "x": -0.0004367232,
+                    "y": 0.4585204,
+                    "z": 0.3212249
+                },
+                "left": {
+                    "x": -0.4553763,
+                    "y": 0.4585204,
+                    "z": 4.984489e-08
+                },
+                "right": {
+                    "x": 0.4545028,
+                    "y": 0.4585204,
+                    "z": 4.984489e-08
+                },
+                "top": {
+                    "x": -0.0004367232,
+                    "y": 0.9170408,
+                    "z": 6.988745e-08
+                }
+            },
+            "canonical_rotation": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "composite_object": false,
+            "do_not_use": false,
+            "do_not_use_reason": "",
+            "flex": false,
+            "name": "cabinet_36_white_wood",
+            "physics_quality": 1.0,
+            "scale_factor": 1,
+            "substructure": [
+                {
+                    "materials": [
+                        "wood_oak_white"
+                    ],
+                    "name": "36_in_cabinet"
+                },
+                {
+                    "materials": [
+                        "granite_beige_french"
+                    ],
+                    "name": "countertop"
+                },
+                {
+                    "materials": [
+                        "wood_oak_white"
+                    ],
+                    "name": "door_l"
+                },
+                {
+                    "materials": [
+                        "wood_oak_white"
+                    ],
+                    "name": "door_r"
+                },
+                {
+                    "materials": [
+                        "bronze_yellow"
+                    ],
+                    "name": "handle003"
+                },
+                {
+                    "materials": [
+                        "bronze_yellow"
+                    ],
+                    "name": "handle004"
+                },
+                {
+                    "materials": [
+                        "wood_oak_white"
+                    ],
+                    "name": "toekick"
+                }
+            ],
+            "urls": {
+                "Darwin": "ROOT/models/osx/2019.2/cabinet_36_white_wood",
+                "Linux": "ROOT/models/linux/2019.2/cabinet_36_white_wood",
+                "Windows": "ROOT/models/windows/2019.2/cabinet_36_white_wood"
+            },
+            "wcategory": "cabinet",
+            "wnid": "n02933112"
+        },
+        "chair_billiani_doll": {
+            "asset_bundle_sizes": {
+                "Darwin": 8624337,
+                "Linux": 8849826,
+                "Windows": 8462353
+            },
+            "bounds": {
+                "back": {
+                    "x": 0,
+                    "y": 0.3889542,
+                    "z": -0.2696859
+                },
+                "bottom": {
+                    "x": 0,
+                    "y": -1.698732e-06,
+                    "z": -2.980232e-08
+                },
+                "center": {
+                    "x": 0,
+                    "y": 0.3889542,
+                    "z": -2.980232e-08
+                },
+                "front": {
+                    "x": 0,
+                    "y": 0.3889542,
+                    "z": 0.2696858
+                },
+                "left": {
+                    "x": -0.2447185,
+                    "y": 0.3889542,
+                    "z": -2.980232e-08
+                },
+                "right": {
+                    "x": 0.2447185,
+                    "y": 0.3889542,
+                    "z": -2.980232e-08
+                },
+                "top": {
+                    "x": 0,
+                    "y": 0.7779101,
+                    "z": -2.980232e-08
+                }
+            },
+            "canonical_rotation": {
+                "x": 0,
+                "y": 0.0,
+                "z": 0
+            },
+            "composite_object": false,
+            "do_not_use": false,
+            "do_not_use_reason": "",
+            "flex": false,
+            "name": "chair_billiani_doll",
+            "physics_quality": -1,
+            "scale_factor": 1.0,
+            "substructure": [
+                {
+                    "materials": [
+                        "wood_american_cherry"
+                    ],
+                    "name": "Chair_billiani_doll 1"
+                },
+                {
+                    "materials": [
+                        "cotton_blend_multi_colored_filaments_spotted"
+                    ],
+                    "name": "Object003"
+                }
+            ],
+            "urls": {
+                "Darwin": "ROOT/models/osx/2018-2019.1/chair_billiani_doll",
+                "Linux": "ROOT/models/linux/2018-2019.1/chair_billiani_doll",
+                "Windows": "ROOT/models/windows/2018-2019.1/chair_billiani_doll"
+            },
+            "wcategory": "chair",
+            "wnid": "n03001627"
+        },
+        "coffee_001": {
+            "asset_bundle_sizes": {
+                "Darwin": 2615913,
+                "Linux": 2842471,
+                "Windows": 2456696
+            },
+            "bounds": {
+                "back": {
+                    "x": -0.04042271,
+                    "y": 0.1665367,
+                    "z": -0.06576154
+                },
+                "bottom": {
+                    "x": -0.04042271,
+                    "y": -0.005693704,
+                    "z": 0.01683895
+                },
+                "center": {
+                    "x": -0.04042271,
+                    "y": 0.1665367,
+                    "z": 0.01683895
+                },
+                "front": {
+                    "x": -0.04042271,
+                    "y": 0.1665367,
+                    "z": 0.09943945
+                },
+                "left": {
+                    "x": -0.2038964,
+                    "y": 0.1665367,
+                    "z": 0.01683895
+                },
+                "right": {
+                    "x": 0.123051,
+                    "y": 0.1665367,
+                    "z": 0.01683895
+                },
+                "top": {
+                    "x": -0.04042271,
+                    "y": 0.3387672,
+                    "z": 0.01683895
+                }
+            },
+            "canonical_rotation": {
+                "x": 0,
+                "y": 0.0,
+                "z": 0
+            },
+            "composite_object": false,
+            "do_not_use": false,
+            "do_not_use_reason": "",
+            "flex": true,
+            "name": "coffee_001",
+            "physics_quality": -1,
+            "scale_factor": 1.0,
+            "substructure": [
+                {
+                    "materials": [
+                        "chrome2",
+                        "plastic_vinyl_glossy_black",
+                        "chrome2",
+                        "sls_plastic",
+                        "chrome2"
+                    ],
+                    "name": "coffee_001"
+                }
+            ],
+            "urls": {
+                "Darwin": "ROOT/models/osx/2018-2019.1/coffee_001",
+                "Linux": "ROOT/models/linux/2018-2019.1/coffee_001",
+                "Windows": "ROOT/models/windows/2018-2019.1/coffee_001"
+            },
+            "wcategory": "coffee maker",
+            "wnid": "n03063338"
+        },
+        "coffee_table_glass_round": {
+            "asset_bundle_sizes": {
+                "Darwin": 3228965,
+                "Linux": 3508910,
+                "Windows": 3033216
+            },
+            "bounds": {
+                "back": {
+                    "x": 0,
+                    "y": 0.1900001,
+                    "z": -0.4496999
+                },
+                "bottom": {
+                    "x": 0,
+                    "y": 0,
+                    "z": -2.980232e-08
+                },
+                "center": {
+                    "x": 0,
+                    "y": 0.1900001,
+                    "z": -2.980232e-08
+                },
+                "front": {
+                    "x": 0,
+                    "y": 0.1900001,
+                    "z": 0.4496998
+                },
+                "left": {
+                    "x": -0.45,
+                    "y": 0.1900001,
+                    "z": -2.980232e-08
+                },
+                "right": {
+                    "x": 0.45,
+                    "y": 0.1900001,
+                    "z": -2.980232e-08
+                },
+                "top": {
+                    "x": 0,
+                    "y": 0.3800001,
+                    "z": -2.980232e-08
+                }
+            },
+            "canonical_rotation": {
+                "x": 0,
+                "y": 0.0,
+                "z": 0
+            },
+            "composite_object": false,
+            "do_not_use": false,
+            "do_not_use_reason": "",
+            "flex": false,
+            "name": "coffee_table_glass_round",
+            "physics_quality": -1,
+            "scale_factor": 1.0,
+            "substructure": [
+                {
+                    "materials": [
+                        "Glass",
+                        "iron_anvil_rusty"
+                    ],
+                    "name": "Arch43_110_obj_01"
+                }
+            ],
+            "urls": {
+                "Darwin": "ROOT/models/osx/2018-2019.1/coffee_table_glass_round",
+                "Linux": "ROOT/models/linux/2018-2019.1/coffee_table_glass_round",
+                "Windows": "ROOT/models/windows/2018-2019.1/coffee_table_glass_round"
+            },
+            "wcategory": "coffee table, cocktail table",
+            "wnid": "n03063968"
+        },
+        "dining_room_table": {
+            "asset_bundle_sizes": {
+                "Darwin": 6048931,
+                "Linux": 6270623,
+                "Windows": 5871439
+            },
+            "bounds": {
+                "back": {
+                    "x": 0,
+                    "y": 0.3675717,
+                    "z": -0.5461
+                },
+                "bottom": {
+                    "x": 0,
+                    "y": -5.197076e-17,
+                    "z": 0
+                },
+                "center": {
+                    "x": 0,
+                    "y": 0.3675717,
+                    "z": 1.606707e-08
+                },
+                "front": {
+                    "x": 0,
+                    "y": 0.3675717,
+                    "z": 0.5461
+                },
+                "left": {
+                    "x": -0.5461,
+                    "y": 0.3675717,
+                    "z": 1.606707e-08
+                },
+                "right": {
+                    "x": 0.5461,
+                    "y": 0.3675717,
+                    "z": 1.606707e-08
+                },
+                "top": {
+                    "x": 0,
+                    "y": 0.7351434,
+                    "z": 3.213414e-08
+                }
+            },
+            "canonical_rotation": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "composite_object": false,
+            "do_not_use": false,
+            "do_not_use_reason": "",
+            "flex": true,
+            "name": "dining_room_table",
+            "physics_quality": -1,
+            "scale_factor": 1,
+            "substructure": [
+                {
+                    "materials": [
+                        "Table"
+                    ],
+                    "name": "dining_room_table"
+                }
+            ],
+            "urls": {
+                "Darwin": "ROOT/models/osx/2019.2/dining_room_table",
+                "Linux": "ROOT/models/linux/2019.2/dining_room_table",
+                "Windows": "ROOT/models/windows/2019.2/dining_room_table"
+            },
+            "wcategory": "table",
+            "wnid": "n04379243"
+        },
+        "dishwasher_4": {
+            "asset_bundle_sizes": {
+                "Darwin": 228400,
+                "Linux": 268519,
+                "Windows": 196676
+            },
+            "bounds": {
+                "back": {
+                    "x": -0.005819201,
+                    "y": 0.4000949,
+                    "z": -0.3109349
+                },
+                "bottom": {
+                    "x": -0.005819201,
+                    "y": -5.960464e-08,
+                    "z": 0.01602522
+                },
+                "center": {
+                    "x": -0.005819201,
+                    "y": 0.4000949,
+                    "z": 0.01602522
+                },
+                "front": {
+                    "x": -0.005819201,
+                    "y": 0.4000949,
+                    "z": 0.3429853
+                },
+                "left": {
+                    "x": -0.3014335,
+                    "y": 0.4000949,
+                    "z": 0.01602522
+                },
+                "right": {
+                    "x": 0.2897951,
+                    "y": 0.4000949,
+                    "z": 0.01602522
+                },
+                "top": {
+                    "x": -0.005819201,
+                    "y": 0.8001899,
+                    "z": 0.01602522
+                }
+            },
+            "canonical_rotation": {
+                "x": 0,
+                "y": 0.0,
+                "z": 0
+            },
+            "composite_object": false,
+            "do_not_use": false,
+            "do_not_use_reason": "",
+            "flex": true,
+            "name": "dishwasher_4",
+            "physics_quality": -1,
+            "scale_factor": 1.0,
+            "substructure": [
+                {
+                    "materials": [
+                        "chrome2"
+                    ],
+                    "name": "Dishwasher_4"
+                }
+            ],
+            "urls": {
+                "Darwin": "ROOT/models/osx/2018-2019.1/dishwasher_4",
+                "Linux": "ROOT/models/linux/2018-2019.1/dishwasher_4",
+                "Windows": "ROOT/models/windows/2018-2019.1/dishwasher_4"
+            },
+            "wcategory": "dishwasher",
+            "wnid": "n03207941"
+        },
+        "duffle_bag": {
+            "asset_bundle_sizes": {
+                "Darwin": 9701438,
+                "Linux": 10100692,
+                "Windows": 9418417
+            },
+            "bounds": {
+                "back": {
+                    "x": 0.007072598,
+                    "y": 0.2004629,
+                    "z": -0.1756167
+                },
+                "bottom": {
+                    "x": 0.007072598,
+                    "y": -0.01119126,
+                    "z": 0.04021017
+                },
+                "center": {
+                    "x": 0.007072598,
+                    "y": 0.2004629,
+                    "z": 0.04021017
+                },
+                "front": {
+                    "x": 0.007072598,
+                    "y": 0.2004629,
+                    "z": 0.256037
+                },
+                "left": {
+                    "x": -0.3487036,
+                    "y": 0.2004629,
+                    "z": 0.04021017
+                },
+                "right": {
+                    "x": 0.3628488,
+                    "y": 0.2004629,
+                    "z": 0.04021017
+                },
+                "top": {
+                    "x": 0.007072598,
+                    "y": 0.4121171,
+                    "z": 0.04021017
+                }
+            },
+            "canonical_rotation": {
+                "x": 0,
+                "y": 0.0,
+                "z": 0
+            },
+            "composite_object": false,
+            "do_not_use": false,
+            "do_not_use_reason": "",
+            "flex": false,
+            "name": "duffle_bag",
+            "physics_quality": -1,
+            "scale_factor": 1.0,
+            "substructure": [
+                {
+                    "materials": [
+                        "steel_brushed"
+                    ],
+                    "name": "bag_18"
+                },
+                {
+                    "materials": [
+                        "synthetic_plaid_weave"
+                    ],
+                    "name": "Object006"
+                },
+                {
+                    "materials": [
+                        "cotton_blend_multi_colored_filaments_fine_2s"
+                    ],
+                    "name": "Object007"
+                },
+                {
+                    "materials": [
+                        "chrome2"
+                    ],
+                    "name": "Object008"
+                }
+            ],
+            "urls": {
+                "Darwin": "ROOT/models/osx/2018-2019.1/duffle_bag",
+                "Linux": "ROOT/models/linux/2018-2019.1/duffle_bag",
+                "Windows": "ROOT/models/windows/2018-2019.1/duffle_bag"
+            },
+            "wcategory": "suitcase",
+            "wnid": "n02773838"
+        },
+        "framed_painting": {
+            "asset_bundle_sizes": {
+                "Darwin": 635169,
+                "Linux": 839684,
+                "Windows": 443768
+            },
+            "bounds": {
+                "back": {
+                    "x": 0.002681738,
+                    "y": 0.05328596,
+                    "z": -0.03281527
+                },
+                "bottom": {
+                    "x": 0.002681613,
+                    "y": -0.4517694,
+                    "z": -0.01376527
+                },
+                "center": {
+                    "x": 0.002681738,
+                    "y": 0.05328596,
+                    "z": -0.01376527
+                },
+                "front": {
+                    "x": 0.002681738,
+                    "y": 0.05328596,
+                    "z": 0.00528473
+                },
+                "left": {
+                    "x": -0.7593184,
+                    "y": 0.05328614,
+                    "z": -0.01376527
+                },
+                "right": {
+                    "x": 0.7646818,
+                    "y": 0.05328578,
+                    "z": -0.01376527
+                },
+                "top": {
+                    "x": 0.002681863,
+                    "y": 0.5583413,
+                    "z": -0.01376527
+                }
+            },
+            "canonical_rotation": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "composite_object": false,
+            "do_not_use": false,
+            "do_not_use_reason": "",
+            "flex": true,
+            "name": "framed_painting",
+            "physics_quality": 0.9999953949307397,
+            "scale_factor": 1,
+            "substructure": [
+                {
+                    "materials": [
+                        "framed_painting"
+                    ],
+                    "name": "framed_painting"
+                }
+            ],
+            "urls": {
+                "Darwin": "ROOT/models/osx/2019.2/framed_painting",
+                "Linux": "ROOT/models/linux/2019.2/framed_painting",
+                "Windows": "ROOT/models/windows/2019.2/framed_painting"
+            },
+            "wcategory": "picture",
+            "wnid": "n03876519"
+        },
+        "fridge_large": {
+            "asset_bundle_sizes": {
+                "Darwin": 1679345,
+                "Linux": 1909988,
+                "Windows": 1514584
+            },
+            "bounds": {
+                "back": {
+                    "x": -0.0008909106,
+                    "y": 0.88,
+                    "z": -0.3500003
+                },
+                "bottom": {
+                    "x": -0.0008909106,
+                    "y": -5.960464e-08,
+                    "z": 0.04067358
+                },
+                "center": {
+                    "x": -0.0008909106,
+                    "y": 0.88,
+                    "z": 0.04067358
+                },
+                "front": {
+                    "x": -0.0008909106,
+                    "y": 0.88,
+                    "z": 0.4313474
+                },
+                "left": {
+                    "x": -0.4568067,
+                    "y": 0.88,
+                    "z": 0.04067358
+                },
+                "right": {
+                    "x": 0.4550249,
+                    "y": 0.88,
+                    "z": 0.04067358
+                },
+                "top": {
+                    "x": -0.0008909106,
+                    "y": 1.76,
+                    "z": 0.04067358
+                }
+            },
+            "canonical_rotation": {
+                "x": 0,
+                "y": 0.0,
+                "z": 0
+            },
+            "composite_object": false,
+            "do_not_use": false,
+            "do_not_use_reason": "",
+            "flex": false,
+            "name": "fridge_large",
+            "physics_quality": -1,
+            "scale_factor": 1.0,
+            "substructure": [
+                {
+                    "materials": [
+                        "chrome",
+                        "resin_polyurethane_gloss_metallic",
+                        "resin_polyurethane_gloss_glossiness",
+                        "chrome",
+                        "resin_polyurethane_gloss_glossiness"
+                    ],
+                    "name": "fridge_008_00"
+                }
+            ],
+            "urls": {
+                "Darwin": "ROOT/models/osx/2018-2019.1/fridge_large",
+                "Linux": "ROOT/models/linux/2018-2019.1/fridge_large",
+                "Windows": "ROOT/models/windows/2018-2019.1/fridge_large"
+            },
+            "wcategory": "refrigerator",
+            "wnid": "n04070727"
+        },
+        "glass1": {
+            "asset_bundle_sizes": {
+                "Darwin": 205549,
+                "Linux": 297266,
+                "Windows": 146688
+            },
+            "bounds": {
+                "back": {
+                    "x": -0.005318094,
+                    "y": 0.0788527,
+                    "z": -0.03242123
+                },
+                "bottom": {
+                    "x": -0.005318094,
+                    "y": 0,
+                    "z": 0.0052667
+                },
+                "center": {
+                    "x": -0.005318094,
+                    "y": 0.0788527,
+                    "z": 0.0052667
+                },
+                "front": {
+                    "x": -0.005318094,
+                    "y": 0.0788527,
+                    "z": 0.04295463
+                },
+                "left": {
+                    "x": -0.04300603,
+                    "y": 0.0788527,
+                    "z": 0.0052667
+                },
+                "right": {
+                    "x": 0.03236984,
+                    "y": 0.0788527,
+                    "z": 0.0052667
+                },
+                "top": {
+                    "x": -0.005318094,
+                    "y": 0.1577054,
+                    "z": 0.0052667
+                }
+            },
+            "canonical_rotation": {
+                "x": 0,
+                "y": 0.0,
+                "z": 0
+            },
+            "composite_object": false,
+            "do_not_use": false,
+            "do_not_use_reason": "",
+            "flex": true,
+            "name": "glass1",
+            "physics_quality": 0.9951180762421884,
+            "scale_factor": 1.0,
+            "substructure": [
+                {
+                    "materials": [
+                        "Glass"
+                    ],
+                    "name": "glass1"
+                }
+            ],
+            "urls": {
+                "Darwin": "ROOT/models/osx/2018-2019.1/glass1",
+                "Linux": "ROOT/models/linux/2018-2019.1/glass1",
+                "Windows": "ROOT/models/windows/2018-2019.1/glass1"
+            },
+            "wcategory": "wineglass",
+            "wnid": "n04592099"
+        },
+        "jug05": {
+            "asset_bundle_sizes": {
+                "Darwin": 159369,
+                "Linux": 198894,
+                "Windows": 127692
+            },
+            "bounds": {
+                "back": {
+                    "x": 0,
+                    "y": 0.06870775,
+                    "z": -0.08972451
+                },
+                "bottom": {
+                    "x": 0,
+                    "y": 0,
+                    "z": 0
+                },
+                "center": {
+                    "x": 0,
+                    "y": 0.06870775,
+                    "z": 0
+                },
+                "front": {
+                    "x": 0,
+                    "y": 0.06870775,
+                    "z": 0.08972451
+                },
+                "left": {
+                    "x": -0.08972479,
+                    "y": 0.06870775,
+                    "z": 0
+                },
+                "right": {
+                    "x": 0.08972479,
+                    "y": 0.06870775,
+                    "z": 0
+                },
+                "top": {
+                    "x": 0,
+                    "y": 0.1374155,
+                    "z": 0
+                }
+            },
+            "canonical_rotation": {
+                "x": 0,
+                "y": 0.0,
+                "z": 0
+            },
+            "composite_object": false,
+            "do_not_use": false,
+            "do_not_use_reason": "",
+            "flex": true,
+            "name": "jug05",
+            "physics_quality": -1,
+            "scale_factor": 1.0,
+            "substructure": [
+                {
+                    "materials": [
+                        "kitchen_jug_clean"
+                    ],
+                    "name": "jug05"
+                }
+            ],
+            "urls": {
+                "Darwin": "ROOT/models/osx/2018-2019.1/jug05",
+                "Linux": "ROOT/models/linux/2018-2019.1/jug05",
+                "Windows": "ROOT/models/windows/2018-2019.1/jug05"
+            },
+            "wcategory": "jug",
+            "wnid": "n03603722"
+        },
+        "linen_dining_chair": {
+            "asset_bundle_sizes": {
+                "Darwin": 7625910,
+                "Linux": 7837832,
+                "Windows": 7442693
+            },
+            "bounds": {
+                "back": {
+                    "x": 0,
+                    "y": 0.4634594,
+                    "z": -0.3276866
+                },
+                "bottom": {
+                    "x": 0,
+                    "y": -2.980232e-08,
+                    "z": 0
+                },
+                "center": {
+                    "x": 0,
+                    "y": 0.4634594,
+                    "z": 0
+                },
+                "front": {
+                    "x": 0,
+                    "y": 0.4634594,
+                    "z": 0.3276866
+                },
+                "left": {
+                    "x": -0.3130713,
+                    "y": 0.4634594,
+                    "z": 0
+                },
+                "right": {
+                    "x": 0.3130713,
+                    "y": 0.4634594,
+                    "z": 0
+                },
+                "top": {
+                    "x": 0,
+                    "y": 0.9269187,
+                    "z": 0
+                }
+            },
+            "canonical_rotation": {
+                "x": 0,
+                "y": 0.0,
+                "z": 0
+            },
+            "composite_object": false,
+            "do_not_use": false,
+            "do_not_use_reason": "",
+            "flex": false,
+            "name": "linen_dining_chair",
+            "physics_quality": -1,
+            "scale_factor": 1.0,
+            "substructure": [
+                {
+                    "materials": [
+                        "linen_burlap_irregular"
+                    ],
+                    "name": "artistic_frame_neptune_2893a_2"
+                },
+                {
+                    "materials": [
+                        "wood_wenge"
+                    ],
+                    "name": "Object007"
+                }
+            ],
+            "urls": {
+                "Darwin": "ROOT/models/osx/2018-2019.1/linen_dining_chair",
+                "Linux": "ROOT/models/linux/2018-2019.1/linen_dining_chair",
+                "Windows": "ROOT/models/windows/2018-2019.1/linen_dining_chair"
+            },
+            "wcategory": "chair",
+            "wnid": "n03001627"
+        },
+        "metal_briefcase": {
+            "asset_bundle_sizes": {
+                "Darwin": 525045,
+                "Linux": 755190,
+                "Windows": 366380
+            },
+            "bounds": {
+                "back": {
+                    "x": 0,
+                    "y": 0.1946038,
+                    "z": -0.04416386
+                },
+                "bottom": {
+                    "x": 0,
+                    "y": 0,
+                    "z": 0.01233791
+                },
+                "center": {
+                    "x": 0,
+                    "y": 0.1946038,
+                    "z": 0.01233791
+                },
+                "front": {
+                    "x": 0,
+                    "y": 0.1946038,
+                    "z": 0.06883968
+                },
+                "left": {
+                    "x": -0.2283721,
+                    "y": 0.1946038,
+                    "z": 0.01233791
+                },
+                "right": {
+                    "x": 0.2283721,
+                    "y": 0.1946038,
+                    "z": 0.01233791
+                },
+                "top": {
+                    "x": 0,
+                    "y": 0.3892076,
+                    "z": 0.01233791
+                }
+            },
+            "canonical_rotation": {
+                "x": 0,
+                "y": 0.0,
+                "z": 0
+            },
+            "composite_object": false,
+            "do_not_use": false,
+            "do_not_use_reason": "",
+            "flex": false,
+            "name": "metal_briefcase",
+            "physics_quality": -1,
+            "scale_factor": 1.0,
+            "substructure": [
+                {
+                    "materials": [
+                        "chrome2"
+                    ],
+                    "name": "bag_1"
+                },
+                {
+                    "materials": [
+                        "plastic_vinyl_glossy_black"
+                    ],
+                    "name": "Object022"
+                }
+            ],
+            "urls": {
+                "Darwin": "ROOT/models/osx/2018-2019.1/metal_briefcase",
+                "Linux": "ROOT/models/linux/2018-2019.1/metal_briefcase",
+                "Windows": "ROOT/models/windows/2018-2019.1/metal_briefcase"
+            },
+            "wcategory": "suitcase",
+            "wnid": "n02773838"
+        },
+        "puzzle_box_composite": {
+            "asset_bundle_sizes": {
+                "Darwin": 9597579,
+                "Linux": 9958355,
+                "Windows": 9295469
+            },
+            "bounds": {
+                "back": {
+                    "x": -2.070952,
+                    "y": 0.07033528,
+                    "z": -0.5816817
+                },
+                "bottom": {
+                    "x": -2.070952,
+                    "y": -1.614711e-08,
+                    "z": -0.2894961
+                },
+                "center": {
+                    "x": -2.070952,
+                    "y": 0.07033526,
+                    "z": -0.2894961
+                },
+                "front": {
+                    "x": -2.070952,
+                    "y": 0.07033525,
+                    "z": 0.00268954
+                },
+                "left": {
+                    "x": -2.350655,
+                    "y": 0.07033526,
+                    "z": -0.2894961
+                },
+                "right": {
+                    "x": -1.79125,
+                    "y": 0.07033526,
+                    "z": -0.2894961
+                },
+                "top": {
+                    "x": -2.070952,
+                    "y": 0.1406705,
+                    "z": -0.2894961
+                }
+            },
+            "canonical_rotation": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "composite_object": true,
+            "do_not_use": false,
+            "do_not_use_reason": "",
+            "flex": false,
+            "name": "puzzle_box_composite",
+            "physics_quality": 0.9921908555599023,
+            "scale_factor": 1,
+            "substructure": [
+                {
+                    "materials": [
+                        "wood_beech_natural"
+                    ],
+                    "name": "puzzle_box_composite"
+                },
+                {
+                    "materials": [
+                        "wood_beech_yellow"
+                    ],
+                    "name": "b03_circle001"
+                },
+                {
+                    "materials": [
+                        "wood_beech_yellow"
+                    ],
+                    "name": "b03_half_circle001"
+                },
+                {
+                    "materials": [
+                        "wood_beech_blue"
+                    ],
+                    "name": "b03_diamond002"
+                },
+                {
+                    "materials": [
+                        "wood_beech_red"
+                    ],
+                    "name": "b03_hexagon001"
+                },
+                {
+                    "materials": [
+                        "wood_beech_red"
+                    ],
+                    "name": "b03_half_hex001"
+                },
+                {
+                    "materials": [
+                        "wood_beech_green"
+                    ],
+                    "name": "b03_pentagon001"
+                },
+                {
+                    "materials": [
+                        "wood_beech_green"
+                    ],
+                    "name": "b03_quarter_circle001"
+                },
+                {
+                    "materials": [
+                        "wood_beech_green"
+                    ],
+                    "name": "b03_rectangle002"
+                },
+                {
+                    "materials": [
+                        "wood_beech_honey"
+                    ],
+                    "name": "b03_square001"
+                },
+                {
+                    "materials": [
+                        "wood_beech_yellow"
+                    ],
+                    "name": "b03_t-shape001"
+                },
+                {
+                    "materials": [
+                        "wood_beech_red"
+                    ],
+                    "name": "b03_triangle001"
+                }
+            ],
+            "urls": {
+                "Darwin": "ROOT/models/osx/2019.2//puzzle_box_composite",
+                "Linux": "ROOT/models/linux/2019.2//puzzle_box_composite",
+                "Windows": "ROOT/models/windows/2019.2//puzzle_box_composite"
+            },
+            "wcategory": "toy",
+            "wnid": "n04461879"
+        },
+        "sayonara_sofa": {
+            "asset_bundle_sizes": {
+                "Darwin": 9814031,
+                "Linux": 10047833,
+                "Windows": 9655412
+            },
+            "bounds": {
+                "back": {
+                    "x": -2.074242e-05,
+                    "y": 0.4140253,
+                    "z": -0.4621993
+                },
+                "bottom": {
+                    "x": -2.074242e-05,
+                    "y": -5.960464e-08,
+                    "z": -4.294515e-05
+                },
+                "center": {
+                    "x": -2.074242e-05,
+                    "y": 0.4140253,
+                    "z": -4.294515e-05
+                },
+                "front": {
+                    "x": -2.074242e-05,
+                    "y": 0.4140253,
+                    "z": 0.4621134
+                },
+                "left": {
+                    "x": -0.8119329,
+                    "y": 0.4140253,
+                    "z": -4.294515e-05
+                },
+                "right": {
+                    "x": 0.8118914,
+                    "y": 0.4140253,
+                    "z": -4.294515e-05
+                },
+                "top": {
+                    "x": -2.074242e-05,
+                    "y": 0.8280507,
+                    "z": -4.294515e-05
+                }
+            },
+            "canonical_rotation": {
+                "x": 0,
+                "y": 0.0,
+                "z": 0
+            },
+            "composite_object": false,
+            "do_not_use": false,
+            "do_not_use_reason": "",
+            "flex": false,
+            "name": "sayonara_sofa",
+            "physics_quality": -1,
+            "scale_factor": 1.0,
+            "substructure": [
+                {
+                    "materials": [
+                        "linen_burlap_irregular",
+                        "cotton_blend_multi_colored_filaments_spotted"
+                    ],
+                    "name": "bbb_emmebonacina_sayonara_with_arm_160"
+                }
+            ],
+            "urls": {
+                "Darwin": "ROOT/models/osx/2018-2019.1/sayonara_sofa",
+                "Linux": "ROOT/models/linux/2018-2019.1/sayonara_sofa",
+                "Windows": "ROOT/models/windows/2018-2019.1/sayonara_sofa"
+            },
+            "wcategory": "sofa",
+            "wnid": "n04256520"
+        },
+        "servingfork": {
+            "asset_bundle_sizes": {
+                "Darwin": 3253175,
+                "Linux": 3483574,
+                "Windows": 3094248
+            },
+            "bounds": {
+                "back": {
+                    "x": 0.0007469393,
+                    "y": 0.01692841,
+                    "z": -0.04594885
+                },
+                "bottom": {
+                    "x": 0.0007469393,
+                    "y": 0,
+                    "z": 0.1380607
+                },
+                "center": {
+                    "x": 0.0007469393,
+                    "y": 0.01692841,
+                    "z": 0.1380607
+                },
+                "front": {
+                    "x": 0.0007469393,
+                    "y": 0.01692841,
+                    "z": 0.3220704
+                },
+                "left": {
+                    "x": -0.03391986,
+                    "y": 0.01692841,
+                    "z": 0.1380607
+                },
+                "right": {
+                    "x": 0.03541374,
+                    "y": 0.01692841,
+                    "z": 0.1380607
+                },
+                "top": {
+                    "x": 0.0007469393,
+                    "y": 0.03385682,
+                    "z": 0.1380607
+                }
+            },
+            "canonical_rotation": {
+                "x": 0,
+                "y": 0.0,
+                "z": 0
+            },
+            "composite_object": false,
+            "do_not_use": false,
+            "do_not_use_reason": "",
+            "flex": false,
+            "name": "servingfork",
+            "physics_quality": -1,
+            "scale_factor": 1.0,
+            "substructure": [
+                {
+                    "materials": [
+                        "chrome2",
+                        "wood_wenge"
+                    ],
+                    "name": "ServingFork"
+                }
+            ],
+            "urls": {
+                "Darwin": "ROOT/models/osx/2018-2019.1/servingfork",
+                "Linux": "ROOT/models/linux/2018-2019.1/servingfork",
+                "Windows": "ROOT/models/windows/2018-2019.1/servingfork"
+            },
+            "wcategory": "carving fork",
+            "wnid": "n02973805"
+        },
+        "side_table_wood": {
+            "asset_bundle_sizes": {
+                "Darwin": 1120011,
+                "Linux": 1329332,
+                "Windows": 943557
+            },
+            "bounds": {
+                "back": {
+                    "x": 0,
+                    "y": 0.3054443,
+                    "z": -0.2279884
+                },
+                "bottom": {
+                    "x": 0,
+                    "y": 0,
+                    "z": -1.490116e-08
+                },
+                "center": {
+                    "x": 0,
+                    "y": 0.3054443,
+                    "z": -1.490116e-08
+                },
+                "front": {
+                    "x": 0,
+                    "y": 0.3054443,
+                    "z": 0.2279884
+                },
+                "left": {
+                    "x": -0.3049884,
+                    "y": 0.3054443,
+                    "z": -1.490116e-08
+                },
+                "right": {
+                    "x": 0.3049884,
+                    "y": 0.3054443,
+                    "z": -1.490116e-08
+                },
+                "top": {
+                    "x": 0,
+                    "y": 0.6108887,
+                    "z": -1.490116e-08
+                }
+            },
+            "canonical_rotation": {
+                "x": 0,
+                "y": 0.0,
+                "z": 0
+            },
+            "composite_object": false,
+            "do_not_use": false,
+            "do_not_use_reason": "",
+            "flex": false,
+            "name": "side_table_wood",
+            "physics_quality": 0.9927159062736673,
+            "scale_factor": 1.0,
+            "substructure": [
+                {
+                    "materials": [
+                        "Exterior",
+                        "Glass"
+                    ],
+                    "name": "Arch43_109_obj_01"
+                }
+            ],
+            "urls": {
+                "Darwin": "ROOT/models/osx/2018-2019.1/side_table_wood",
+                "Linux": "ROOT/models/linux/2018-2019.1/side_table_wood",
+                "Windows": "ROOT/models/windows/2018-2019.1/side_table_wood"
+            },
+            "wcategory": "table",
+            "wnid": "n04379243"
+        },
+        "skillet_open": {
+            "asset_bundle_sizes": {
+                "Darwin": 5172778,
+                "Linux": 5404084,
+                "Windows": 5007674
+            },
+            "bounds": {
+                "back": {
+                    "x": 0.005825251,
+                    "y": 0.1359487,
+                    "z": -0.3391084
+                },
+                "bottom": {
+                    "x": 0.005825251,
+                    "y": 0,
+                    "z": 0.01185206
+                },
+                "center": {
+                    "x": 0.005825251,
+                    "y": 0.1359487,
+                    "z": 0.01185206
+                },
+                "front": {
+                    "x": 0.005825251,
+                    "y": 0.1359487,
+                    "z": 0.3628125
+                },
+                "left": {
+                    "x": -0.1486617,
+                    "y": 0.1359487,
+                    "z": 0.01185206
+                },
+                "right": {
+                    "x": 0.1603122,
+                    "y": 0.1359487,
+                    "z": 0.01185206
+                },
+                "top": {
+                    "x": 0.005825251,
+                    "y": 0.2718974,
+                    "z": 0.01185206
+                }
+            },
+            "canonical_rotation": {
+                "x": 0,
+                "y": 0.0,
+                "z": 0
+            },
+            "composite_object": false,
+            "do_not_use": false,
+            "do_not_use_reason": "",
+            "flex": true,
+            "name": "skillet_open",
+            "physics_quality": -1,
+            "scale_factor": 1.0,
+            "substructure": [
+                {
+                    "materials": [
+                        "aluminium_brushed"
+                    ],
+                    "name": "skillet_open"
+                }
+            ],
+            "urls": {
+                "Darwin": "ROOT/models/osx/2018-2019.1/skillet_open",
+                "Linux": "ROOT/models/linux/2018-2019.1/skillet_open",
+                "Windows": "ROOT/models/windows/2018-2019.1/skillet_open"
+            },
+            "wcategory": "pan",
+            "wnid": "n03880531"
+        },
+        "sm_table_white": {
+            "asset_bundle_sizes": {
+                "Darwin": 1488103,
+                "Linux": 1716262,
+                "Windows": 1328175
+            },
+            "bounds": {
+                "back": {
+                    "x": -0.0003643632,
+                    "y": 0.446458,
+                    "z": -0.378994
+                },
+                "bottom": {
+                    "x": -0.0003643632,
+                    "y": 0,
+                    "z": -5.960464e-08
+                },
+                "center": {
+                    "x": -0.0003643632,
+                    "y": 0.446458,
+                    "z": -5.960464e-08
+                },
+                "front": {
+                    "x": -0.0003643632,
+                    "y": 0.446458,
+                    "z": 0.3789939
+                },
+                "left": {
+                    "x": -0.5722287,
+                    "y": 0.446458,
+                    "z": -5.960464e-08
+                },
+                "right": {
+                    "x": 0.5715,
+                    "y": 0.446458,
+                    "z": -5.960464e-08
+                },
+                "top": {
+                    "x": -0.0003643632,
+                    "y": 0.8929161,
+                    "z": -5.960464e-08
+                }
+            },
+            "canonical_rotation": {
+                "x": 0,
+                "y": 0.0,
+                "z": 0
+            },
+            "composite_object": false,
+            "do_not_use": false,
+            "do_not_use_reason": "",
+            "flex": false,
+            "name": "sm_table_white",
+            "physics_quality": -1,
+            "scale_factor": 1.0,
+            "substructure": [
+                {
+                    "materials": [
+                        "plastic_vinyl_glossy_white",
+                        "steel_brushed"
+                    ],
+                    "name": "Object007"
+                }
+            ],
+            "urls": {
+                "Darwin": "ROOT/models/osx/2018-2019.1/sm_table_white",
+                "Linux": "ROOT/models/linux/2018-2019.1/sm_table_white",
+                "Windows": "ROOT/models/windows/2018-2019.1/sm_table_white"
+            },
+            "wcategory": "table",
+            "wnid": "n04379243"
+        },
+        "spoon1": {
+            "asset_bundle_sizes": {
+                "Darwin": 175491,
+                "Linux": 214848,
+                "Windows": 143258
+            },
+            "bounds": {
+                "back": {
+                    "x": 0.000691276,
+                    "y": 0.009562465,
+                    "z": -0.05445207
+                },
+                "bottom": {
+                    "x": 0.000691276,
+                    "y": -0.000365736,
+                    "z": 0.02021047
+                },
+                "center": {
+                    "x": 0.000691276,
+                    "y": 0.009562465,
+                    "z": 0.02021047
+                },
+                "front": {
+                    "x": 0.000691276,
+                    "y": 0.009562466,
+                    "z": 0.094873
+                },
+                "left": {
+                    "x": -0.01380068,
+                    "y": 0.009562465,
+                    "z": 0.02021047
+                },
+                "right": {
+                    "x": 0.01518324,
+                    "y": 0.009562465,
+                    "z": 0.02021047
+                },
+                "top": {
+                    "x": 0.000691276,
+                    "y": 0.01949067,
+                    "z": 0.02021047
+                }
+            },
+            "canonical_rotation": {
+                "x": 0,
+                "y": 0.0,
+                "z": 0
+            },
+            "composite_object": false,
+            "do_not_use": false,
+            "do_not_use_reason": "",
+            "flex": true,
+            "name": "spoon1",
+            "physics_quality": -1,
+            "scale_factor": 1.0,
+            "substructure": [
+                {
+                    "materials": [
+                        "chrome2"
+                    ],
+                    "name": "spoon1"
+                }
+            ],
+            "urls": {
+                "Darwin": "ROOT/models/osx/2018-2019.1/spoon1",
+                "Linux": "ROOT/models/linux/2018-2019.1/spoon1",
+                "Windows": "ROOT/models/windows/2018-2019.1/spoon1"
+            },
+            "wcategory": "spoon",
+            "wnid": "n04284002"
+        },
+        "trapezoidal_table": {
+            "asset_bundle_sizes": {
+                "Darwin": 3880673,
+                "Linux": 4100940,
+                "Windows": 3715124
+            },
+            "bounds": {
+                "back": {
+                    "x": 0,
+                    "y": 0.1791968,
+                    "z": -0.3690141
+                },
+                "bottom": {
+                    "x": 0,
+                    "y": 0,
+                    "z": 0
+                },
+                "center": {
+                    "x": 0,
+                    "y": 0.1791968,
+                    "z": 0
+                },
+                "front": {
+                    "x": 0,
+                    "y": 0.1791968,
+                    "z": 0.3690141
+                },
+                "left": {
+                    "x": -0.6156889,
+                    "y": 0.1791968,
+                    "z": 0
+                },
+                "right": {
+                    "x": 0.6156889,
+                    "y": 0.1791968,
+                    "z": 0
+                },
+                "top": {
+                    "x": 0,
+                    "y": 0.3583935,
+                    "z": 0
+                }
+            },
+            "canonical_rotation": {
+                "x": 0,
+                "y": 0.0,
+                "z": 0
+            },
+            "composite_object": false,
+            "do_not_use": false,
+            "do_not_use_reason": "",
+            "flex": true,
+            "name": "trapezoidal_table",
+            "physics_quality": -1,
+            "scale_factor": 1.0,
+            "substructure": [
+                {
+                    "materials": [
+                        "wood_american_cherry"
+                    ],
+                    "name": "trapezoidal_table"
+                }
+            ],
+            "urls": {
+                "Darwin": "ROOT/models/osx/2018-2019.1/trapezoidal_table",
+                "Linux": "ROOT/models/linux/2018-2019.1/trapezoidal_table",
+                "Windows": "ROOT/models/windows/2018-2019.1/trapezoidal_table"
+            },
+            "wcategory": "coffee table, cocktail table",
+            "wnid": "n03063968"
+        },
+        "trunck": {
+            "asset_bundle_sizes": {
+                "Darwin": 9799564,
+                "Linux": 10029220,
+                "Windows": 9641331
+            },
+            "bounds": {
+                "back": {
+                    "x": -0.001732141,
+                    "y": 0.4944474,
+                    "z": 0.3441561
+                },
+                "bottom": {
+                    "x": -0.001732528,
+                    "y": 8.231815e-10,
+                    "z": 0.004657388
+                },
+                "center": {
+                    "x": -0.001732349,
+                    "y": 0.4944473,
+                    "z": 0.004657365
+                },
+                "front": {
+                    "x": -0.001732558,
+                    "y": 0.4944473,
+                    "z": -0.3348414
+                },
+                "left": {
+                    "x": 0.4407591,
+                    "y": 0.4944472,
+                    "z": 0.00465709
+                },
+                "right": {
+                    "x": -0.4442238,
+                    "y": 0.4944475,
+                    "z": 0.004657641
+                },
+                "top": {
+                    "x": -0.001732171,
+                    "y": 0.9888946,
+                    "z": 0.004657343
+                }
+            },
+            "canonical_rotation": {
+                "x": 0,
+                "y": 0.0,
+                "z": 0
+            },
+            "composite_object": false,
+            "do_not_use": false,
+            "do_not_use_reason": "",
+            "flex": true,
+            "name": "trunck",
+            "physics_quality": 0.9647357660512457,
+            "scale_factor": 1.0,
+            "substructure": [
+                {
+                    "materials": [
+                        "leather_fine_touch",
+                        "aluminium_brushed",
+                        "linen_burlap_irregular",
+                        "leather_fine_touch",
+                        "aluminium_brushed"
+                    ],
+                    "name": "trunck"
+                }
+            ],
+            "urls": {
+                "Darwin": "ROOT/models/osx/2018-2019.1/trunck",
+                "Linux": "ROOT/models/linux/2018-2019.1/trunck",
+                "Windows": "ROOT/models/windows/2018-2019.1/trunck"
+            },
+            "wcategory": "trunk",
+            "wnid": "n04491769"
+        },
+        "woven_box": {
+            "asset_bundle_sizes": {
+                "Darwin": 15170608,
+                "Linux": 15398348,
+                "Windows": 15014943
+            },
+            "bounds": {
+                "back": {
+                    "x": 0,
+                    "y": 0.2486388,
+                    "z": -0.3600698
+                },
+                "bottom": {
+                    "x": 0,
+                    "y": 0,
+                    "z": 2.980232e-08
+                },
+                "center": {
+                    "x": 0,
+                    "y": 0.2486388,
+                    "z": 2.980232e-08
+                },
+                "front": {
+                    "x": 0,
+                    "y": 0.2486388,
+                    "z": 0.3600699
+                },
+                "left": {
+                    "x": -0.3600699,
+                    "y": 0.2486388,
+                    "z": 2.980232e-08
+                },
+                "right": {
+                    "x": 0.3600699,
+                    "y": 0.2486388,
+                    "z": 2.980232e-08
+                },
+                "top": {
+                    "x": 0,
+                    "y": 0.4972777,
+                    "z": 2.980232e-08
+                }
+            },
+            "canonical_rotation": {
+                "x": 0,
+                "y": 0.0,
+                "z": 0
+            },
+            "composite_object": false,
+            "do_not_use": false,
+            "do_not_use_reason": "",
+            "flex": true,
+            "name": "woven_box",
+            "physics_quality": -1,
+            "scale_factor": 1.0,
+            "substructure": [
+                {
+                    "materials": [
+                        "wicker_weave"
+                    ],
+                    "name": "woven_box"
+                }
+            ],
+            "urls": {
+                "Darwin": "ROOT/models/osx/2018-2019.1/woven_box",
+                "Linux": "ROOT/models/linux/2018-2019.1/woven_box",
+                "Windows": "ROOT/models/windows/2018-2019.1/woven_box"
+            },
+            "wcategory": "box",
+            "wnid": "n02883344"
+        },
+        "yellow_side_chair": {
+            "asset_bundle_sizes": {
+                "Darwin": 4968360,
+                "Linux": 5196180,
+                "Windows": 4778749
+            },
+            "bounds": {
+                "back": {
+                    "x": 2.980232e-08,
+                    "y": 0.3612285,
+                    "z": -0.3061644
+                },
+                "bottom": {
+                    "x": 2.980232e-08,
+                    "y": 0,
+                    "z": 5.960464e-08
+                },
+                "center": {
+                    "x": 2.980232e-08,
+                    "y": 0.3612285,
+                    "z": 5.960464e-08
+                },
+                "front": {
+                    "x": 2.980232e-08,
+                    "y": 0.3612285,
+                    "z": 0.3061645
+                },
+                "left": {
+                    "x": -0.2656645,
+                    "y": 0.3612285,
+                    "z": 5.960464e-08
+                },
+                "right": {
+                    "x": 0.2656645,
+                    "y": 0.3612285,
+                    "z": 5.960464e-08
+                },
+                "top": {
+                    "x": 2.980232e-08,
+                    "y": 0.7224569,
+                    "z": 5.960464e-08
+                }
+            },
+            "canonical_rotation": {
+                "x": 0,
+                "y": 0.0,
+                "z": 0
+            },
+            "composite_object": false,
+            "do_not_use": false,
+            "do_not_use_reason": "",
+            "flex": false,
+            "name": "yellow_side_chair",
+            "physics_quality": -1,
+            "scale_factor": 1.0,
+            "substructure": [
+                {
+                    "materials": [
+                        "leather_turned",
+                        "aluminium_brushed"
+                    ],
+                    "name": "Arch43_003_obj_03"
+                }
+            ],
+            "urls": {
+                "Darwin": "ROOT/models/osx/2018-2019.1/yellow_side_chair",
+                "Linux": "ROOT/models/linux/2018-2019.1/yellow_side_chair",
+                "Windows": "ROOT/models/windows/2018-2019.1/yellow_side_chair"
+            },
+            "wcategory": "chair",
+            "wnid": "n03001627"
+        }
+    }
+}
