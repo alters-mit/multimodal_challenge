@@ -224,8 +224,8 @@ class Rehearsal(Controller):
         :param num_trials: How many trials we want to save to disk.
         """
 
-        # Get the drop zones.
         filename = f"{scene}_{layout}.json"
+        # Get the drop zones.
         drop_zone_data = loads(DROP_ZONE_DIRECTORY.joinpath(filename).read_text(encoding="utf-8"))
         self.drop_zones.clear()
         for drop_zone in drop_zone_data["drop_zones"]:
@@ -247,18 +247,21 @@ class Rehearsal(Controller):
         # Set the scene environment.
         self.scene_environment = SceneEnvironment(resp=resp)
         pbar = tqdm(total=num_trials)
-        num_good = 0
-        while num_good < num_trials:
-            # Do a trial.
-            drop: Drop = self.do_trial()
-            # If we got an object back, then this was a good trial.
-            if drop is not None:
-                # Save the data.
-                self.output_directory.joinpath(f"{num_good}.json").write_text(dumps(drop, cls=Encoder),
-                                                                              encoding="utf-8")
-                num_good += 1
-                pbar.update(1)
-        pbar.close()
+        # Remember all good drops.
+        drops: List[Drop] = list()
+        try:
+            while len(drops) < num_trials:
+                # Do a trial.
+                drop: Drop = self.do_trial()
+                # If we got an object back, then this was a good trial.
+                if drop is not None:
+                    # Save the data.
+                    drops.append(drop)
+                    pbar.update(1)
+        finally:
+            pbar.close()
+            # Write the results to disk.
+            self.output_directory.joinpath(filename).write_text(dumps(drops, cls=Encoder, indent=2), encoding="utf-8")
 
 
 if __name__ == "__main__":
