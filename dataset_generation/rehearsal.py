@@ -1,15 +1,14 @@
-from json import loads, dumps
-from typing import Optional, List, Dict
+from json import dumps
+from typing import Optional, List, Dict, Tuple
 from csv import DictReader
 from tqdm import tqdm
 import numpy as np
 from tdw.controller import Controller
 from tdw.output_data import Transforms, Raycast
-from tdw.tdw_utils import TDWUtils
-from magnebot.scene_environment import SceneEnvironment, Room
+from magnebot.scene_environment import SceneEnvironment
 from magnebot.util import get_data
-from multimodal_challenge.util import DROP_OBJECTS, get_object_init_commands, get_scene_librarian
-from multimodal_challenge.paths import DROP_ZONE_DIRECTORY, SCENE_LAYOUT_PATH, REHEARSAL_DIRECTORY
+from multimodal_challenge.util import DROP_OBJECTS, get_object_init_commands, get_scene_librarian, get_drop_zones
+from multimodal_challenge.paths import SCENE_LAYOUT_PATH, REHEARSAL_DIRECTORY
 from multimodal_challenge.dataset_generation.drop import Drop
 from multimodal_challenge.dataset_generation.drop_zone import DropZone
 from multimodal_challenge.encoder import Encoder
@@ -22,7 +21,12 @@ class Rehearsal(Controller):
 
     This is meant only for backend developers; the Python module already has cached rehearsal data.
 
-    Each scene has a corresponding list of [`DropZones`](../api/drop_zone.md). These are already cached. If the target object lands in a `DropZone`, then this was a valid trial. As a result, this script will cut down on dev time (we don't need to set drop parameters manually) and generation time (because we don't have to discard any audio recordings).
+    Each scene has a corresponding list of [`DropZones`](../api/drop_zone.md). These are already cached.
+    If the target object lands in a `DropZone`, then this was a valid trial.
+    As a result, this script will cut down on dev time and generation time.
+
+    There will be a small discrepancy in physics behavior when running `dataset.py` because in this controller,
+    all objects are kinematic (non-moveable) in order to avoid re-initializing the scene per trial (which is slow).
 
     # Requirements
 
@@ -55,15 +59,6 @@ class Rehearsal(Controller):
     ........1_0.json  # scene_layout
     ........1_1.json
     ```
-
-    ### Advantages
-
-    - This is a VERY fast process. It saves dev time (we don't need to manually set trial init values) and audio recording time (we don't need to discard any recordings).
-
-    ### Disadvantages
-
-    - All objects in the scene are kinematic because re-initializing the scene per trial would be too slow. Therefore, there will be a small discrepancy between physics behavior in the rehearsal and physics behavior in the dataset.
-
     """
 
     def __init__(self, port: int = 1071, random_seed: int = None):
@@ -82,6 +77,8 @@ class Rehearsal(Controller):
         # Get a random seed.
         if random_seed is None:
             random_seed = self.get_unique_id()
+        # Write the random seed.
+        REHEARSAL_DIRECTORY.joinpath("seed.txt").write_text(str(random_seed), encoding="utf-8")
         """:field
         The random number generator.
         """
@@ -95,12 +92,12 @@ class Rehearsal(Controller):
         """
         self.drop_zones: List[DropZone] = list()
 
-    def do_trial(self) -> Optional[Drop]:
+    def do_trial(self) -> Tuple[Optional[Drop], int]:
         """
         Choose a random object. Assign a random (constrained) scale, position, rotation, and force.
         Let the object fall. When it stops moving, determine if the object is in a drop zone.
 
-        :return: If the object is in the drop zone, a `Drop` object of trial initialization parameters. Otherwise, None.
+        :return: Tuple: A `Drop` object if the object landed in the drop zone, otherwise None; drop zone ID.
         """
 
         commands = []
@@ -108,18 +105,17 @@ class Rehearsal(Controller):
             commands.append({"$type": "destroy_object",
                              "id": self.drop_object})
         # Get a random room.
-        room: Room = self.rng.choice(self.scene_environment.rooms)
         # Get a random starting position.
-        position = {"x": float(self.rng.uniform(room.x_0, room.x_1)),
+        position = {"x": float(self.rng.uniform(self.scene_environment.x_min, self.scene_environment.x_max)),
                     "y": 2.8,
-                    "z": float(self.rng.uniform(room.z_0, room.z_1))}
+                    "z": float(self.rng.uniform(self.scene_environment.z_min, self.scene_environment.z_max))}
         # Raycast down from the position.
         commands.append({"$type": "send_raycast",
                          "origin": position,
                          "destination": {"x": position["x"], "y": 0, "z": position["z"]}})
         resp = self.communicate(commands)
         raycast = get_data(resp=resp, d_type=Raycast)
-        min_y = raycast.get_point()[1] + 0.5
+        min_y = raycast.get_point()[1] + 0.2
         if min_y > position["y"]:
             min_y = raycast.get_point()[1]
         # Get a random y value for the starting position.
@@ -135,12 +131,11 @@ class Rehearsal(Controller):
                                      rotation={"x": float(self.rng.uniform(-360, 360)),
                                                "y": float(self.rng.uniform(-360, 360)),
                                                "z": float(self.rng.uniform(-360, 360))},
-                                     gravity=True,
                                      kinematic=False)
         # Define the drop force.
-        force = {"x": float(self.rng.uniform(-0.2, 0.2)),
-                 "y": float(self.rng.uniform(-0.2, 0.1)),
-                 "z": float(self.rng.uniform(-0.2, 0.2))}
+        force = {"x": float(self.rng.uniform(-0.1, 0.1)),
+                 "y": float(self.rng.uniform(-0.05, 0.05)),
+                 "z": float(self.rng.uniform(-0.1, 0.1))}
         # Add the initialization commands.
         self.drop_object, object_commands = a.get_commands()
         commands.extend(object_commands)
@@ -172,13 +167,13 @@ class Rehearsal(Controller):
                 good = True
             p_0 = p_1
         if not good:
-            return None
+            return None, -1
         # Check if this object is in a drop zone.
-        for drop_zone in self.drop_zones:
+        for i, drop_zone in enumerate(self.drop_zones):
             if drop_zone.center[1] + 0.1 >= p_0[1] >= drop_zone.center[1] and \
                     np.linalg.norm(p_0 - drop_zone.center) < drop_zone.radius:
-                return Drop(init_data=a, force=force)
-        return None
+                return Drop(init_data=a, force=force), i
+        return None, -1
 
     def run(self, num_trials: int = 10000) -> None:
         """
@@ -190,15 +185,18 @@ class Rehearsal(Controller):
         self.scene_librarian = get_scene_librarian()
         scene_layouts: Dict[str, int] = dict()
         num_layouts: int = 0
+        # Get the scene_layout schema.
         with open(str(SCENE_LAYOUT_PATH.resolve()), newline='') as f:
             reader = DictReader(f)
             for row in reader:
                 layouts = int(row["layout"])
                 scene_layouts[row["scene"]] = layouts
                 num_layouts += layouts
+        # Do trials for each scene_layout combination.
         for scene in scene_layouts:
             for i in range(scene_layouts[scene]):
                 self.do_trials(scene=scene, layout=i, num_trials=int(num_trials / num_layouts))
+        self.communicate({"$type": "terminate"})
 
     def do_trials(self, scene: str, layout: int, num_trials: int) -> None:
         """
@@ -212,12 +210,7 @@ class Rehearsal(Controller):
         """
 
         filename = f"{scene}_{layout}.json"
-        # Get the drop zones.
-        drop_zone_data = loads(DROP_ZONE_DIRECTORY.joinpath(filename).read_text(encoding="utf-8"))
-        self.drop_zones.clear()
-        for drop_zone in drop_zone_data["drop_zones"]:
-            self.drop_zones.append(DropZone(center=TDWUtils.vector3_to_array(drop_zone["position"]),
-                                            radius=drop_zone["size"]))
+        self.drop_zones = get_drop_zones(filename=filename)
         scene_record = self.scene_librarian.get_record(scene)
         commands: List[dict] = [{"$type": "add_scene",
                                  "name": scene_record.name,
@@ -236,21 +229,24 @@ class Rehearsal(Controller):
         pbar = tqdm(total=num_trials)
         # Remember all good drops.
         drops: List[Drop] = list()
-        try:
-            while len(drops) < num_trials:
-                # Do a trial.
-                drop: Drop = self.do_trial()
-                # If we got an object back, then this was a good trial.
-                if drop is not None:
-                    # Save the data.
-                    drops.append(drop)
-                    pbar.update(1)
-        finally:
-            pbar.close()
-            # Write the results to disk.
-            REHEARSAL_DIRECTORY.joinpath(filename).write_text(dumps(drops, cls=Encoder, indent=2), encoding="utf-8")
+        drop_zone_indices: List[int] = list()
+        while len(drops) < num_trials:
+            # Do a trial.
+            drop, drop_zone_index = self.do_trial()
+            # If we got an object back, then this was a good trial.
+            if drop is not None:
+                # Save the data.
+                drops.append(drop)
+                drop_zone_indices.append(drop_zone_index)
+                pbar.update(1)
+        pbar.close()
+        # Write the results to disk.
+        REHEARSAL_DIRECTORY.joinpath(filename).write_text(dumps(drops, cls=Encoder), encoding="utf-8")
+        # Record the drop zone indices for debugging.
+        REHEARSAL_DIRECTORY.joinpath(f"{scene}_{layout}_drop_zones.json").write_text(dumps(drop_zone_indices),
+                                                                                     encoding="utf-8")
 
 
 if __name__ == "__main__":
-    m = Rehearsal()
-    m.run()
+    m = Rehearsal(random_seed=0)
+    m.run(num_trials=1000)

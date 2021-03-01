@@ -320,10 +320,8 @@ class Dataset(MultiModalBase):
         for o_id in self.objects_static:
             name = self.objects_static[o_id].name
             o = MultiModalObjectInitData(name=name,
-                                         audio=Magnebot._OBJECT_AUDIO[name],
                                          position=TDWUtils.array_to_vector3(state.object_transforms[o_id].position),
                                          rotation=TDWUtils.array_to_vector4(state.object_transforms[o_id].rotation),
-                                         gravity=True,
                                          kinematic=self.objects_static[o_id].kinematic,
                                          scale_factor=self.scale_factors[o_id])
             object_init_data.append(o)

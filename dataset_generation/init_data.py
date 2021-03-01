@@ -123,18 +123,14 @@ class InitData:
                 # Get the objects that are hanging from the wall and make them kinematic.
                 if "cabinet" in name or "painting" in name or "_rug" in name or name == "fruit_basket":
                     kinematic = True
-                    gravity = False
                 else:
                     kinematic = False
-                    gravity = True
                 if name in object_info:
                     objects.append(MultiModalObjectInitData(name=name,
                                                             position=commands[i]["position"],
                                                             rotation=commands[i + 1]["rotation"],
                                                             scale_factor=commands[i + 2]["scale_factor"],
-                                                            kinematic=kinematic,
-                                                            gravity=gravity,
-                                                            audio=object_info[name]))
+                                                            kinematic=kinematic))
                 else:
                     print(f"Warning: no audio values for {name}")
                 i += 3

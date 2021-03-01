@@ -8,7 +8,7 @@ Parameters for defining a dropped object: its starting position, rotation, etc. 
 
 ## Fields
 
-- `init_data` An [`MultiModalObjectInitData` object](multimodal_object_init_data.md).
+- `init_data` A [`MultiModalObjectInitData` object](multimodal_object_init_data.md).
 
 - `force` The initial force of the object as a Vector3 dictionary.
 

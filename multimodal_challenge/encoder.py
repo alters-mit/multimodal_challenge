@@ -20,7 +20,11 @@ class Encoder(JSONEncoder):
         elif isinstance(obj, np.ndarray):
             return obj.tolist()
         elif isinstance(obj, MultiModalObjectInitData):
-            return obj.__dict__
+            return {"name": obj.name,
+                    "position": obj.position,
+                    "rotation": obj.rotation,
+                    "scale_factor": obj.scale_factor,
+                    "kinematic": obj.kinematic}
         elif isinstance(obj, ObjectInfo):
             return obj.__dict__
         elif isinstance(obj, Drop):

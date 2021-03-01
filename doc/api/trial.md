@@ -51,13 +51,3 @@ It also includes the pre-recorded audio.
 | target_object |  int |  | The object ID of the target object. |
 | audio |  bytes |  | The audio that was recorded while the object was moving. |
 
-#### write
-
-**`self.write(path)`**
-
-Serialize this object into JSON and write to disk.
-
-| Parameter | Type | Default | Description |
-| --- | --- | --- | --- |
-| path |  Path |  | The filepath. |
-

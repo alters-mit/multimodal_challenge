@@ -1,7 +1,6 @@
 from base64 import b64decode
 from typing import List
 import numpy as np
-from tdw.py_impact import ObjectInfo, AudioMaterial
 from multimodal_challenge.multimodal_object_init_data import MultiModalObjectInitData
 
 
@@ -40,11 +39,7 @@ class Trial:
             self.object_init_data: List[MultiModalObjectInitData] = list()
             o: dict
             for o in object_init_data:
-                object_info = ObjectInfo(**o["audio"])
-                object_info.material = AudioMaterial[object_info.material]
-                a = MultiModalObjectInitData(name=o["name"], scale_factor=o["scale_factor"], position=o["position"],
-                                             rotation=o["rotation"], kinematic=o["kinematic"], gravity=o["gravity"],
-                                             audio=object_info)
+                a = MultiModalObjectInitData(**o)
                 self.object_init_data.append(a)
         else:
             self.object_init_data: List[MultiModalObjectInitData] = object_init_data

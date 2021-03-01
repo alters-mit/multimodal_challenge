@@ -6,7 +6,12 @@
 
 This is meant only for backend developers; the Python module already has cached rehearsal data.
 
-Each scene has a corresponding list of [`DropZones`](../api/drop_zone.md). These are already cached. If the target object lands in a `DropZone`, then this was a valid trial. As a result, this script will cut down on dev time (we don't need to set drop parameters manually) and generation time (because we don't have to discard any audio recordings).
+Each scene has a corresponding list of [`DropZones`](../api/drop_zone.md). These are already cached.
+If the target object lands in a `DropZone`, then this was a valid trial.
+As a result, this script will cut down on dev time and generation time.
+
+There will be a small discrepancy in physics behavior when running `dataset.py` because in this controller,
+all objects are kinematic (non-moveable) in order to avoid re-initializing the scene per trial (which is slow).
 
 # Requirements
 
@@ -34,23 +39,11 @@ Each scene has a corresponding list of [`DropZones`](../api/drop_zone.md). These
 **Result:** A list of `Drop` initialization objects per scene_layout combination:
 
 ```
-multimodal_challenge/
-....data/
-........objects/
-........scenes/
-........dataset/
-............drops/
-................1_0.json  # scene_layout
-................1_1.json
+D:/multimodal_challenge/dataset  # See dataset in config.ini
+....drops/
+........1_0.json  # scene_layout
+........1_1.json
 ```
-
-### Advantages
-
-- This is a VERY fast process. It saves dev time (we don't need to manually set trial init values) and audio recording time (we don't need to discard any recordings).
-
-### Disadvantages
-
-- All objects in the scene are kinematic because re-initializing the scene per trial would be too slow. Therefore, there will be a small discrepancy between physics behavior in the rehearsal and physics behavior in the dataset.
 
 ***
 
@@ -88,7 +81,7 @@ Create the network socket and bind the socket to the port.
 Choose a random object. Assign a random (constrained) scale, position, rotation, and force.
 Let the object fall. When it stops moving, determine if the object is in a drop zone.
 
-_Returns:_  If the object is in the drop zone, a `Drop` object of trial initialization parameters. Otherwise, None.
+_Returns:_  Tuple: A `Drop` object if the object landed in the drop zone, otherwise None; drop zone ID.
 
 #### run
 

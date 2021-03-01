@@ -1,20 +1,6 @@
 [
   {
-    "audio": {
-      "amp": 0.02,
-      "bounciness": 0.35,
-      "library": "models_core.json",
-      "mass": 330.0,
-      "material": "metal",
-      "name": "4ft_shelf_metal",
-      "resonance": 0.65
-    },
-    "bounciness": 0.35,
-    "dynamic_friction": 0.43,
-    "gravity": true,
     "kinematic": false,
-    "library": "",
-    "mass": 330.0,
     "name": "4ft_shelf_metal",
     "position": {
       "x": 1.97,
@@ -31,25 +17,10 @@
       "x": 1,
       "y": 1,
       "z": 1
-    },
-    "static_friction": 0.52
+    }
   },
   {
-    "audio": {
-      "amp": 0.2,
-      "bounciness": 0.625,
-      "library": "models_core.json",
-      "mass": 12.0,
-      "material": "ceramic",
-      "name": "skillet_open",
-      "resonance": 0.65
-    },
-    "bounciness": 0.625,
-    "dynamic_friction": 0.47,
-    "gravity": true,
     "kinematic": false,
-    "library": "",
-    "mass": 12.0,
     "name": "skillet_open",
     "position": {
       "x": -2.703,
@@ -66,25 +37,10 @@
       "x": 1,
       "y": 1,
       "z": 1
-    },
-    "static_friction": 0.47
+    }
   },
   {
-    "audio": {
-      "amp": 0.3,
-      "bounciness": 0.4,
-      "library": "models_core.json",
-      "mass": 2.0,
-      "material": "cardboard",
-      "name": "alma_floor_lamp",
-      "resonance": 0.65
-    },
-    "bounciness": 0.4,
-    "dynamic_friction": 0.47,
-    "gravity": true,
     "kinematic": false,
-    "library": "",
-    "mass": 2.0,
     "name": "alma_floor_lamp",
     "position": {
       "x": -2.701,
@@ -101,25 +57,10 @@
       "x": 1,
       "y": 1,
       "z": 1
-    },
-    "static_friction": 0.47
+    }
   },
   {
-    "audio": {
-      "amp": 0.1,
-      "bounciness": 0.2,
-      "library": "models_core.json",
-      "mass": 0.6,
-      "material": "wood",
-      "name": "woven_box",
-      "resonance": 0.65
-    },
-    "bounciness": 0.2,
-    "dynamic_friction": 0.35,
-    "gravity": true,
     "kinematic": false,
-    "library": "",
-    "mass": 0.6,
     "name": "woven_box",
     "position": {
       "x": 3.214,
@@ -136,25 +77,10 @@
       "x": 1,
       "y": 1,
       "z": 1
-    },
-    "static_friction": 0.4
+    }
   },
   {
-    "audio": {
-      "amp": 0.01,
-      "bounciness": 0.2,
-      "library": "models_core.json",
-      "mass": 220.0,
-      "material": "cardboard",
-      "name": "sayonara_sofa",
-      "resonance": 0.1
-    },
-    "bounciness": 0.2,
-    "dynamic_friction": 0.47,
-    "gravity": true,
     "kinematic": false,
-    "library": "",
-    "mass": 220.0,
     "name": "sayonara_sofa",
     "position": {
       "x": 1.18,
@@ -171,25 +97,10 @@
       "x": 1,
       "y": 1,
       "z": 1
-    },
-    "static_friction": 0.47
+    }
   },
   {
-    "audio": {
-      "amp": 0.1,
-      "bounciness": 0.6,
-      "library": "models_core.json",
-      "mass": 3.0,
-      "material": "ceramic",
-      "name": "jug05",
-      "resonance": 0.85
-    },
-    "bounciness": 0.6,
-    "dynamic_friction": 0.47,
-    "gravity": true,
     "kinematic": false,
-    "library": "",
-    "mass": 3.0,
     "name": "jug05",
     "position": {
       "x": -1.231,
@@ -206,25 +117,10 @@
       "x": 1,
       "y": 1,
       "z": 1
-    },
-    "static_friction": 0.47
+    }
   },
   {
-    "audio": {
-      "amp": 0.5,
-      "bounciness": 0.6,
-      "library": "models_core.json",
-      "mass": 200.0,
-      "material": "hardwood",
-      "name": "trapezoidal_table",
-      "resonance": 0.65
-    },
-    "bounciness": 0.6,
-    "dynamic_friction": 0.35,
-    "gravity": true,
     "kinematic": false,
-    "library": "",
-    "mass": 200.0,
     "name": "trapezoidal_table",
     "position": {
       "x": 1.101,
@@ -241,25 +137,10 @@
       "x": 1,
       "y": 1,
       "z": 1
-    },
-    "static_friction": 0.4
+    }
   },
   {
-    "audio": {
-      "amp": 0.05,
-      "bounciness": 0.2,
-      "library": "models_core.json",
-      "mass": 0.2,
-      "material": "hardwood",
-      "name": "puzzle_box_composite",
-      "resonance": 0.65
-    },
-    "bounciness": 0.2,
-    "dynamic_friction": 0.35,
-    "gravity": true,
     "kinematic": false,
-    "library": "",
-    "mass": 0.2,
     "name": "puzzle_box_composite",
     "position": {
       "x": -0.148,
@@ -276,25 +157,10 @@
       "x": 1,
       "y": 1,
       "z": 1
-    },
-    "static_friction": 0.4
+    }
   },
   {
-    "audio": {
-      "amp": 0.05,
-      "bounciness": 0.2,
-      "library": "models_core.json",
-      "mass": 0.2,
-      "material": "hardwood",
-      "name": "puzzle_box_composite",
-      "resonance": 0.65
-    },
-    "bounciness": 0.2,
-    "dynamic_friction": 0.35,
-    "gravity": true,
     "kinematic": false,
-    "library": "",
-    "mass": 0.2,
     "name": "puzzle_box_composite",
     "position": {
       "x": 0.909,
@@ -311,25 +177,10 @@
       "x": 1,
       "y": 1,
       "z": 1
-    },
-    "static_friction": 0.4
+    }
   },
   {
-    "audio": {
-      "amp": 0.01,
-      "bounciness": 0.58,
-      "library": "models_core.json",
-      "mass": 275.0,
-      "material": "wood",
-      "name": "trunck",
-      "resonance": 0.65
-    },
-    "bounciness": 0.58,
-    "dynamic_friction": 0.35,
-    "gravity": true,
     "kinematic": false,
-    "library": "",
-    "mass": 275.0,
     "name": "trunck",
     "position": {
       "x": -2.636,
@@ -346,25 +197,10 @@
       "x": 1,
       "y": 1,
       "z": 1
-    },
-    "static_friction": 0.4
+    }
   },
   {
-    "audio": {
-      "amp": 0.2,
-      "bounciness": 0.6,
-      "library": "models_core.json",
-      "mass": 0.5,
-      "material": "glass",
-      "name": "framed_painting",
-      "resonance": 0.65
-    },
-    "bounciness": 0.6,
-    "dynamic_friction": 0.65,
-    "gravity": false,
     "kinematic": true,
-    "library": "",
-    "mass": 0.5,
     "name": "framed_painting",
     "position": {
       "x": 1.201,
@@ -381,25 +217,10 @@
       "x": 1,
       "y": 1,
       "z": 1
-    },
-    "static_friction": 0.65
+    }
   },
   {
-    "audio": {
-      "amp": 0.02,
-      "bounciness": 0.58,
-      "library": "models_core.json",
-      "mass": 35.0,
-      "material": "wood",
-      "name": "chair_billiani_doll",
-      "resonance": 0.45
-    },
-    "bounciness": 0.58,
-    "dynamic_friction": 0.35,
-    "gravity": true,
     "kinematic": false,
-    "library": "",
-    "mass": 35.0,
     "name": "chair_billiani_doll",
     "position": {
       "x": 2.5,
@@ -416,25 +237,10 @@
       "x": 1,
       "y": 1,
       "z": 1
-    },
-    "static_friction": 0.4
+    }
   },
   {
-    "audio": {
-      "amp": 0.02,
-      "bounciness": 0.58,
-      "library": "models_core.json",
-      "mass": 35.0,
-      "material": "wood",
-      "name": "chair_billiani_doll",
-      "resonance": 0.45
-    },
-    "bounciness": 0.58,
-    "dynamic_friction": 0.35,
-    "gravity": true,
     "kinematic": false,
-    "library": "",
-    "mass": 35.0,
     "name": "chair_billiani_doll",
     "position": {
       "x": 3.241,
@@ -451,25 +257,10 @@
       "x": 1,
       "y": 1,
       "z": 1
-    },
-    "static_friction": 0.4
+    }
   },
   {
-    "audio": {
-      "amp": 0.02,
-      "bounciness": 0.58,
-      "library": "models_core.json",
-      "mass": 35.0,
-      "material": "wood",
-      "name": "chair_billiani_doll",
-      "resonance": 0.45
-    },
-    "bounciness": 0.58,
-    "dynamic_friction": 0.35,
-    "gravity": true,
     "kinematic": false,
-    "library": "",
-    "mass": 35.0,
     "name": "chair_billiani_doll",
     "position": {
       "x": 2.307,
@@ -486,25 +277,10 @@
       "x": 1,
       "y": 1,
       "z": 1
-    },
-    "static_friction": 0.4
+    }
   },
   {
-    "audio": {
-      "amp": 0.1,
-      "bounciness": 0.6,
-      "library": "models_core.json",
-      "mass": 20.0,
-      "material": "wood",
-      "name": "yellow_side_chair",
-      "resonance": 0.65
-    },
-    "bounciness": 0.6,
-    "dynamic_friction": 0.35,
-    "gravity": true,
     "kinematic": false,
-    "library": "",
-    "mass": 20.0,
     "name": "yellow_side_chair",
     "position": {
       "x": -1.469,
@@ -521,25 +297,10 @@
       "x": 1,
       "y": 1,
       "z": 1
-    },
-    "static_friction": 0.4
+    }
   },
   {
-    "audio": {
-      "amp": 0.01,
-      "bounciness": 0.2,
-      "library": "models_core.json",
-      "mass": 220.0,
-      "material": "cardboard",
-      "name": "arflex_strips_sofa",
-      "resonance": 0.65
-    },
-    "bounciness": 0.2,
-    "dynamic_friction": 0.47,
-    "gravity": true,
     "kinematic": false,
-    "library": "",
-    "mass": 220.0,
     "name": "arflex_strips_sofa",
     "position": {
       "x": -0.006663393,
@@ -556,25 +317,10 @@
       "x": 1,
       "y": 1,
       "z": 1
-    },
-    "static_friction": 0.47
+    }
   },
   {
-    "audio": {
-      "amp": 0.5,
-      "bounciness": 0.6,
-      "library": "models_core.json",
-      "mass": 150.0,
-      "material": "hardwood",
-      "name": "side_table_wood",
-      "resonance": 0.65
-    },
-    "bounciness": 0.6,
-    "dynamic_friction": 0.35,
-    "gravity": true,
     "kinematic": false,
-    "library": "",
-    "mass": 150.0,
     "name": "side_table_wood",
     "position": {
       "x": -1.24,
@@ -591,25 +337,10 @@
       "x": 1,
       "y": 1,
       "z": 1
-    },
-    "static_friction": 0.4
+    }
   },
   {
-    "audio": {
-      "amp": 0.01,
-      "bounciness": 0.4,
-      "library": "models_core.json",
-      "mass": 4.0,
-      "material": "metal",
-      "name": "metal_briefcase",
-      "resonance": 0.65
-    },
-    "bounciness": 0.4,
-    "dynamic_friction": 0.43,
-    "gravity": true,
     "kinematic": false,
-    "library": "",
-    "mass": 4.0,
     "name": "metal_briefcase",
     "position": {
       "x": 0.326,
@@ -626,25 +357,10 @@
       "x": 1,
       "y": 1,
       "z": 1
-    },
-    "static_friction": 0.52
+    }
   },
   {
-    "audio": {
-      "amp": 0.02,
-      "bounciness": 0.5,
-      "library": "models_core.json",
-      "mass": 10.0,
-      "material": "cardboard",
-      "name": "duffle_bag",
-      "resonance": 0.35
-    },
-    "bounciness": 0.5,
-    "dynamic_friction": 0.47,
-    "gravity": true,
     "kinematic": false,
-    "library": "",
-    "mass": 10.0,
     "name": "duffle_bag",
     "position": {
       "x": 0.93,
@@ -661,25 +377,10 @@
       "x": 1,
       "y": 1,
       "z": 1
-    },
-    "static_friction": 0.47
+    }
   },
   {
-    "audio": {
-      "amp": 0.3,
-      "bounciness": 0.4,
-      "library": "models_core.json",
-      "mass": 5.0,
-      "material": "metal",
-      "name": "bastone_floor_lamp",
-      "resonance": 0.65
-    },
-    "bounciness": 0.4,
-    "dynamic_friction": 0.43,
-    "gravity": true,
     "kinematic": false,
-    "library": "",
-    "mass": 5.0,
     "name": "bastone_floor_lamp",
     "position": {
       "x": 1.98,
@@ -696,25 +397,10 @@
       "x": 1,
       "y": 1,
       "z": 1
-    },
-    "static_friction": 0.52
+    }
   },
   {
-    "audio": {
-      "amp": 0.01,
-      "bounciness": 0.58,
-      "library": "models_core.json",
-      "mass": 70.0,
-      "material": "wood",
-      "name": "24_in_wall_cabinet_white_wood",
-      "resonance": 0.25
-    },
-    "bounciness": 0.58,
-    "dynamic_friction": 0.35,
-    "gravity": false,
     "kinematic": true,
-    "library": "",
-    "mass": 70.0,
     "name": "24_in_wall_cabinet_white_wood",
     "position": {
       "x": -2.787,
@@ -731,25 +417,10 @@
       "x": 1,
       "y": 1,
       "z": 1
-    },
-    "static_friction": 0.4
+    }
   },
   {
-    "audio": {
-      "amp": 0.01,
-      "bounciness": 0.58,
-      "library": "models_core.json",
-      "mass": 70.0,
-      "material": "wood",
-      "name": "36_in_wall_cabinet_white_wood",
-      "resonance": 0.25
-    },
-    "bounciness": 0.58,
-    "dynamic_friction": 0.35,
-    "gravity": false,
     "kinematic": true,
-    "library": "",
-    "mass": 70.0,
     "name": "36_in_wall_cabinet_white_wood",
     "position": {
       "x": -2.893,
@@ -766,25 +437,10 @@
       "x": 1,
       "y": 1,
       "z": 1
-    },
-    "static_friction": 0.4
+    }
   },
   {
-    "audio": {
-      "amp": 0.1,
-      "bounciness": 0.625,
-      "library": "models_core.json",
-      "mass": 130.0,
-      "material": "ceramic",
-      "name": "sm_table_white",
-      "resonance": 0.65
-    },
-    "bounciness": 0.625,
-    "dynamic_friction": 0.47,
-    "gravity": true,
     "kinematic": false,
-    "library": "",
-    "mass": 130.0,
     "name": "sm_table_white",
     "position": {
       "x": -1.139,
@@ -801,25 +457,10 @@
       "x": 1,
       "y": 1,
       "z": 1
-    },
-    "static_friction": 0.47
+    }
   },
   {
-    "audio": {
-      "amp": 0.1,
-      "bounciness": 0.5,
-      "library": "models_core.json",
-      "mass": 80.0,
-      "material": "glass",
-      "name": "coffee_table_glass_round",
-      "resonance": 0.65
-    },
-    "bounciness": 0.5,
-    "dynamic_friction": 0.65,
-    "gravity": true,
     "kinematic": false,
-    "library": "",
-    "mass": 80.0,
     "name": "coffee_table_glass_round",
     "position": {
       "x": 0.000812941,
@@ -836,25 +477,10 @@
       "x": 1,
       "y": 1,
       "z": 1
-    },
-    "static_friction": 0.65
+    }
   },
   {
-    "audio": {
-      "amp": 0.01,
-      "bounciness": 0.35,
-      "library": "models_core.json",
-      "mass": 300.0,
-      "material": "metal",
-      "name": "fridge_large",
-      "resonance": 0.5
-    },
-    "bounciness": 0.35,
-    "dynamic_friction": 0.43,
-    "gravity": true,
     "kinematic": false,
-    "library": "",
-    "mass": 300.0,
     "name": "fridge_large",
     "position": {
       "x": -2.659,
@@ -871,25 +497,10 @@
       "x": 1,
       "y": 1,
       "z": 1
-    },
-    "static_friction": 0.52
+    }
   },
   {
-    "audio": {
-      "amp": 0.1,
-      "bounciness": 0.625,
-      "library": "models_core.json",
-      "mass": 20.0,
-      "material": "metal",
-      "name": "appliance-ge-profile-microwave3",
-      "resonance": 0.65
-    },
-    "bounciness": 0.625,
-    "dynamic_friction": 0.43,
-    "gravity": true,
     "kinematic": false,
-    "library": "",
-    "mass": 20.0,
     "name": "appliance-ge-profile-microwave3",
     "position": {
       "x": -2.808,
@@ -906,25 +517,10 @@
       "x": 1,
       "y": 1,
       "z": 1
-    },
-    "static_friction": 0.52
+    }
   },
   {
-    "audio": {
-      "amp": 0.01,
-      "bounciness": 0.35,
-      "library": "models_core.json",
-      "mass": 300.0,
-      "material": "metal",
-      "name": "dishwasher_4",
-      "resonance": 0.65
-    },
-    "bounciness": 0.35,
-    "dynamic_friction": 0.43,
-    "gravity": true,
     "kinematic": false,
-    "library": "",
-    "mass": 300.0,
     "name": "dishwasher_4",
     "position": {
       "x": -2.682,
@@ -941,25 +537,10 @@
       "x": 1,
       "y": 1,
       "z": 1
-    },
-    "static_friction": 0.52
+    }
   },
   {
-    "audio": {
-      "amp": 0.01,
-      "bounciness": 0.58,
-      "library": "models_core.json",
-      "mass": 250.0,
-      "material": "wood",
-      "name": "dining_room_table",
-      "resonance": 0.35
-    },
-    "bounciness": 0.58,
-    "dynamic_friction": 0.35,
-    "gravity": true,
     "kinematic": false,
-    "library": "",
-    "mass": 250.0,
     "name": "dining_room_table",
     "position": {
       "x": 3.121,
@@ -976,25 +557,10 @@
       "x": 1,
       "y": 1,
       "z": 1
-    },
-    "static_friction": 0.4
+    }
   },
   {
-    "audio": {
-      "amp": 0.01,
-      "bounciness": 0.2,
-      "library": "models_core.json",
-      "mass": 1.0,
-      "material": "ceramic",
-      "name": "coffee_001",
-      "resonance": 0.65
-    },
-    "bounciness": 0.2,
-    "dynamic_friction": 0.47,
-    "gravity": true,
     "kinematic": false,
-    "library": "",
-    "mass": 1.0,
     "name": "coffee_001",
     "position": {
       "x": -2.906,
@@ -1011,25 +577,10 @@
       "x": 1,
       "y": 1,
       "z": 1
-    },
-    "static_friction": 0.47
+    }
   },
   {
-    "audio": {
-      "amp": 0.02,
-      "bounciness": 0.58,
-      "library": "models_core.json",
-      "mass": 35.0,
-      "material": "wood",
-      "name": "linen_dining_chair",
-      "resonance": 0.4
-    },
-    "bounciness": 0.58,
-    "dynamic_friction": 0.35,
-    "gravity": true,
     "kinematic": false,
-    "library": "",
-    "mass": 35.0,
     "name": "linen_dining_chair",
     "position": {
       "x": 0.897,
@@ -1046,25 +597,10 @@
       "x": 1,
       "y": 1,
       "z": 1
-    },
-    "static_friction": 0.4
+    }
   },
   {
-    "audio": {
-      "amp": 0.02,
-      "bounciness": 0.58,
-      "library": "models_core.json",
-      "mass": 35.0,
-      "material": "wood",
-      "name": "linen_dining_chair",
-      "resonance": 0.4
-    },
-    "bounciness": 0.58,
-    "dynamic_friction": 0.35,
-    "gravity": true,
     "kinematic": false,
-    "library": "",
-    "mass": 35.0,
     "name": "linen_dining_chair",
     "position": {
       "x": -0.87,
@@ -1081,25 +617,10 @@
       "x": 1,
       "y": 1,
       "z": 1
-    },
-    "static_friction": 0.4
+    }
   },
   {
-    "audio": {
-      "amp": 0.01,
-      "bounciness": 0.58,
-      "library": "models_core.json",
-      "mass": 70.0,
-      "material": "wood",
-      "name": "cabinet_24_two_drawer_white_wood",
-      "resonance": 0.25
-    },
-    "bounciness": 0.58,
-    "dynamic_friction": 0.35,
-    "gravity": false,
     "kinematic": true,
-    "library": "",
-    "mass": 70.0,
     "name": "cabinet_24_two_drawer_white_wood",
     "position": {
       "x": -2.678,
@@ -1116,25 +637,10 @@
       "x": 1,
       "y": 1,
       "z": 1
-    },
-    "static_friction": 0.4
+    }
   },
   {
-    "audio": {
-      "amp": 0.01,
-      "bounciness": 0.58,
-      "library": "models_core.json",
-      "mass": 70.0,
-      "material": "wood",
-      "name": "cabinet_24_white_wood",
-      "resonance": 0.5
-    },
-    "bounciness": 0.58,
-    "dynamic_friction": 0.35,
-    "gravity": false,
     "kinematic": true,
-    "library": "",
-    "mass": 70.0,
     "name": "cabinet_24_white_wood",
     "position": {
       "x": -2.674,
@@ -1151,25 +657,10 @@
       "x": 1,
       "y": 1,
       "z": 1
-    },
-    "static_friction": 0.4
+    }
   },
   {
-    "audio": {
-      "amp": 0.01,
-      "bounciness": 0.58,
-      "library": "models_core.json",
-      "mass": 70.0,
-      "material": "wood",
-      "name": "cabinet_36_white_wood",
-      "resonance": 0.35
-    },
-    "bounciness": 0.58,
-    "dynamic_friction": 0.35,
-    "gravity": false,
     "kinematic": true,
-    "library": "",
-    "mass": 70.0,
     "name": "cabinet_36_white_wood",
     "position": {
       "x": -2.679,
@@ -1186,25 +677,10 @@
       "x": 1,
       "y": 1,
       "z": 1
-    },
-    "static_friction": 0.4
+    }
   },
   {
-    "audio": {
-      "amp": 0.01,
-      "bounciness": 0.58,
-      "library": "models_core.json",
-      "mass": 70.0,
-      "material": "wood",
-      "name": "cabinet_36_white_wood",
-      "resonance": 0.35
-    },
-    "bounciness": 0.58,
-    "dynamic_friction": 0.35,
-    "gravity": false,
     "kinematic": true,
-    "library": "",
-    "mass": 70.0,
     "name": "cabinet_36_white_wood",
     "position": {
       "x": -2.689,
@@ -1221,25 +697,10 @@
       "x": 1,
       "y": 1,
       "z": 1
-    },
-    "static_friction": 0.4
+    }
   },
   {
-    "audio": {
-      "amp": 0.6,
-      "bounciness": 0.6,
-      "library": "models_core.json",
-      "mass": 0.2,
-      "material": "metal",
-      "name": "spoon1",
-      "resonance": 0.65
-    },
-    "bounciness": 0.6,
-    "dynamic_friction": 0.43,
-    "gravity": true,
     "kinematic": false,
-    "library": "",
-    "mass": 0.2,
     "name": "spoon1",
     "position": {
       "x": 3.31097,
@@ -1256,25 +717,10 @@
       "x": 1,
       "y": 1,
       "z": 1
-    },
-    "static_friction": 0.52
+    }
   },
   {
-    "audio": {
-      "amp": 0.5,
-      "bounciness": 0.6,
-      "library": "models_core.json",
-      "mass": 0.2,
-      "material": "metal",
-      "name": "servingfork",
-      "resonance": 0.65
-    },
-    "bounciness": 0.6,
-    "dynamic_friction": 0.43,
-    "gravity": true,
     "kinematic": false,
-    "library": "",
-    "mass": 0.2,
     "name": "servingfork",
     "position": {
       "x": 8.422649e-08,
@@ -1291,25 +737,10 @@
       "x": 1,
       "y": 1,
       "z": 1
-    },
-    "static_friction": 0.52
+    }
   },
   {
-    "audio": {
-      "amp": 0.7,
-      "bounciness": 0.6,
-      "library": "models_core.json",
-      "mass": 0.5,
-      "material": "glass",
-      "name": "glass1",
-      "resonance": 1.1
-    },
-    "bounciness": 0.6,
-    "dynamic_friction": 0.65,
-    "gravity": true,
     "kinematic": false,
-    "library": "",
-    "mass": 0.5,
     "name": "glass1",
     "position": {
       "x": 2.858003,
@@ -1326,25 +757,10 @@
       "x": 1,
       "y": 1,
       "z": 1
-    },
-    "static_friction": 0.65
+    }
   },
   {
-    "audio": {
-      "amp": 0.6,
-      "bounciness": 0.6,
-      "library": "models_core.json",
-      "mass": 0.2,
-      "material": "metal",
-      "name": "spoon1",
-      "resonance": 0.65
-    },
-    "bounciness": 0.6,
-    "dynamic_friction": 0.43,
-    "gravity": true,
     "kinematic": false,
-    "library": "",
-    "mass": 0.2,
     "name": "spoon1",
     "position": {
       "x": 2.720088,
@@ -1361,25 +777,10 @@
       "x": 1,
       "y": 1,
       "z": 1
-    },
-    "static_friction": 0.52
+    }
   },
   {
-    "audio": {
-      "amp": 0.5,
-      "bounciness": 0.6,
-      "library": "models_core.json",
-      "mass": 0.2,
-      "material": "metal",
-      "name": "servingfork",
-      "resonance": 0.65
-    },
-    "bounciness": 0.6,
-    "dynamic_friction": 0.43,
-    "gravity": true,
     "kinematic": false,
-    "library": "",
-    "mass": 0.2,
     "name": "servingfork",
     "position": {
       "x": -2.679,
@@ -1396,25 +797,10 @@
       "x": 1,
       "y": 1,
       "z": 1
-    },
-    "static_friction": 0.52
+    }
   },
   {
-    "audio": {
-      "amp": 0.7,
-      "bounciness": 0.6,
-      "library": "models_core.json",
-      "mass": 0.5,
-      "material": "glass",
-      "name": "glass1",
-      "resonance": 1.1
-    },
-    "bounciness": 0.6,
-    "dynamic_friction": 0.65,
-    "gravity": true,
     "kinematic": false,
-    "library": "",
-    "mass": 0.5,
     "name": "glass1",
     "position": {
       "x": 3.311,
@@ -1431,25 +817,10 @@
       "x": 1,
       "y": 1,
       "z": 1
-    },
-    "static_friction": 0.65
+    }
   },
   {
-    "audio": {
-      "amp": 0.6,
-      "bounciness": 0.6,
-      "library": "models_core.json",
-      "mass": 0.2,
-      "material": "metal",
-      "name": "spoon1",
-      "resonance": 0.65
-    },
-    "bounciness": 0.6,
-    "dynamic_friction": 0.43,
-    "gravity": true,
     "kinematic": false,
-    "library": "",
-    "mass": 0.2,
     "name": "spoon1",
     "position": {
       "x": -1.226,
@@ -1466,25 +837,10 @@
       "x": 1,
       "y": 1,
       "z": 1
-    },
-    "static_friction": 0.52
+    }
   },
   {
-    "audio": {
-      "amp": 0.5,
-      "bounciness": 0.6,
-      "library": "models_core.json",
-      "mass": 0.2,
-      "material": "metal",
-      "name": "servingfork",
-      "resonance": 0.65
-    },
-    "bounciness": 0.6,
-    "dynamic_friction": 0.43,
-    "gravity": true,
     "kinematic": false,
-    "library": "",
-    "mass": 0.2,
     "name": "servingfork",
     "position": {
       "x": 8.451752e-08,
@@ -1501,25 +857,10 @@
       "x": 1,
       "y": 1,
       "z": 1
-    },
-    "static_friction": 0.52
+    }
   },
   {
-    "audio": {
-      "amp": 0.7,
-      "bounciness": 0.6,
-      "library": "models_core.json",
-      "mass": 0.5,
-      "material": "glass",
-      "name": "glass1",
-      "resonance": 1.1
-    },
-    "bounciness": 0.6,
-    "dynamic_friction": 0.65,
-    "gravity": true,
     "kinematic": false,
-    "library": "",
-    "mass": 0.5,
     "name": "glass1",
     "position": {
       "x": -1.225997,
@@ -1536,7 +877,6 @@
       "x": 1,
       "y": 1,
       "z": 1
-    },
-    "static_friction": 0.65
+    }
   }
 ]
