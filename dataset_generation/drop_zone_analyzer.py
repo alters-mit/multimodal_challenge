@@ -40,11 +40,13 @@ class DropZoneAnalyzer(Controller):
         commands = [self.get_add_scene(scene_name=scene),
                     {"$type": "set_floorplan_roof",
                      "show": False}]
+        print("Max instances:", max_instances)
         for i, drop_zone in enumerate(drop_zones):
             # Lerp between the two colors to show how close the value of this drop zone
             # compared to the drop zone with the most drops.
-            color = DropZoneAnalyzer.COLOR_A + (DropZoneAnalyzer.COLOR_B - DropZoneAnalyzer.COLOR_A) * \
-                    (indices.count(i) / max_instances)
+            t = indices.count(i) / max_instances
+            color = DropZoneAnalyzer.COLOR_A + (DropZoneAnalyzer.COLOR_B - DropZoneAnalyzer.COLOR_A) * t
+            print(i, indices.count(i) / len(indices))
             commands.append({"$type": "add_position_marker",
                              "position": TDWUtils.array_to_vector3(drop_zone.center),
                              "shape": "circle",
