@@ -8,26 +8,26 @@ class EnvAudioMaterials:
     """
 
     """:class_var
-    A dictionary. Key = A PyImpact `AudioMaterial`. Value = The corresponding Resonance Audio material.
+    A dictionary. Key = A Resonance Audio material. Value = The corresponding PyImpact `AudioMaterial`.
     """
-    PY_IMPACT_TO_RESONANCE_AUDIO: Dict[AudioMaterial, str] = {AudioMaterial.cardboard: "roughPlaster",
-                                                              AudioMaterial.ceramic: "tile",
-                                                              AudioMaterial.glass: "glass",
-                                                              AudioMaterial.hardwood: "parquet",
-                                                              AudioMaterial.metal: "metal",
-                                                              AudioMaterial.wood: "wood"}
+    RESONANCE_AUDIO_TO_PY_IMPACT: Dict[str, AudioMaterial] = {"roughPlaster": AudioMaterial.wood,
+                                                              "tile": AudioMaterial.ceramic,
+                                                              "concrete": AudioMaterial.ceramic,
+                                                              "wood": AudioMaterial.wood,
+                                                              "smoothPlaster": AudioMaterial.wood,
+                                                              "acousticTile": AudioMaterial.cardboard}
 
     def __init__(self, floor: str, wall: str):
         """
-        :param floor: The PyImpact floor audio material as a string.
-        :param wall: The PyImpact wall audio material as a string.
+        :param floor: The Resonance Audio floor material.
+        :param wall: The Resonance Audio wall material.
         """
 
         """:field
-        The PyImpact floor floor material.
+        The Resonance Audio floor material..
         """
-        self.floor: AudioMaterial = AudioMaterial[floor]
+        self.floor: str = floor
         """:field
-        The PyImpact wall audio material.
+        The Resonance Audio wall material.
         """
-        self.wall: AudioMaterial = AudioMaterial[wall]
+        self.wall: str = wall

@@ -1,14 +1,14 @@
 from json import dumps
-from typing import Optional, List, Dict, Tuple
-from csv import DictReader
+from typing import Optional, List, Tuple
 from tqdm import tqdm
 import numpy as np
 from tdw.controller import Controller
 from tdw.output_data import Transforms, Raycast
 from magnebot.scene_environment import SceneEnvironment
 from magnebot.util import get_data
-from multimodal_challenge.util import DROP_OBJECTS, get_object_init_commands, get_scene_librarian, get_drop_zones
-from multimodal_challenge.paths import SCENE_LAYOUT_PATH, REHEARSAL_DIRECTORY
+from multimodal_challenge.util import DROP_OBJECTS, get_object_init_commands, get_scene_librarian, get_drop_zones,\
+    NUM_LAYOUTS
+from multimodal_challenge.paths import REHEARSAL_DIRECTORY, OBJECT_INIT_DIRECTORY
 from multimodal_challenge.dataset_generation.drop import Drop
 from multimodal_challenge.dataset_generation.drop_zone import DropZone
 from multimodal_challenge.encoder import Encoder
@@ -183,19 +183,17 @@ class Rehearsal(Controller):
         """
 
         self.scene_librarian = get_scene_librarian()
-        scene_layouts: Dict[str, int] = dict()
-        num_layouts: int = 0
+        scenes: List[str] = list()
         # Get the scene_layout schema.
-        with open(str(SCENE_LAYOUT_PATH.resolve()), newline='') as f:
-            reader = DictReader(f)
-            for row in reader:
-                layouts = int(row["layout"])
-                scene_layouts[row["scene"]] = layouts
-                num_layouts += layouts
+        for f in OBJECT_INIT_DIRECTORY.iterdir():
+            # Expected: mm_kitchen_1a_0.json, mm_kitchen_1a_1.json, ... , mm_kitchen_2b_2.json, ...
+            if f.is_file() and f.suffix == ".json" and f.name.endswith("_0.json"):
+                scenes.append(f.name.replace(".json", "")[:-2])
         # Do trials for each scene_layout combination.
-        for scene in scene_layouts:
-            for i in range(scene_layouts[scene]):
-                self.do_trials(scene=scene, layout=i, num_trials=int(num_trials / num_layouts))
+        trials_per_scene_layout = int(num_trials / float(len(scenes) * NUM_LAYOUTS))
+        for scene in scenes:
+            for i in range(NUM_LAYOUTS):
+                self.do_trials(scene=scene, layout=i, num_trials=trials_per_scene_layout)
         self.communicate({"$type": "terminate"})
 
     def do_trials(self, scene: str, layout: int, num_trials: int) -> None:
