@@ -1,3 +1,4 @@
+from typing import List
 import numpy as np
 
 
@@ -6,11 +7,10 @@ class MagnebotInitData:
     Initialization data for the Magnebot in the challenge controller and the dataset controller.
     """
 
-    def __init__(self, position: np.array, rotation: float, torso_height: float, column_angle: float,
+    def __init__(self, position: np.array, torso_height: float, column_angle: float,
                  camera_pitch: float, camera_yaw: float):
         """
         :param position: The initial position of the Magnebot as an `[x, y, z]` numpy array.
-        :param rotation: The initial rotation of the Magnebot around the y axis.
         :param torso_height: The initial height of the Magnebot's torso (between 0 and 1).
         :param column_angle: The initial rotation of the Magnebot's column in degrees.
         :param camera_pitch: The initial pitch of the Magnebot's camera in degrees.
@@ -21,10 +21,6 @@ class MagnebotInitData:
         The initial position of the Magnebot as an `[x, y, z]` numpy array.
         """
         self.position: np.array = np.array(position)
-        """:field
-        The initial rotation of the Magnebot around the y axis.
-        """
-        self.rotation: float = float(rotation)
         """:field
         The initial height of the Magnebot's torso (between 0 and 1).
         """

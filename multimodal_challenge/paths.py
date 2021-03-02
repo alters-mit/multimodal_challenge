@@ -36,6 +36,8 @@ OBJECT_LIBRARY_PATH = OBJECT_DATA_DIRECTORY.joinpath("library.json")
 TARGET_OBJECTS_PATH = OBJECT_DATA_DIRECTORY.joinpath("target_objects.txt")
 # The path to scene data.
 SCENE_DATA_DIRECTORY = DATA_DIRECTORY.joinpath("scenes")
+# The path to the occupancy maps.
+OCCUPANCY_MAPS_DIRECTORY = SCENE_DATA_DIRECTORY.joinpath("occupancy_maps")
 # The path to the scene librarian metadata.
 SCENE_LIBRARY_PATH = SCENE_DATA_DIRECTORY.joinpath("library.json")
 # The path to the .json files containing object init data.

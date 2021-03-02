@@ -13,5 +13,5 @@ if __name__ == "__main__":
     md.get_docs(output_directory=Path("../doc/api"))
     # Dataset generation documentation.
     md = PyMdDoc(input_directory=Path("../dataset_generation"), files=["dataset.py", "rehearsal.py", "init_data.py",
-                                                                       "drop_zone_analyzer.py"])
+                                                                       "drop_zone_analyzer.py", "occupancy_mapper.py"])
     md.get_docs(output_directory=Path("../doc/dataset"))

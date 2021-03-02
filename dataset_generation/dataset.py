@@ -9,7 +9,7 @@ import pyaudio
 from tqdm import tqdm
 from tdw.tdw_utils import AudioUtils, TDWUtils
 from tdw.py_impact import PyImpact
-from magnebot import Magnebot
+from magnebot import Magnebot, ArmJoint
 from magnebot.scene_state import SceneState
 from multimodal_challenge.multimodal_base import MultiModalBase
 from multimodal_challenge.trial import Trial
@@ -135,6 +135,10 @@ class Dataset(MultiModalBase):
         A dummy object ID for the environment. This is reassigned per trial.
         """
         self.env_id: int = -1
+        # Magnebot initialization data.
+        self._magnebot_init_data: Optional[MagnebotInitData] = None
+        # The initial position of the Magnebot for this trial.
+        self._magnebot_position: Optional[np.array] = None
 
     def run(self) -> None:
         """
@@ -357,19 +361,51 @@ class Dataset(MultiModalBase):
         # Add an audio sensor.
         return [{"$type": "add_environ_audio_sensor"}]
 
-    def _get_magnebot_init_data(self) -> MagnebotInitData:
-        # Get a random joint positions.
-        column_angle = self._rng.uniform(-25, 25)
-        torso_height = self._rng.random()
-        # Set random camera angles.
-        camera_pitch = self._rng.uniform(-Magnebot.CAMERA_RPY_CONSTRAINTS[1] / 2,
-                                         Magnebot.CAMERA_RPY_CONSTRAINTS[1] / 2)
-        camera_yaw = self._rng.uniform(-Magnebot.CAMERA_RPY_CONSTRAINTS[2] / 2,
-                                       Magnebot.CAMERA_RPY_CONSTRAINTS[2] / 2)
-        position = np.array([0, 0, 0])  # TODO
-        rotation = 0  # TODO
-        return MagnebotInitData(position=position, rotation=rotation, torso_height=torso_height,
-                                column_angle=column_angle, camera_pitch=camera_pitch, camera_yaw=camera_yaw)
+    def _set_initial_pose(self) -> None:
+        good = False
+        num_attempts: int = 0
+        joint_ids = [self.magnebot_static.arm_joints[ArmJoint.torso], self.magnebot_static.arm_joints[ArmJoint.column]]
+        while not good and num_attempts < 100:
+            # Get a random joint positions.
+            column_angle = self._rng.uniform(-160, 160)
+            torso_height = self._rng.random()
+            # Set random camera angles.
+            camera_pitch = self._rng.uniform(-Magnebot.CAMERA_RPY_CONSTRAINTS[1] / 2,
+                                             Magnebot.CAMERA_RPY_CONSTRAINTS[1] / 2)
+            camera_yaw = self._rng.uniform(-Magnebot.CAMERA_RPY_CONSTRAINTS[2] / 2,
+                                           Magnebot.CAMERA_RPY_CONSTRAINTS[2] / 2)
+            self._magnebot_init_data = MagnebotInitData(position=self._magnebot_position,
+                                                        torso_height=torso_height,
+                                                        column_angle=column_angle,
+                                                        camera_yaw=camera_yaw,
+                                                        camera_pitch=camera_pitch)
+            # Converts the init data to commands.
+            self._next_frame_commands.extend(self._get_magnebot_init_commands(init=self._magnebot_init_data))
+            # Strike a cool pose.
+            self._do_arm_motion(joint_ids=joint_ids)
+            # Update the state.
+            self._end_action()
+            # If the object isn't visible, this is a good pose.
+            good = self.target_object_id not in self.get_visible_objects()
+            num_attempts += 1
+
+    def _get_magnebot_position(self) -> np.array:
+        # Get all free occupancy map positions.
+        occupancy_positions: List[np.array] = list()
+        target_object_position = self.state.object_transforms[self.target_object_id].position
+        for ix, iy in np.ndindex(self.occupancy_map.shape):
+            if self.occupancy_map[ix][iy] != 0:
+                continue
+            px, pz = self.get_occupancy_position(ix, iy)
+            occupancy_positions.append(np.array([px, 0, pz]))
+        # Sort the occupancy map positions by distance to the target object.
+        occupancy_positions = list(sorted(occupancy_positions,
+                                          key=lambda p: np.linalg.norm(p - target_object_position)))
+        # Get the latter half of the positions (the further positions).
+        occupancy_positions = occupancy_positions[int(len(occupancy_positions) / 2.0):]
+        # Pick a random position.
+        self._magnebot_position = self._rng.choice(occupancy_positions)
+        return self._magnebot_position
 
     @staticmethod
     def _get_pyaudio_device_index() -> int:
