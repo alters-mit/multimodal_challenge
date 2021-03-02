@@ -2,9 +2,9 @@ from typing import Dict
 from multimodal_challenge.multimodal_object_init_data import MultiModalObjectInitData
 
 
-class Drop:
+class DatasetTrial:
     """
-    Parameters for defining a dropped object: its starting position, rotation, etc. plus a force vector.
+    Parameters for defining a trial for dataset generation.
     """
 
     def __init__(self, init_data: MultiModalObjectInitData, force: Dict[str, float]):
@@ -17,12 +17,12 @@ class Drop:
         if isinstance(init_data, dict):
             init_data: dict
             """:field
-            A [`MultiModalObjectInitData` object](multimodal_object_init_data.md).
+            A [`MultiModalObjectInitData` object](multimodal_object_init_data.md) for the dropped object.
             """
             self.init_data = MultiModalObjectInitData(**init_data)
         else:
             self.init_data: MultiModalObjectInitData = init_data
         """:field
-        The initial force of the object as a Vector3 dictionary.
+        The initial force of the dropped object object as a Vector3 dictionary.
         """
         self.force: Dict[str, float] = force

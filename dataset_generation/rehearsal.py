@@ -9,15 +9,15 @@ from magnebot.util import get_data
 from multimodal_challenge.util import DROP_OBJECTS, get_object_init_commands, get_scene_librarian, get_drop_zones,\
     NUM_LAYOUTS
 from multimodal_challenge.paths import REHEARSAL_DIRECTORY, OBJECT_INIT_DIRECTORY
-from multimodal_challenge.dataset_generation.drop import Drop
-from multimodal_challenge.dataset_generation.drop_zone import DropZone
+from multimodal_challenge.dataset.dataset_trial import DatasetTrial
+from multimodal_challenge.dataset.drop_zone import DropZone
 from multimodal_challenge.encoder import Encoder
 from multimodal_challenge.multimodal_object_init_data import MultiModalObjectInitData
 
 
 class Rehearsal(Controller):
     """
-    "Rehearse" the audio dataset_generation by running randomly-generated trials and saving the "valid" trials.
+    "Rehearse" the audio dataset by running randomly-generated trials and saving the "valid" trials.
 
     This is meant only for backend developers; the Python module already has cached rehearsal data.
 
@@ -34,7 +34,7 @@ class Rehearsal(Controller):
 
     # Usage
 
-    1. `cd dataset_generation`
+    1. `cd dataset`
     2. `python3 rehearsal.py`
     3. Run build
 
@@ -47,11 +47,11 @@ class Rehearsal(Controller):
 
     **Per trial:**
 
-    1. Randomly set the parameters of a new [`Drop`](../api/drop.md) which is used here as initialization data.
+    1. Randomly set the parameters of a new [`DatasetTrial`](../api/dataset_trial.md) for initialization.
     2. Let the target object fall. **The only output data is the `Transform` of the target object.**
-    3. When the target object stops falling, check if the target object is in a `DropZone`. If so, record the `Drop`.
+    3. When the target object stops falling, if it's is in a `DropZone`, record the `DatasetTrial`.
 
-    **Result:** A list of `Drop` initialization objects per scene_layout combination:
+    **Result:** A list of `DatasetTrial` initialization objects per scene_layout combination:
 
     ```
     D:/multimodal_challenge/dataset  # See dataset in config.ini
@@ -92,12 +92,12 @@ class Rehearsal(Controller):
         """
         self.drop_zones: List[DropZone] = list()
 
-    def do_trial(self) -> Tuple[Optional[Drop], int]:
+    def do_trial(self) -> Tuple[Optional[DatasetTrial], int]:
         """
         Choose a random object. Assign a random (constrained) scale, position, rotation, and force.
         Let the object fall. When it stops moving, determine if the object is in a drop zone.
 
-        :return: Tuple: A `Drop` object if the object landed in the drop zone, otherwise None; drop zone ID.
+        :return: Tuple: A `DatasetTrial` if the object landed in the drop zone, otherwise None; drop zone ID.
         """
 
         commands = []
@@ -172,7 +172,7 @@ class Rehearsal(Controller):
         for i, drop_zone in enumerate(self.drop_zones):
             if drop_zone.center[1] + 0.1 >= p_0[1] >= drop_zone.center[1] and \
                     np.linalg.norm(p_0 - drop_zone.center) < drop_zone.radius:
-                return Drop(init_data=a, force=force), i
+                return DatasetTrial(init_data=a, force=force), i
         return None, -1
 
     def run(self, num_trials: int = 10000) -> None:
@@ -226,20 +226,20 @@ class Rehearsal(Controller):
         self.scene_environment = SceneEnvironment(resp=resp)
         pbar = tqdm(total=num_trials)
         # Remember all good drops.
-        drops: List[Drop] = list()
+        dataset_trials: List[DatasetTrial] = list()
         drop_zone_indices: List[int] = list()
-        while len(drops) < num_trials:
+        while len(dataset_trials) < num_trials:
             # Do a trial.
-            drop, drop_zone_index = self.do_trial()
+            dataset_trial, drop_zone_index = self.do_trial()
             # If we got an object back, then this was a good trial.
-            if drop is not None:
+            if dataset_trial is not None:
                 # Save the data.
-                drops.append(drop)
+                dataset_trials.append(dataset_trial)
                 drop_zone_indices.append(drop_zone_index)
                 pbar.update(1)
         pbar.close()
         # Write the results to disk.
-        REHEARSAL_DIRECTORY.joinpath(filename).write_text(dumps(drops, cls=Encoder), encoding="utf-8")
+        REHEARSAL_DIRECTORY.joinpath(filename).write_text(dumps(dataset_trials, cls=Encoder), encoding="utf-8")
         # Record the drop zone indices for debugging.
         REHEARSAL_DIRECTORY.joinpath(f"{scene}_{layout}_drop_zones.json").write_text(dumps(drop_zone_indices),
                                                                                      encoding="utf-8")

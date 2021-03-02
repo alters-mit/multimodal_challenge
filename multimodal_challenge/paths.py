@@ -32,15 +32,15 @@ DATA_DIRECTORY: Path = Path(resource_filename(__name__, "data"))
 OBJECT_DATA_DIRECTORY = DATA_DIRECTORY.joinpath("objects")
 # The path to the object librarian metadata.
 OBJECT_LIBRARY_PATH = OBJECT_DATA_DIRECTORY.joinpath("library.json")
-# The path to the list of droppable objects.
-DROP_OBJECTS_PATH = OBJECT_DATA_DIRECTORY.joinpath("drop_objects.txt")
+# The path to the list of droppable target objects.
+TARGET_OBJECTS_PATH = OBJECT_DATA_DIRECTORY.joinpath("target_objects.txt")
 # The path to scene data.
 SCENE_DATA_DIRECTORY = DATA_DIRECTORY.joinpath("scenes")
 # The path to the scene librarian metadata.
 SCENE_LIBRARY_PATH = SCENE_DATA_DIRECTORY.joinpath("library.json")
 # The path to the .json files containing object init data.
 OBJECT_INIT_DIRECTORY = SCENE_DATA_DIRECTORY.joinpath("object_init")
-# The path to the audio dataset_generation files.
+# The path to the audio dataset files.
 AUDIO_DATASET_DIRECTORY = DATA_DIRECTORY.joinpath("dataset")
 # The path to the .json files containing drop zone data.
 DROP_ZONE_DIRECTORY = AUDIO_DATASET_DIRECTORY.joinpath("drop_zones")

@@ -6,7 +6,7 @@ from tdw.py_impact import PyImpact
 from tdw.librarian import ModelLibrarian, SceneLibrarian
 from tdw.controller import Controller
 from multimodal_challenge.paths import DROP_ZONE_DIRECTORY, OBJECT_INIT_DIRECTORY, OBJECT_LIBRARY_PATH, \
-    SCENE_LIBRARY_PATH, DROP_OBJECTS_PATH
+    SCENE_LIBRARY_PATH, TARGET_OBJECTS_PATH
 from multimodal_challenge.multimodal_object_init_data import MultiModalObjectInitData
 from multimodal_challenge.encoder import Encoder
 
@@ -26,7 +26,7 @@ class InitData:
 
     # Usage
 
-    1. `cd dataset_generation`
+    1. `cd dataset`
     2. `python3 init_data.py ARGUMENTS`
     3. Run build
 
@@ -138,7 +138,7 @@ class InitData:
             model_lib_core = ModelLibrarian()
             model_names = [o.name for o in objects]
             # Get the drop objects.
-            model_names.extend(DROP_OBJECTS_PATH.read_text(encoding="utf-8").split("\n"))
+            model_names.extend(TARGET_OBJECTS_PATH.read_text(encoding="utf-8").split("\n"))
             model_names = list(sorted(model_names))
             for o in model_names:
                 record = model_lib.get_record(o)

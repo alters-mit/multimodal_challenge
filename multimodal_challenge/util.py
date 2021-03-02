@@ -3,13 +3,13 @@ from typing import List
 from os.path import join
 from tdw.librarian import SceneLibrarian
 from tdw.tdw_utils import TDWUtils
-from multimodal_challenge.paths import DROP_OBJECTS_PATH, OBJECT_INIT_DIRECTORY, SCENE_LIBRARY_PATH, \
+from multimodal_challenge.paths import TARGET_OBJECTS_PATH, OBJECT_INIT_DIRECTORY, SCENE_LIBRARY_PATH, \
     ASSET_BUNDLES_DIRECTORY, DROP_ZONE_DIRECTORY
 from multimodal_challenge.multimodal_object_init_data import MultiModalObjectInitData
-from multimodal_challenge.dataset_generation.drop_zone import DropZone
+from multimodal_challenge.dataset.drop_zone import DropZone
 
 # A list of the names of droppable objects.
-DROP_OBJECTS = DROP_OBJECTS_PATH.read_text(encoding="utf-8").split("\n")
+DROP_OBJECTS = TARGET_OBJECTS_PATH.read_text(encoding="utf-8").split("\n")
 # The expected number of layouts per scene.
 NUM_LAYOUTS = 4
 
