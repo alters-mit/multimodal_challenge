@@ -1352,6 +1352,77 @@
             "wcategory": "suitcase",
             "wnid": "n02773838"
         },
+        "elephant_bowl": {
+            "asset_bundle_sizes": {
+                "Darwin": 1712033,
+                "Linux": 1941026,
+                "Windows": 1553838
+            },
+            "bounds": {
+                "back": {
+                    "x": 0,
+                    "y": 0.2518426,
+                    "z": -0.2562177
+                },
+                "bottom": {
+                    "x": 0,
+                    "y": 0,
+                    "z": 0
+                },
+                "center": {
+                    "x": 0,
+                    "y": 0.2518426,
+                    "z": 0
+                },
+                "front": {
+                    "x": 0,
+                    "y": 0.2518426,
+                    "z": 0.2562177
+                },
+                "left": {
+                    "x": -0.2565,
+                    "y": 0.2518426,
+                    "z": 0
+                },
+                "right": {
+                    "x": 0.2565,
+                    "y": 0.2518426,
+                    "z": 0
+                },
+                "top": {
+                    "x": 0,
+                    "y": 0.5036852,
+                    "z": 0
+                }
+            },
+            "canonical_rotation": {
+                "x": 0,
+                "y": 0.0,
+                "z": 0
+            },
+            "composite_object": false,
+            "do_not_use": false,
+            "do_not_use_reason": "",
+            "flex": true,
+            "name": "elephant_bowl",
+            "physics_quality": -1,
+            "scale_factor": 1.0,
+            "substructure": [
+                {
+                    "materials": [
+                        "marble_white_less_tile"
+                    ],
+                    "name": "elephant_bowl"
+                }
+            ],
+            "urls": {
+                "Darwin": "ROOT/models/osx/2018-2019.1/elephant_bowl",
+                "Linux": "ROOT/models/linux/2018-2019.1/elephant_bowl",
+                "Windows": "ROOT/models/windows/2018-2019.1/elephant_bowl"
+            },
+            "wcategory": "bowl",
+            "wnid": "n03206908"
+        },
         "fork1": {
             "asset_bundle_sizes": {
                 "Darwin": 111055,
@@ -2136,6 +2207,80 @@
             },
             "wcategory": "jug",
             "wnid": "n03603722"
+        },
+        "juicer": {
+            "asset_bundle_sizes": {
+                "Darwin": 528486,
+                "Linux": 808278,
+                "Windows": 332565
+            },
+            "bounds": {
+                "back": {
+                    "x": 0,
+                    "y": 0.1429182,
+                    "z": -0.1219431
+                },
+                "bottom": {
+                    "x": 0,
+                    "y": -1.937151e-05,
+                    "z": -0.009561256
+                },
+                "center": {
+                    "x": 0,
+                    "y": 0.1429182,
+                    "z": -0.009561256
+                },
+                "front": {
+                    "x": 0,
+                    "y": 0.1429182,
+                    "z": 0.1028206
+                },
+                "left": {
+                    "x": -0.1028206,
+                    "y": 0.1429182,
+                    "z": -0.009561256
+                },
+                "right": {
+                    "x": 0.1028206,
+                    "y": 0.1429182,
+                    "z": -0.009561256
+                },
+                "top": {
+                    "x": 0,
+                    "y": 0.2858557,
+                    "z": -0.009561256
+                }
+            },
+            "canonical_rotation": {
+                "x": 0,
+                "y": 0.0,
+                "z": 0
+            },
+            "composite_object": false,
+            "do_not_use": false,
+            "do_not_use_reason": "",
+            "flex": true,
+            "name": "juicer",
+            "physics_quality": -1,
+            "scale_factor": 1.0,
+            "substructure": [
+                {
+                    "materials": [
+                        "plastic_vinyl_glossy_gray",
+                        "Glass",
+                        "plastic_vinyl_glossy_black",
+                        "plastic_vinyl_glossy_green"
+                    ],
+                    "name": "Juicer"
+                }
+            ],
+            "urls": {
+                "Darwin": "ROOT/models/osx/2018-2019.1/juicer",
+                "Linux": "ROOT/models/linux/2018-2019.1/juicer",
+                "Windows": "ROOT/models/windows/2018-2019.1/juicer"
+            },
+            "wcategory": "coffee grinder",
+            "wnid": "n03063485"
         },
         "knife1": {
             "asset_bundle_sizes": {
@@ -3641,6 +3786,79 @@
             "wcategory": "toy",
             "wnid": "n04461879"
         },
+        "toaster_002": {
+            "asset_bundle_sizes": {
+                "Darwin": 344679,
+                "Linux": 574207,
+                "Windows": 183950
+            },
+            "bounds": {
+                "back": {
+                    "x": 4.917383e-05,
+                    "y": 0.09173434,
+                    "z": -0.085
+                },
+                "bottom": {
+                    "x": 4.917383e-05,
+                    "y": 0,
+                    "z": 0
+                },
+                "center": {
+                    "x": 4.917383e-05,
+                    "y": 0.09173434,
+                    "z": 0
+                },
+                "front": {
+                    "x": 4.917383e-05,
+                    "y": 0.09173434,
+                    "z": 0.085
+                },
+                "left": {
+                    "x": -0.1864974,
+                    "y": 0.09173434,
+                    "z": 0
+                },
+                "right": {
+                    "x": 0.1865958,
+                    "y": 0.09173434,
+                    "z": 0
+                },
+                "top": {
+                    "x": 4.917383e-05,
+                    "y": 0.1834687,
+                    "z": 0
+                }
+            },
+            "canonical_rotation": {
+                "x": 0,
+                "y": 0.0,
+                "z": 0
+            },
+            "composite_object": false,
+            "do_not_use": false,
+            "do_not_use_reason": "",
+            "flex": true,
+            "name": "toaster_002",
+            "physics_quality": -1,
+            "scale_factor": 1.0,
+            "substructure": [
+                {
+                    "materials": [
+                        "plastic_vinyl_glossy_black",
+                        "chrome2",
+                        "plastic_vinyl_glossy_black"
+                    ],
+                    "name": "toaster_002"
+                }
+            ],
+            "urls": {
+                "Darwin": "ROOT/models/osx/2018-2019.1/toaster_002",
+                "Linux": "ROOT/models/linux/2018-2019.1/toaster_002",
+                "Windows": "ROOT/models/windows/2018-2019.1/toaster_002"
+            },
+            "wcategory": "toaster",
+            "wnid": "n04442312"
+        },
         "trapezoidal_table": {
             "asset_bundle_sizes": {
                 "Darwin": 3880673,
@@ -3786,6 +4004,83 @@
             },
             "wcategory": "trunk",
             "wnid": "n04491769"
+        },
+        "white_shopping_bag": {
+            "asset_bundle_sizes": {
+                "Darwin": 563281,
+                "Linux": 772682,
+                "Windows": 410350
+            },
+            "bounds": {
+                "back": {
+                    "x": 0.005275548,
+                    "y": 0.2546528,
+                    "z": -0.03169721
+                },
+                "bottom": {
+                    "x": 0.005275548,
+                    "y": 0,
+                    "z": -0.01019863
+                },
+                "center": {
+                    "x": 0.005275548,
+                    "y": 0.2546528,
+                    "z": -0.01019863
+                },
+                "front": {
+                    "x": 0.005275548,
+                    "y": 0.2546528,
+                    "z": 0.01129995
+                },
+                "left": {
+                    "x": -0.1583929,
+                    "y": 0.2546528,
+                    "z": -0.01019863
+                },
+                "right": {
+                    "x": 0.168944,
+                    "y": 0.2546528,
+                    "z": -0.01019863
+                },
+                "top": {
+                    "x": 0.005275548,
+                    "y": 0.5093057,
+                    "z": -0.01019863
+                }
+            },
+            "canonical_rotation": {
+                "x": 0,
+                "y": 0.0,
+                "z": 0
+            },
+            "composite_object": false,
+            "do_not_use": false,
+            "do_not_use_reason": "",
+            "flex": false,
+            "name": "white_shopping_bag",
+            "physics_quality": 0.999073388010816,
+            "scale_factor": 1.0,
+            "substructure": [
+                {
+                    "materials": [
+                        "plastic_vinyl_glossy_white"
+                    ],
+                    "name": "bag_13"
+                },
+                {
+                    "materials": [
+                        "chrome2"
+                    ],
+                    "name": "Object013"
+                }
+            ],
+            "urls": {
+                "Darwin": "ROOT/models/osx/2018-2019.1/white_shopping_bag",
+                "Linux": "ROOT/models/linux/2018-2019.1/white_shopping_bag",
+                "Windows": "ROOT/models/windows/2018-2019.1/white_shopping_bag"
+            },
+            "wcategory": "suitcase",
+            "wnid": "n02773838"
         },
         "woven_box": {
             "asset_bundle_sizes": {

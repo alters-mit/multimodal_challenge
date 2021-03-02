@@ -56,6 +56,6 @@ def get_drop_zones(filename: str) -> List[DropZone]:
 
     drop_zone_data = loads(DROP_ZONE_DIRECTORY.joinpath(filename).read_text(encoding="utf-8"))
     drop_zones: List[DropZone] = list()
-    for drop_zone in drop_zone_data["drop_zones"]:
+    for drop_zone in drop_zone_data:
         drop_zones.append(DropZone(center=TDWUtils.vector3_to_array(drop_zone["position"]), radius=drop_zone["size"]))
     return drop_zones

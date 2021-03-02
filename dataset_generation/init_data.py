@@ -56,10 +56,10 @@ class InitData:
         drop_zone_src = root_dir.joinpath(f"{filename}.json")
         drop_zone_dst = DROP_ZONE_DIRECTORY.joinpath(f"{filename}.json")
         drop_zone_data = loads(drop_zone_src.read_text(encoding="utf-8"))
-        drop_zone_dst.write_text(dumps({"drop_zones": drop_zone_data["position_markers"]}), encoding="utf-8")
+        drop_zone_dst.write_text(dumps(drop_zone_data["position_markers"]), encoding="utf-8")
         # Show the drop zones.
         if drop_zones:
-            dzs = loads(drop_zone_dst.read_text(encoding="utf-8"))["position_markers"]
+            dzs = loads(drop_zone_dst.read_text(encoding="utf-8"))
             for dz in dzs:
                 commands.append({"$type": "add_position_marker",
                                  "position": dz["position"],
