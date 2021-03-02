@@ -46,7 +46,6 @@ class MultiModalBase(Magnebot, ABC):
         self._cache_static_data(resp=resp)
         self._end_action()
         self._set_initial_pose()
-        self._end_action()
         return ActionStatus.success
 
     def _get_magnebot_init_commands(self, init: MagnebotInitData) -> List[dict]:
