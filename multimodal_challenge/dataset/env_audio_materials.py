@@ -24,7 +24,7 @@ class EnvAudioMaterials:
         """
 
         """:field
-        The Resonance Audio floor material..
+        The Resonance Audio floor material.
         """
         self.floor: str = floor
         """:field

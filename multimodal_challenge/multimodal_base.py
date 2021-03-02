@@ -1,13 +1,28 @@
 from typing import List, Tuple, Optional
 from abc import ABC, abstractmethod
-import numpy as np
 from tdw.tdw_utils import TDWUtils
 from magnebot import Magnebot, ActionStatus, ArmJoint
 from multimodal_challenge.util import get_scene_librarian
 from multimodal_challenge.multimodal_object_init_data import MultiModalObjectInitData
+from multimodal_challenge.magnebot_init_data import MagnebotInitData
 
 
 class MultiModalBase(Magnebot, ABC):
+    def __init__(self, port: int = 1071, screen_width: int = 256, screen_height: int = 256, random_seed: int = None,
+                 skip_frames: int = 10):
+        """
+        :param port: The socket port. [Read this](https://github.com/threedworld-mit/tdw/blob/master/Documentation/getting_started.md#command-line-arguments) for more information.
+        :param screen_width: The width of the screen in pixels.
+        :param screen_height: The height of the screen in pixels.
+        :param random_seed: The seed used for random numbers. If None, this is chosen randomly. In the Magnebot API this is used only when randomly selecting a start position for the Magnebot (see the `room` parameter of `init_scene()`). The same random seed is used in higher-level APIs such as the Transport Challenge.
+        :param skip_frames: The build will return output data this many physics frames per simulation frame (`communicate()` call). This will greatly speed up the simulation, but eventually there will be a noticeable loss in physics accuracy. If you want to render every frame, set this to 0.
+        """
+
+        super().__init__(port=port, launch_build=False, screen_width=screen_width, screen_height=screen_height,
+                         auto_save_images=False, random_seed=random_seed, img_is_png=False, skip_frames=skip_frames)
+        # Initialization data for the Magnebot.
+        self._magnebot_init_data: Optional[MagnebotInitData] = None
+
     def init_scene(self, scene: str, layout: int, room: int = None) -> ActionStatus:
         self.scene_librarian = get_scene_librarian()
         # Add the scene.
@@ -26,15 +41,17 @@ class MultiModalBase(Magnebot, ABC):
             target_object_id, target_object_commands = target_object.get_commands()
             commands.extend(target_object_commands)
         # Initialize the Magnebot, the return data, etc.
-        commands.extend(self._get_scene_init_commands(
-            magnebot_position=TDWUtils.array_to_vector3(self._get_magnebot_position())))
+        self._magnebot_init_data = self._get_magnebot_init_data()
+        commands.extend(self._get_scene_init_commands(magnebot_position=TDWUtils.array_to_vector3(
+            self._magnebot_init_data.position)))
         # Set the rotation of the Magnebot.
         for i in range(len(commands)):
             if commands[i]["$type"] == "add_magnebot":
-                commands[i]["rotation"] = {"x": 0, "y": float(self._get_magnebot_rotation()), "z": 0}
+                commands[i]["rotation"] = {"x": 0, "y": self._magnebot_init_data.rotation, "z": 0}
                 break
         # Set the rotation of the camera.
-        for angle, axis in zip(self._get_camera_rotation(), ["pitch", "yaw"]):
+        for angle, axis in zip([self._magnebot_init_data.camera_pitch, self._magnebot_init_data.camera_yaw],
+                               ["pitch", "yaw"]):
             commands.append({"$type": "rotate_sensor_container_by",
                              "axis": axis,
                              "angle": float(angle)})
@@ -42,8 +59,8 @@ class MultiModalBase(Magnebot, ABC):
         resp = self.communicate(commands)
         self._cache_static_data(resp=resp)
         # Set the initial torso and column positions.
-        torso_commands, joint_ids = self._get_torso_commands(position=self._get_torso_height(),
-                                                             angle=self._get_torso_angle())
+        torso_commands, joint_ids = self._get_torso_commands(position=self._magnebot_init_data.torso_height,
+                                                             angle=self._magnebot_init_data.column_angle)
         self._next_frame_commands.extend(torso_commands)
         self._do_arm_motion(joint_ids=joint_ids)
         self._end_action()
@@ -105,22 +122,6 @@ class MultiModalBase(Magnebot, ABC):
         raise Exception()
 
     @abstractmethod
-    def _get_magnebot_position(self) -> np.array:
-        """
-        :return: The initial position of the Magnebot.
-        """
-
-        raise Exception()
-
-    @abstractmethod
-    def _get_magnebot_rotation(self) -> float:
-        """
-        :return: The initial rotation of the Magnebot.
-        """
-
-        raise Exception()
-
-    @abstractmethod
     def _get_target_object(self) -> Optional[MultiModalObjectInitData]:
         """
         :return: Object initialization data for the target object.
@@ -129,25 +130,9 @@ class MultiModalBase(Magnebot, ABC):
         raise Exception()
 
     @abstractmethod
-    def _get_torso_height(self) -> float:
+    def _get_magnebot_init_data(self) -> MagnebotInitData:
         """
-        :return: The initial torso height.
-        """
-
-        raise Exception()
-
-    @abstractmethod
-    def _get_torso_angle(self) -> float:
-        """
-        :return: The initial torso angle.
-        """
-
-        raise Exception()
-
-    @abstractmethod
-    def _get_camera_rotation(self) -> Tuple[float, float]:
-        """
-        :return: The initial pitch and yaw of the camera.
+        :return: Initialization data for the Magnebot.
         """
 
         raise Exception()

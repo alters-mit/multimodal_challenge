@@ -5,6 +5,7 @@ from tdw.py_impact import AudioMaterial, ObjectInfo
 from multimodal_challenge.multimodal_object_init_data import MultiModalObjectInitData
 from multimodal_challenge.dataset.dataset_trial import DatasetTrial
 from multimodal_challenge.trial import Trial
+from multimodal_challenge.magnebot_init_data import MagnebotInitData
 
 
 class Encoder(JSONEncoder):
@@ -28,6 +29,8 @@ class Encoder(JSONEncoder):
         elif isinstance(obj, ObjectInfo):
             return obj.__dict__
         elif isinstance(obj, DatasetTrial):
+            return obj.__dict__
+        elif isinstance(obj, MagnebotInitData):
             return obj.__dict__
         elif isinstance(obj, Trial):
             return obj.__dict__

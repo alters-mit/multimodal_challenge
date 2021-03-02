@@ -14,7 +14,7 @@ class DropZone:
         """
 
         """:field
-        The center of the circle as an `[x, y, z]` numpy array. The circle is always on the `(x, z)` plane.
+        The center of the circle as an `[x, y, z]` numpy array.
         """
         self.center: np.array = center
         """:field

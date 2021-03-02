@@ -20,6 +20,7 @@ from multimodal_challenge.util import get_object_init_commands, NUM_LAYOUTS
 from multimodal_challenge.multimodal_object_init_data import MultiModalObjectInitData
 from multimodal_challenge.dataset.dataset_trial import DatasetTrial
 from multimodal_challenge.dataset.env_audio_materials import EnvAudioMaterials
+from multimodal_challenge.magnebot_init_data import MagnebotInitData
 
 
 class Dataset(MultiModalBase):
@@ -97,8 +98,7 @@ class Dataset(MultiModalBase):
         :param random_seed: The seed for the random number generator.
         """
 
-        super().__init__(port=port, random_seed=random_seed, launch_build=False, screen_height=128, screen_width=128,
-                         img_is_png=False, auto_save_images=False, skip_frames=0, debug=False)
+        super().__init__(port=port, random_seed=random_seed, screen_height=128, screen_width=128, skip_frames=0)
         self.communicate([{"$type": "set_render_quality",
                            "render_quality": 0},
                           {"$type": "set_target_framerate",
@@ -119,30 +119,6 @@ class Dataset(MultiModalBase):
         Parameters to define each trial. See: `rehearsal.py`.
         """
         self.trials: List[DatasetTrial] = list()
-        """:field
-        The position of the Magnebot in the current trial.
-        """
-        self.magnebot_position: np.array = np.array([0, 0, 0])
-        """:field
-        The rotation of the Magnebot in the current trial.
-        """
-        self.magnebot_rotation: float = -1
-        """:field
-        The height of the torso in the current trial.
-        """
-        self.torso_height: float = -1
-        """:field
-        The rotation of the column in the current trial.
-        """
-        self.torso_angle: float = -1
-        """:field
-        The camera pitch in the current trial.
-        """
-        self.camera_pitch: float = -1
-        """:field
-        The camera yaw in the current trial.
-        """
-        self.camera_yaw: float = -1
         """:field
         The ID of the target object in the current trial.
         """
@@ -323,12 +299,7 @@ class Dataset(MultiModalBase):
 
         # Cache the result of the trial.
         ci = Trial(scene=self.scene,
-                   magnebot_position=self.magnebot_position,
-                   magnebot_rotation=self.magnebot_rotation,
-                   torso_height=self.torso_height,
-                   column_rotation=self.torso_angle,
-                   camera_pitch=self.camera_pitch,
-                   camera_yaw=self.camera_yaw,
+                   magnebot=self._magnebot_init_data,
                    audio=Dataset.TEMP_AUDIO_PATH.read_bytes(),
                    target_object=self.target_object_id,
                    object_init_data=object_init_data)
@@ -386,21 +357,19 @@ class Dataset(MultiModalBase):
         # Add an audio sensor.
         return [{"$type": "add_environ_audio_sensor"}]
 
-    def _get_torso_height(self) -> float:
-        self.torso_height = float(self._rng.random())
-        return self.torso_height
-
-    def _get_camera_rotation(self) -> Tuple[float, float]:
-        # Set a random pitch and yaw.
-        self.camera_pitch = float(self._rng.uniform(-Magnebot.CAMERA_RPY_CONSTRAINTS[1] / 2,
-                                                    Magnebot.CAMERA_RPY_CONSTRAINTS[1] / 2))
-        self.camera_yaw = float(self._rng.uniform(-Magnebot.CAMERA_RPY_CONSTRAINTS[2] / 2,
-                                                  Magnebot.CAMERA_RPY_CONSTRAINTS[2] / 2))
-        return self.camera_pitch, self.camera_yaw
-
-    def _get_torso_angle(self) -> float:
-        self.torso_angle = float(self._rng.uniform(-90, 90))
-        return self.torso_angle
+    def _get_magnebot_init_data(self) -> MagnebotInitData:
+        # Get a random joint positions.
+        column_angle = self._rng.uniform(-25, 25)
+        torso_height = self._rng.random()
+        # Set random camera angles.
+        camera_pitch = self._rng.uniform(-Magnebot.CAMERA_RPY_CONSTRAINTS[1] / 2,
+                                         Magnebot.CAMERA_RPY_CONSTRAINTS[1] / 2)
+        camera_yaw = self._rng.uniform(-Magnebot.CAMERA_RPY_CONSTRAINTS[2] / 2,
+                                       Magnebot.CAMERA_RPY_CONSTRAINTS[2] / 2)
+        position = np.array([0, 0, 0])  # TODO
+        rotation = 0  # TODO
+        return MagnebotInitData(position=position, rotation=rotation, torso_height=torso_height,
+                                column_angle=column_angle, camera_pitch=camera_pitch, camera_yaw=camera_yaw)
 
     @staticmethod
     def _get_pyaudio_device_index() -> int:

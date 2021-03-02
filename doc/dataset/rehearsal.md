@@ -2,7 +2,7 @@
 
 `from dataset_generation.rehearsal import Rehearsal`
 
-"Rehearse" the audio dataset_generation by running randomly-generated trials and saving the "valid" trials.
+"Rehearse" the audio dataset by running randomly-generated trials and saving the "valid" trials.
 
 This is meant only for backend developers; the Python module already has cached rehearsal data.
 
@@ -19,7 +19,7 @@ all objects are kinematic (non-moveable) in order to avoid re-initializing the s
 
 # Usage
 
-1. `cd dataset_generation`
+1. `cd dataset`
 2. `python3 rehearsal.py`
 3. Run build
 
@@ -32,11 +32,11 @@ all objects are kinematic (non-moveable) in order to avoid re-initializing the s
 
 **Per trial:**
 
-1. Randomly set the parameters of a new [`Drop`](../api/drop.md) which is used here as initialization data.
+1. Randomly set the parameters of a new [`DatasetTrial`](../api/dataset_trial.md) for initialization.
 2. Let the target object fall. **The only output data is the `Transform` of the target object.**
-3. When the target object stops falling, check if the target object is in a `DropZone`. If so, record the `Drop`.
+3. When the target object stops falling, if it's is in a `DropZone`, record the `DatasetTrial`.
 
-**Result:** A list of `Drop` initialization objects per scene_layout combination:
+**Result:** A list of `DatasetTrial` initialization objects per scene_layout combination:
 
 ```
 D:/multimodal_challenge/dataset  # See dataset in config.ini
@@ -81,7 +81,7 @@ Create the network socket and bind the socket to the port.
 Choose a random object. Assign a random (constrained) scale, position, rotation, and force.
 Let the object fall. When it stops moving, determine if the object is in a drop zone.
 
-_Returns:_  Tuple: A `Drop` object if the object landed in the drop zone, otherwise None; drop zone ID.
+_Returns:_  Tuple: A `DatasetTrial` if the object landed in the drop zone, otherwise None; drop zone ID.
 
 #### run
 

@@ -10,15 +10,15 @@ PyImpact and Resonance Audio materials for the floor and walls of a scene.
 
 | Variable | Type | Description |
 | --- | --- | --- |
-| `PY_IMPACT_TO_RESONANCE_AUDIO` | Dict[AudioMaterial, str] | A dictionary. Key = A PyImpact `AudioMaterial`. Value = The corresponding Resonance Audio material. |
+| `RESONANCE_AUDIO_TO_PY_IMPACT` | Dict[str, AudioMaterial] | A dictionary. Key = A Resonance Audio material. Value = The corresponding PyImpact `AudioMaterial`. |
 
 ***
 
 ## Fields
 
-- `floor` The PyImpact floor floor material.
+- `floor` The Resonance Audio floor material.
 
-- `wall` The PyImpact wall audio material.
+- `wall` The Resonance Audio wall material.
 
 ***
 
@@ -30,6 +30,6 @@ PyImpact and Resonance Audio materials for the floor and walls of a scene.
 
 | Parameter | Type | Default | Description |
 | --- | --- | --- | --- |
-| floor |  str |  | The PyImpact floor audio material as a string. |
-| wall |  str |  | The PyImpact wall audio material as a string. |
+| floor |  str |  | The Resonance Audio floor material. |
+| wall |  str |  | The Resonance Audio wall material. |
 

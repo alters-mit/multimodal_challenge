@@ -15,7 +15,7 @@ This is a backend tool for TDW  developers to convert saved [TDW commands](https
 
 # Usage
 
-1. `cd dataset_generation`
+1. `cd dataset`
 2. `python3 init_data.py ARGUMENTS`
 3. Run build
 
