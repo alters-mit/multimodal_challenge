@@ -18,7 +18,7 @@ from multimodal_challenge.trial import Trial
 from multimodal_challenge.encoder import Encoder
 from multimodal_challenge.paths import REHEARSAL_DIRECTORY, ENV_AUDIO_MATERIALS_PATH, OBJECT_INIT_DIRECTORY, \
     DATASET_DIRECTORY
-from multimodal_challenge.util import get_object_init_commands, NUM_LAYOUTS
+from multimodal_challenge.util import get_object_init_commands
 from multimodal_challenge.multimodal_object_init_data import MultiModalObjectInitData
 from multimodal_challenge.dataset.dataset_trial import DatasetTrial
 from multimodal_challenge.dataset.env_audio_materials import EnvAudioMaterials
@@ -86,7 +86,7 @@ class Dataset(MultiModalBase):
     """:class_var
     The PyImpact object used to generate impact sound audio at runtime.
     """
-    PY_IMPACT: PyImpact = PyImpact()
+    PY_IMPACT: PyImpact = PyImpact(initial_amp=0.5)
     """:class_var
     The path to the temporary audio file.
     """
@@ -146,8 +146,7 @@ class Dataset(MultiModalBase):
         for f in OBJECT_INIT_DIRECTORY.iterdir():
             # Expected: mm_kitchen_1a_0.json, mm_kitchen_1a_1.json, ... , mm_kitchen_2b_2.json, ...
             if f.is_file() and f.suffix == ".json" and f.name.endswith("_0.json"):
-                for i in range(NUM_LAYOUTS):
-                    self.do_trials(scene=f.name.replace(".json", "")[:-2], layout=str(i))
+                self.do_trials(scene=f.name.replace(".json", "")[:-2], layout=f.name[-6])
 
     def do_trials(self, scene: str, layout: str) -> None:
         """
@@ -163,9 +162,11 @@ class Dataset(MultiModalBase):
         self.scene = scene
         self.layout = int(layout)
         output_directory = DATASET_DIRECTORY.joinpath(f"{scene}_{layout}")
+        if not output_directory.exists():
+            output_directory.mkdir(parents=True)
 
         # Get the environment audio materials.
-        data = loads(ENV_AUDIO_MATERIALS_PATH)
+        data = loads(ENV_AUDIO_MATERIALS_PATH.read_text(encoding="utf-8"))
         self.env_audio_materials = EnvAudioMaterials(**data[scene])
         self.trial_count: int = 0
         # Get the last trial number, to prevent overwriting files.
@@ -174,12 +175,12 @@ class Dataset(MultiModalBase):
                 tc = int(f.name.replace(".json", ""))
                 if tc > self.trial_count:
                     self.trial_count = tc + 1
-        # We already completed this portion of the dataset.
-        if self.trial_count == len(self.trials):
-            return
         # Load the cached trial data.
         self.trials = [DatasetTrial(**d) for d in
                        loads(REHEARSAL_DIRECTORY.joinpath(f"{scene}_{layout}.json").read_text(encoding="utf-8"))]
+        # We already completed this portion of the dataset.
+        if self.trial_count == len(self.trials):
+            return
         # Create a progress bar.
         pbar = tqdm(total=len(self.trials))
         pbar.update(self.trial_count)
@@ -218,20 +219,19 @@ class Dataset(MultiModalBase):
         object_names = dict()
         for object_id in self.objects_static:
             object_names[object_id] = self.objects_static[object_id].name
-        Dataset.PY_IMPACT.set_default_audio_info(objects=object_names)
+        Dataset.PY_IMPACT.set_default_audio_info(object_names=object_names)
         try:
             # Start recording the audio.
             AudioUtils.start(output_path=Dataset.TEMP_AUDIO_PATH)
             # These commands must be sent here because `init_scene()` will try to make the Magnebot moveable.
-            self._next_frame_commands.extend([{"$type": "send_rigidbodies",
-                                               "frequency": "always"},
-                                              {"$type": "set_immovable",
-                                               "immovable": True},
-                                              {"$type": "enable_image_sensor",
-                                               "enable": False}])
+            resp = self.communicate([{"$type": "send_rigidbodies",
+                                      "frequency": "always"},
+                                     {"$type": "set_immovable",
+                                      "immovable": True},
+                                     {"$type": "enable_image_sensor",
+                                      "enable": False}])
             frame: int = 0
             done: bool = False
-            resp = self.communicate([])
             # Let the simulation run until there's too many frames or if there's no audio.
             while not done and frame < 1000:
                 # Get impact sound commands.
@@ -321,6 +321,8 @@ class Dataset(MultiModalBase):
         num_attempts: int = 0
         joint_ids = [self.magnebot_static.arm_joints[ArmJoint.torso], self.magnebot_static.arm_joints[ArmJoint.column]]
         while not good and num_attempts < 100:
+            self._next_frame_commands.append({"$type": "set_immovable",
+                                              "immovable": True})
             # Get a random joint positions.
             column_angle = self._rng.uniform(-160, 160)
             torso_height = self._rng.random()
