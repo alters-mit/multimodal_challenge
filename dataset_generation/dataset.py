@@ -1,5 +1,5 @@
 from time import sleep
-from typing import List, Tuple, Dict, Optional
+from typing import List, Optional
 from pathlib import Path
 from json import loads, dumps
 from threading import Thread
@@ -9,8 +9,10 @@ import pyaudio
 from tqdm import tqdm
 from tdw.tdw_utils import AudioUtils, TDWUtils
 from tdw.py_impact import PyImpact
+from tdw.output_data import Rigidbodies
 from magnebot import Magnebot, ArmJoint
 from magnebot.scene_state import SceneState
+from magnebot.util import get_data
 from multimodal_challenge.multimodal_base import MultiModalBase
 from multimodal_challenge.trial import Trial
 from multimodal_challenge.encoder import Encoder
@@ -124,10 +126,6 @@ class Dataset(MultiModalBase):
         """
         self.target_object_id: int = -1
         """:field
-        Cached scale factors per objects for the current trial.
-        """
-        self.scale_factors: Dict[int, Dict[str, float]] = dict()
-        """:field
         The PyImpact audio materials used for the environment as an `EnvAudioMaterials` object.
         """
         self.env_audio_materials: Optional[EnvAudioMaterials] = None
@@ -213,6 +211,14 @@ class Dataset(MultiModalBase):
         """
 
         self.init_scene(scene=self.scene, layout=self.layout)
+        # Get the PyImpact audio materials for the floor and walls.
+        floor = EnvAudioMaterials.RESONANCE_AUDIO_TO_PY_IMPACT[self.env_audio_materials.floor]
+        wall = EnvAudioMaterials.RESONANCE_AUDIO_TO_PY_IMPACT[self.env_audio_materials.wall]
+        # Cache the names of each object in PyImpact.
+        object_names = dict()
+        for object_id in self.objects_static:
+            object_names[object_id] = self.objects_static[object_id].name
+        Dataset.PY_IMPACT.set_default_audio_info(objects=object_names)
         try:
             # Start recording the audio.
             AudioUtils.start(output_path=Dataset.TEMP_AUDIO_PATH)
@@ -228,53 +234,10 @@ class Dataset(MultiModalBase):
             resp = self.communicate([])
             # Let the simulation run until there's too many frames or if there's no audio.
             while not done and frame < 1000:
-                collisions, env_collisions, rigidbodies = Dataset.PY_IMPACT.get_collisions(resp=resp)
-                commands = []
-                # Play sounds from collisions.
-                for collision in collisions:
-                    if collision.get_state() == "enter" and Dataset.PY_IMPACT.is_valid_collision(
-                            collision=collision):
-                        o_0 = self.objects_static[collision.get_collider_id()]
-                        o_1 = self.objects_static[collision.get_collidee_id()]
-                        if o_0.mass < o_1.mass:
-                            target = o_0
-                            other = o_1
-                        else:
-                            target = o_1
-                            other = o_0
-                        target_audio = Magnebot._OBJECT_AUDIO[target.name]
-                        other_audio = Magnebot._OBJECT_AUDIO[other.name]
-                        commands.append(Dataset.PY_IMPACT.get_impact_sound_command(collision=collision,
-                                                                                   rigidbodies=rigidbodies,
-                                                                                   target_id=target.object_id,
-                                                                                   target_amp=target_audio.amp,
-                                                                                   target_mat=target_audio.material.name,
-                                                                                   other_id=other.object_id,
-                                                                                   other_amp=other_audio.amp,
-                                                                                   other_mat=other_audio.material.name,
-                                                                                   resonance=target_audio.resonance,
-                                                                                   play_audio_data=False))
-                # Play sounds from collisions with the environment.
-                for collision in env_collisions:
-                    if collision.get_state() == "enter":
-                        o = self.objects_static[collision.get_object_id()]
-                        a = Magnebot._OBJECT_AUDIO[o.name]
-                        # Get the correct environment material, given a) the room and b) if this is the floor or wall.
-                        if collision.get_floor():
-                            env_mat = EnvAudioMaterials.RESONANCE_AUDIO_TO_PY_IMPACT[self.env_audio_materials.floor]
-                        else:
-                            env_mat = EnvAudioMaterials.RESONANCE_AUDIO_TO_PY_IMPACT[self.env_audio_materials.wall]
-                        commands.append(Dataset.PY_IMPACT.get_impact_sound_command(collision=collision,
-                                                                                   rigidbodies=rigidbodies,
-                                                                                   target_id=o.object_id,
-                                                                                   target_amp=a.amp,
-                                                                                   target_mat=a.material.name,
-                                                                                   other_id=self.env_id,
-                                                                                   other_amp=0.01,
-                                                                                   other_mat=env_mat.name,
-                                                                                   resonance=a.resonance,
-                                                                                   play_audio_data=False))
+                # Get impact sound commands.
+                commands = Dataset.PY_IMPACT.get_audio_commands(resp=resp, floor=floor, wall=wall, resonance_audio=True)
                 # Check if the object stopped moving (there won't be audio or collisions while it's falling).
+                rigidbodies = get_data(resp=resp, d_type=Rigidbodies)
                 sleeping = False
                 for i in range(rigidbodies.get_num()):
                     if rigidbodies.get_id(i) == self.target_object_id:
@@ -298,7 +261,7 @@ class Dataset(MultiModalBase):
                                          position=TDWUtils.array_to_vector3(state.object_transforms[o_id].position),
                                          rotation=TDWUtils.array_to_vector4(state.object_transforms[o_id].rotation),
                                          kinematic=self.objects_static[o_id].kinematic,
-                                         scale_factor=self.scale_factors[o_id])
+                                         scale_factor={"x": 1, "y": 1, "z": 1})
             object_init_data.append(o)
 
         # Cache the result of the trial.
@@ -329,17 +292,6 @@ class Dataset(MultiModalBase):
     def _get_object_init_commands(self) -> List[dict]:
         # Get the commands for the scene objects.
         commands = get_object_init_commands(scene=self.scene, layout=self.layout)
-        # Append the target object.
-        self.target_object_id, object_commands = self.trials[self.trial_count].init_data.get_commands()
-        # Record the scale factors.
-        self.scale_factors.clear()
-        for cmd in object_commands:
-            if cmd["$type"] == "scale_object":
-                self.scale_factors[cmd["id"]] = cmd["scale_factor"]
-        commands.extend(object_commands)
-        commands.append({"$type": "apply_force_to_object",
-                         "id": self.target_object_id,
-                         "force": self.trials[self.trial_count].force})
         return commands
 
     def _get_start_trial_commands(self) -> List[dict]:
@@ -358,8 +310,11 @@ class Dataset(MultiModalBase):
                  "reverb_right_wall_material": self.env_audio_materials.wall}]
 
     def _get_end_init_commands(self) -> List[dict]:
-        # Add an audio sensor.
-        return [{"$type": "add_environ_audio_sensor"}]
+        # Add an audio sensor. Apply a force.
+        return [{"$type": "add_environ_audio_sensor"},
+                {"$type": "apply_force_to_object",
+                 "id": self.target_object_id,
+                 "force": self.trials[self.trial_count].force}]
 
     def _set_initial_pose(self) -> None:
         good = False
@@ -392,7 +347,7 @@ class Dataset(MultiModalBase):
     def _get_magnebot_position(self) -> np.array:
         # Get all free occupancy map positions.
         occupancy_positions: List[np.array] = list()
-        target_object_position = self.state.object_transforms[self.target_object_id].position
+        target_object_position = TDWUtils.vector3_to_array(self.trials[self.trial_count].init_data.position)
         for ix, iy in np.ndindex(self.occupancy_map.shape):
             if self.occupancy_map[ix][iy] != 0:
                 continue
@@ -406,6 +361,9 @@ class Dataset(MultiModalBase):
         # Pick a random position.
         self._magnebot_position = self._rng.choice(occupancy_positions)
         return self._magnebot_position
+
+    def _get_target_object(self) -> Optional[MultiModalObjectInitData]:
+        return self.trials[self.trial_count].init_data
 
     @staticmethod
     def _get_pyaudio_device_index() -> int:

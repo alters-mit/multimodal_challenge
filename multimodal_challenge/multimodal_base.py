@@ -21,6 +21,10 @@ class MultiModalBase(Magnebot, ABC):
 
         super().__init__(port=port, launch_build=False, screen_width=screen_width, screen_height=screen_height,
                          auto_save_images=False, random_seed=random_seed, img_is_png=False, skip_frames=skip_frames)
+        """:field
+        The ID of the target object.
+        """
+        self.target_object_id: int = -1
 
     def init_scene(self, scene: str, layout: int, room: int = None) -> ActionStatus:
         self.scene_librarian = get_scene_librarian()
@@ -37,7 +41,7 @@ class MultiModalBase(Magnebot, ABC):
         # Add the target object.
         target_object: MultiModalObjectInitData = self._get_target_object()
         if target_object is not None:
-            target_object_id, target_object_commands = target_object.get_commands()
+            self.target_object_id, target_object_commands = target_object.get_commands()
             commands.extend(target_object_commands)
         commands.extend(self._get_scene_init_commands(magnebot_position=TDWUtils.array_to_vector3(
             self._get_magnebot_position())))

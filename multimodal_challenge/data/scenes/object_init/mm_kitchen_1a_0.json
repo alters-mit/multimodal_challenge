@@ -501,26 +501,6 @@
   },
   {
     "kinematic": false,
-    "name": "servingfork",
-    "position": {
-      "x": 8.440111e-08,
-      "y": -8.6613e-08,
-      "z": -5.960464e-07
-    },
-    "rotation": {
-      "w": 1,
-      "x": -4.423928e-09,
-      "y": 1.626237e-08,
-      "z": 1.832353e-08
-    },
-    "scale_factor": {
-      "x": 1,
-      "y": 1,
-      "z": 1
-    }
-  },
-  {
-    "kinematic": false,
     "name": "glass1",
     "position": {
       "x": 2.858003,
@@ -612,26 +592,6 @@
       "x": -0.0006677371,
       "y": 0.4863944,
       "z": -0.005560733
-    },
-    "scale_factor": {
-      "x": 1,
-      "y": 1,
-      "z": 1
-    }
-  },
-  {
-    "kinematic": false,
-    "name": "servingfork",
-    "position": {
-      "x": 8.440111e-08,
-      "y": -8.6613e-08,
-      "z": -5.960464e-07
-    },
-    "rotation": {
-      "w": 1,
-      "x": -4.423928e-09,
-      "y": 1.626237e-08,
-      "z": 1.832353e-08
     },
     "scale_factor": {
       "x": 1,
