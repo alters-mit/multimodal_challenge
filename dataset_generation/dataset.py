@@ -348,7 +348,7 @@ class Dataset(MultiModalBase):
         # Get the actual angle of the Magnebot (which won't be exactly the same as the target angle).
         y_rot = QuaternionUtils.get_y_angle(QuaternionUtils.IDENTITY, self.state.magnebot_transform.rotation)
         # Record the initialization pose.
-        self._magnebot_init_data = MagnebotInitData(position=self._magnebot_position, rotation=y_rot)
+        self._magnebot_init_data = MagnebotInitData(position=self.state.magnebot_transform.position, rotation=y_rot)
         # Stop skipping frames now that we're done turning.
         self._skip_frames = 0
         # Let the object fall.
