@@ -71,7 +71,7 @@ class InitData:
         return commands
 
     @staticmethod
-    def get_init_data(scene: str, layout: int, occupancy_map: bool) -> List[MultiModalObjectInitData]:
+    def get_init_data(scene: str, layout: int, occupancy_map: str) -> None:
         """
         Create object initialization data and update drop zone data.
 
@@ -80,9 +80,13 @@ class InitData:
         :param scene: The name of the scene.
         :param layout: The layout index.
         :param occupancy_map: If True, generate an occupancy map.
-
-        :return: A list of [`MultiModalObjectInitData`](../api/multimodal_object_init_data.md).
         """
+
+        # Update an occupancy map.
+        if occupancy_map == "update":
+            m = OccupancyMapper()
+            m.create(scene=scene, layout=layout, image_dir=Path("../doc/images"))
+            return
 
         bucket: str = "https://tdw-public.s3.amazonaws.com"
         # Update the scene library.
@@ -118,7 +122,8 @@ class InitData:
                 if name in replacements:
                     name = replacements[name]
                 # Get the objects that are hanging from the wall and make them kinematic.
-                if "cabinet" in name or "painting" in name or "_rug" in name or name == "fruit_basket":
+                if "cabinet" in name or "painting" in name or "_rug" in name or "fridge" in name \
+                        or name == "fruit_basket" or "floor_lamp" in name:
                     kinematic = True
                 else:
                     kinematic = False
@@ -150,10 +155,10 @@ class InitData:
         model_lib.write()
 
         # Generate an occupancy map.
-        if occupancy_map:
+        if occupancy_map == "create":
             m = OccupancyMapper()
             m.create(scene=scene, layout=layout, image_dir=Path("../doc/images"))
-        return objects
+        return
 
 
 if __name__ == "__main__":
@@ -164,7 +169,11 @@ if __name__ == "__main__":
                                                                   "Don't update the init data.")
     parser.add_argument("--drop_zones", action="store_true", help="If included, show the drop zones. Ignored unless "
                                                                   "there is a `--load_scene` flag present.")
-    parser.add_argument("--no_occupancy_map", action="store_true", help="If included, don't generate an occupancy map.")
+    parser.add_argument("--occupancy_map", type=str, choices=["create", "update", "skip"], default="create",
+                        help="Create an occupancy map. "
+                             "create=Create a new occupancy map. "
+                             "update=Use existing init data to update an occupancy map. "
+                             "skip=Don't create an occupancy map.")
     args = parser.parse_args()
     if args.load_scene:
         c = Controller(launch_build=False)
@@ -173,4 +182,4 @@ if __name__ == "__main__":
                                           drop_zones=args.drop_zones is not None))
         c.communicate(cmds)
     else:
-        InitData.get_init_data(scene=args.scene, layout=args.layout, occupancy_map=not args.no_occupancy_map)
+        InitData.get_init_data(scene=args.scene, layout=args.layout, occupancy_map=args.occupancy_map)

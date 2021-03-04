@@ -40,7 +40,7 @@
     }
   },
   {
-    "kinematic": false,
+    "kinematic": true,
     "name": "alma_floor_lamp",
     "position": {
       "x": -2.653,
@@ -300,7 +300,7 @@
     }
   },
   {
-    "kinematic": false,
+    "kinematic": true,
     "name": "fridge_large",
     "position": {
       "x": -2.638289,

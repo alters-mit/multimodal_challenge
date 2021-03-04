@@ -129,11 +129,11 @@ class Rehearsal(Controller):
                                      rotation={"x": float(self.rng.uniform(-360, 360)),
                                                "y": float(self.rng.uniform(-360, 360)),
                                                "z": float(self.rng.uniform(-360, 360))},
-                                     kinematic=True)
+                                     kinematic=False)
         # Define the drop force.
-        force = {"x": float(self.rng.uniform(-0.2, 0.2)),
+        force = {"x": float(self.rng.uniform(-0.1, 0.1)),
                  "y": float(self.rng.uniform(-0.05, 0.05)),
-                 "z": float(self.rng.uniform(-0.2, 0.2))}
+                 "z": float(self.rng.uniform(-0.1, 0.1))}
         # Add the initialization commands.
         self.drop_object, object_commands = a.get_commands()
         commands.extend(object_commands)
@@ -170,6 +170,8 @@ class Rehearsal(Controller):
         for i, drop_zone in enumerate(self.drop_zones):
             if drop_zone.center[1] + 0.1 >= p_0[1] >= drop_zone.center[1] and \
                     np.linalg.norm(p_0 - drop_zone.center) < drop_zone.radius:
+                # In dataset generation, we don't want the object to fall right away, so we make it kinematic.
+                a.kinematic = True
                 return DatasetTrial(init_data=a, force=force, position=TDWUtils.array_to_vector3(p_0)), i
         return None, -1
 
@@ -227,7 +229,10 @@ class Rehearsal(Controller):
         # Remember all good drops.
         dataset_trials: List[DatasetTrial] = list()
         drop_zone_indices: List[int] = list()
+        count: int = 0
         while len(dataset_trials) < num_trials:
+            # Sometimes it's nice to watch the numbers go up.
+            pbar.set_description(str(count))
             # Do a trial.
             dataset_trial, drop_zone_index = self.do_trial()
             # If we got an object back, then this was a good trial.
@@ -236,6 +241,7 @@ class Rehearsal(Controller):
                 dataset_trials.append(dataset_trial)
                 drop_zone_indices.append(drop_zone_index)
                 pbar.update(1)
+            count += 1
         pbar.close()
         # Write the results to disk.
         REHEARSAL_DIRECTORY.joinpath(filename).write_text(dumps(dataset_trials, cls=Encoder), encoding="utf-8")
