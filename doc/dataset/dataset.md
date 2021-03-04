@@ -52,8 +52,7 @@ D:/multimodal_challenge/dataset  # See dataset in config.ini
 | Variable | Type | Description |
 | --- | --- | --- |
 | `PY_AUDIO` | pyaudio.PyAudio | The PyAudio object. This is used to determine when a trial ends (when the audio stops playing). |
-| `AUDIO_IS_PLAYING` | bool | True if there is currently audio playing. Don't set this value manually! It is handled in a separate thread. |
-| `LISTEN_TO_AUDIO` | bool | If True, continue to listen to audio. Use this to stop the PyAudio thread. |
+| `INITIAL_AMP` | float | PyImpact initial amp value. |
 | `PY_IMPACT` | PyImpact | The PyImpact object used to generate impact sound audio at runtime. |
 | `TEMP_AUDIO_PATH` | Path | The path to the temporary audio file. |
 

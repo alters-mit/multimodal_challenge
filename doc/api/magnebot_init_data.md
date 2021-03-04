@@ -25,9 +25,3 @@ Initialization data for the Magnebot in the challenge controller and the dataset
 | position |  np.array |  | The initial position of the Magnebot as an `[x, y, z]` numpy array. |
 | rotation |  float |  | The initial rotation of the Magnebot around the y axis in degrees. |
 
-#### get_commands
-
-**`self.get_commands()`**
-
-_Returns:_  A list of commands to initialize a Magnebot pose.
-

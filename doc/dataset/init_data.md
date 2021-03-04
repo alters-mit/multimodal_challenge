@@ -25,6 +25,7 @@ This is a backend tool for TDW  developers to convert saved [TDW commands](https
 | `--layout` | int | The layout index. |
 | `--load_scene` | | If included, load the scene. Don't update the init data. |
 | `--drop_zones` | | If included, show the drop zones. Ignored unless there is a `--load_scene` flag present. |
+| `--occupancy_map` | str | Set how the occupancy map will be generated. `create`=Create an occupancy map from the list of commands. `update`=Update an occupancy map from existing init data (and don't overwrite that init data). `skip`=Don't modify the existing occupancy map. |
 
 ***
 
@@ -53,12 +54,9 @@ Create object initialization data and update drop zone data.
 
 Update the scene and model metadata records in this repo's librarians.
 
-
 | Parameter | Type | Default | Description |
 | --- | --- | --- | --- |
 | scene |  str |  | The name of the scene. |
 | layout |  int |  | The layout index. |
-| occupancy_map |  bool |  | If True, generate an occupancy map. |
-
-_Returns:_  A list of [`MultiModalObjectInitData`](../api/multimodal_object_init_data.md).
+| occupancy_map |  str |  | If True, generate an occupancy map. |
 
