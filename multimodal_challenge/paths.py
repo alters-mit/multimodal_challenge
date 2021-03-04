@@ -34,6 +34,8 @@ OBJECT_DATA_DIRECTORY = DATA_DIRECTORY.joinpath("objects")
 OBJECT_LIBRARY_PATH = OBJECT_DATA_DIRECTORY.joinpath("library.json")
 # The path to the list of droppable target objects.
 TARGET_OBJECTS_PATH = OBJECT_DATA_DIRECTORY.joinpath("target_objects.txt")
+# The path to the list of kinematic objects.
+KINEMATIC_OBJECTS_PATH = OBJECT_DATA_DIRECTORY.joinpath("kinematic.txt")
 # The path to scene data.
 SCENE_DATA_DIRECTORY = DATA_DIRECTORY.joinpath("scenes")
 # The path to the occupancy maps.

@@ -80,7 +80,7 @@
     }
   },
   {
-    "kinematic": false,
+    "kinematic": true,
     "name": "trunck",
     "position": {
       "x": -2.635999,

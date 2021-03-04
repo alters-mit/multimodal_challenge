@@ -6,7 +6,7 @@ from tdw.py_impact import PyImpact
 from tdw.librarian import ModelLibrarian, SceneLibrarian
 from tdw.controller import Controller
 from multimodal_challenge.paths import DROP_ZONE_DIRECTORY, OBJECT_INIT_DIRECTORY, OBJECT_LIBRARY_PATH, \
-    SCENE_LIBRARY_PATH, TARGET_OBJECTS_PATH
+    SCENE_LIBRARY_PATH, TARGET_OBJECTS_PATH, KINEMATIC_OBJECTS_PATH
 from multimodal_challenge.multimodal_object_init_data import MultiModalObjectInitData
 from multimodal_challenge.encoder import Encoder
 from multimodal_challenge.occupancy_mapper import OccupancyMapper
@@ -107,6 +107,8 @@ class InitData:
                         "jigsaw_puzzle_composite": "puzzle_box_composite",
                         "salt": "pepper",
                         "rattan_basket": "basket_18inx18inx12iin_bamboo"}
+        # Get a list of kinematic objects.
+        kinematic_objects = KINEMATIC_OBJECTS_PATH.read_text(encoding="utf-8").split("\n")
         # Get the commands.
         commands = InitData.get_commands(scene=scene, layout=layout, drop_zones=False)
         objects: List[MultiModalObjectInitData] = list()
@@ -122,17 +124,11 @@ class InitData:
                 name = commands[i]["name"]
                 if name in replacements:
                     name = replacements[name]
-                # Get the objects that are hanging from the wall and make them kinematic.
-                if "cabinet" in name or "painting" in name or "_rug" in name or "fridge" in name \
-                        or name == "fruit_basket" or "floor_lamp" in name:
-                    kinematic = True
-                else:
-                    kinematic = False
                 if name in object_info:
                     objects.append(MultiModalObjectInitData(name=name,
                                                             position=commands[i]["position"],
                                                             rotation=commands[i + 1]["rotation"],
-                                                            kinematic=kinematic))
+                                                            kinematic=name in kinematic_objects))
                 else:
                     print(f"Warning: no audio values for {name}")
                 i += 3
