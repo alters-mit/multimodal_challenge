@@ -7,7 +7,7 @@ class DatasetTrial:
     Parameters for defining a trial for dataset generation.
     """
 
-    def __init__(self, init_data: MultiModalObjectInitData, force: Dict[str, float]):
+    def __init__(self, init_data: MultiModalObjectInitData, force: Dict[str, float], position: Dict[str, float]):
         """
         :param init_data: A [`MultiModalObjectInitData` object](multimodal_object_init_data.md).
         :param force: The initial force of the object as a Vector3 dictionary.
@@ -26,3 +26,7 @@ class DatasetTrial:
         The initial force of the dropped object object as a Vector3 dictionary.
         """
         self.force: Dict[str, float] = force
+        """:field
+        The position of the object after it falls. This is used to set a valid initial Magnebot pose.
+        """
+        self.position: Dict[str, float] = position

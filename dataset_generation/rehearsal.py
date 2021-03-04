@@ -3,11 +3,11 @@ from typing import Optional, List, Tuple
 from tqdm import tqdm
 import numpy as np
 from tdw.controller import Controller
+from tdw.tdw_utils import TDWUtils
 from tdw.output_data import Transforms, Raycast
 from magnebot.scene_environment import SceneEnvironment
 from magnebot.util import get_data
-from multimodal_challenge.util import DROP_OBJECTS, get_object_init_commands, get_scene_librarian, get_drop_zones,\
-    NUM_LAYOUTS
+from multimodal_challenge.util import DROP_OBJECTS, get_object_init_commands, get_scene_librarian, get_drop_zones
 from multimodal_challenge.paths import REHEARSAL_DIRECTORY, OBJECT_INIT_DIRECTORY
 from multimodal_challenge.dataset.dataset_trial import DatasetTrial
 from multimodal_challenge.dataset.drop_zone import DropZone
@@ -123,19 +123,17 @@ class Rehearsal(Controller):
         commands.clear()
         # Get the next object.
         name = self.rng.choice(DROP_OBJECTS)
-        scale = float(self.rng.uniform(0.75, 1.2))
         # Get the init data.
         a = MultiModalObjectInitData(name=name,
-                                     scale_factor={"x": scale, "y": scale, "z": scale},
                                      position=position,
                                      rotation={"x": float(self.rng.uniform(-360, 360)),
                                                "y": float(self.rng.uniform(-360, 360)),
                                                "z": float(self.rng.uniform(-360, 360))},
-                                     kinematic=False)
+                                     kinematic=True)
         # Define the drop force.
-        force = {"x": float(self.rng.uniform(-0.1, 0.1)),
+        force = {"x": float(self.rng.uniform(-0.2, 0.2)),
                  "y": float(self.rng.uniform(-0.05, 0.05)),
-                 "z": float(self.rng.uniform(-0.1, 0.1))}
+                 "z": float(self.rng.uniform(-0.2, 0.2))}
         # Add the initialization commands.
         self.drop_object, object_commands = a.get_commands()
         commands.extend(object_commands)
@@ -172,7 +170,7 @@ class Rehearsal(Controller):
         for i, drop_zone in enumerate(self.drop_zones):
             if drop_zone.center[1] + 0.1 >= p_0[1] >= drop_zone.center[1] and \
                     np.linalg.norm(p_0 - drop_zone.center) < drop_zone.radius:
-                return DatasetTrial(init_data=a, force=force), i
+                return DatasetTrial(init_data=a, force=force, position=TDWUtils.array_to_vector3(p_0)), i
         return None, -1
 
     def run(self, num_trials: int = 10000) -> None:
@@ -187,13 +185,14 @@ class Rehearsal(Controller):
         # Get the scene_layout schema.
         for f in OBJECT_INIT_DIRECTORY.iterdir():
             # Expected: mm_kitchen_1a_0.json, mm_kitchen_1a_1.json, ... , mm_kitchen_2b_2.json, ...
-            if f.is_file() and f.suffix == ".json" and f.name.endswith("_0.json"):
-                scenes.append(f.name.replace(".json", "")[:-2])
+            if f.is_file() and f.suffix == ".json":
+                scenes.append(f.name.replace(".json", ""))
         # Do trials for each scene_layout combination.
-        trials_per_scene_layout = int(num_trials / float(len(scenes) * NUM_LAYOUTS))
+        trials_per_scene_layout = int(num_trials / float(len(scenes)))
         for scene in scenes:
-            for i in range(NUM_LAYOUTS):
-                self.do_trials(scene=scene, layout=i, num_trials=trials_per_scene_layout)
+            scene_name = scene[:-2]
+            layout = int(scene[-1])
+            self.do_trials(scene=scene_name, layout=layout, num_trials=trials_per_scene_layout)
         self.communicate({"$type": "terminate"})
 
     def do_trials(self, scene: str, layout: int, num_trials: int) -> None:

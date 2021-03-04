@@ -9,9 +9,7 @@ from multimodal_challenge.multimodal_object_init_data import MultiModalObjectIni
 from multimodal_challenge.dataset.drop_zone import DropZone
 
 # A list of the names of droppable objects.
-DROP_OBJECTS = TARGET_OBJECTS_PATH.read_text(encoding="utf-8").split("\n")
-# The expected number of layouts per scene.
-NUM_LAYOUTS = 4
+DROP_OBJECTS: List[str] = TARGET_OBJECTS_PATH.read_text(encoding="utf-8").split("\n")
 
 
 def get_scene_librarian() -> SceneLibrarian:

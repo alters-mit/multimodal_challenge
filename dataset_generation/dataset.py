@@ -8,9 +8,8 @@ import numpy as np
 import pyaudio
 from tqdm import tqdm
 from tdw.tdw_utils import AudioUtils, TDWUtils
-from tdw.py_impact import PyImpact
-from tdw.output_data import Rigidbodies
-from magnebot import Magnebot, ArmJoint
+from tdw.py_impact import PyImpact, ObjectInfo, AudioMaterial
+from tdw.output_data import Rigidbodies, ScreenPosition, StaticRobot
 from magnebot.scene_state import SceneState
 from magnebot.util import get_data
 from multimodal_challenge.multimodal_base import MultiModalBase
@@ -220,6 +219,16 @@ class Dataset(MultiModalBase):
         for object_id in self.objects_static:
             object_names[object_id] = self.objects_static[object_id].name
         Dataset.PY_IMPACT.set_default_audio_info(object_names=object_names)
+        # Assign audio properties per joint.
+        for j in self.magnebot_static.joints:
+            Dataset.PY_IMPACT.object_info[self.magnebot_static.joints[j].name] = ObjectInfo(
+                name=self.magnebot_static.joints[j].name,
+                mass=self.magnebot_static.joints[j].mass,
+                amp=0.05,
+                resonance=0.65,
+                material=AudioMaterial.metal,
+                bounciness=0.6,
+                library="")
         try:
             # Start recording the audio.
             AudioUtils.start(output_path=Dataset.TEMP_AUDIO_PATH)
@@ -279,15 +288,7 @@ class Dataset(MultiModalBase):
 
     def _cache_static_data(self, resp: List[bytes]) -> None:
         super()._cache_static_data(resp=resp)
-        num_attempts = 0
-
-        # Get a unique env ID.
-        got_env_id = False
-        while not got_env_id and num_attempts < 100:
-            self.env_id = self.get_unique_id()
-            got_env_id = self.env_id in self.objects_static
-            num_attempts += 1
-        assert got_env_id, f"Failed to get an environment ID for PyImpact (this should never happen!)"
+        self.env_id = self.get_unique_id()
 
     def _get_object_init_commands(self) -> List[dict]:
         # Get the commands for the scene objects.
@@ -319,32 +320,31 @@ class Dataset(MultiModalBase):
     def _set_initial_pose(self) -> None:
         good = False
         num_attempts: int = 0
-        joint_ids = [self.magnebot_static.arm_joints[ArmJoint.torso], self.magnebot_static.arm_joints[ArmJoint.column]]
+        # Get the expected position of where the target object will land.
+        target_object_position = self.trials[self.trial_count].position
+        self._next_frame_commands.extend([{"$type": "enable_image_sensor",
+                                           "enable": True}])
         while not good and num_attempts < 100:
-            self._next_frame_commands.append({"$type": "set_immovable",
-                                              "immovable": True})
-            # Get a random joint positions.
-            column_angle = self._rng.uniform(-160, 160)
-            torso_height = self._rng.random()
-            # Set random camera angles.
-            camera_pitch = self._rng.uniform(-Magnebot.CAMERA_RPY_CONSTRAINTS[1] / 2,
-                                             Magnebot.CAMERA_RPY_CONSTRAINTS[1] / 2)
-            camera_yaw = self._rng.uniform(-Magnebot.CAMERA_RPY_CONSTRAINTS[2] / 2,
-                                           Magnebot.CAMERA_RPY_CONSTRAINTS[2] / 2)
+            # Get a random starting rotation.
             self._magnebot_init_data = MagnebotInitData(position=self._magnebot_position,
-                                                        torso_height=torso_height,
-                                                        column_angle=column_angle,
-                                                        camera_yaw=camera_yaw,
-                                                        camera_pitch=camera_pitch)
+                                                        rotation=self._rng.uniform(-179, 179))
             # Converts the init data to commands.
-            self._next_frame_commands.extend(self._get_magnebot_init_commands(init=self._magnebot_init_data))
-            # Strike a cool pose.
-            self._do_arm_motion(joint_ids=joint_ids)
-            # Update the state.
-            self._end_action()
-            # If the object isn't visible, this is a good pose.
-            good = self.target_object_id not in self.get_visible_objects()
+            commands = self._magnebot_init_data.get_commands()
+            commands.append({"$type": "send_screen_positions",
+                             "position_ids": [0],
+                             "positions": [target_object_position]})
+            # If the screen position of the target is negative then it's not in the viewport, and this is a good pose.
+            resp = self.communicate(commands)
+            sx, sy, sz = get_data(resp=resp, d_type=ScreenPosition).get_screen()
+            good = sx < 0 or sz < 0
             num_attempts += 1
+        self._end_action()
+        # Let the object fall. Do this after _end_action() so we don't lose a frame of audio.
+        self.objects_static[self.target_object_id].kinematic = False
+        self._next_frame_commands.append({"$type": "set_kinematic_state",
+                                          "id": self.target_object_id,
+                                          "is_kinematic": False,
+                                          "use_gravity": True})
 
     def _get_magnebot_position(self) -> np.array:
         # Get all free occupancy map positions.

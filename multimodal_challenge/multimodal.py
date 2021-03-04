@@ -88,7 +88,27 @@ class MultiModal(MultiModalBase):
         """
 
         self._start_action()
-        commands, joint_ids = self._get_torso_commands(position=position, angle=angle)
+        # Clamp the position.
+        if position < 0:
+            position = 0
+        elif position > 1:
+            position = 1
+        torso_max: float = 1.5
+        torso_min: float = 0.6
+        torso_id = self.magnebot_static.arm_joints[ArmJoint.torso]
+        joint_ids = [torso_id]
+        commands = [{"$type": "set_immovable",
+                     "immovable": True},
+                    {"$type": "set_prismatic_target",
+                     "joint_id": torso_id,
+                     "target": (position * (torso_max - torso_min)) + torso_max}]
+        # Rotate the column.
+        if angle is not None:
+            column_id = self.magnebot_static.arm_joints[ArmJoint.column]
+            commands.append({"$type": "set_revolute_target",
+                             "joint_id": column_id,
+                             "target": angle})
+            joint_ids.append(column_id)
         self._next_frame_commands.extend(commands)
         status = self._do_arm_motion(joint_ids=joint_ids)
         self._end_action()
@@ -131,7 +151,5 @@ class MultiModal(MultiModalBase):
 
     def _set_initial_pose(self) -> None:
         # Strike a cool pose.
-        self._next_frame_commands.extend(self._get_magnebot_init_commands(init=self.__trial.magnebot))
-        joint_ids = [self.magnebot_static.arm_joints[ArmJoint.torso], self.magnebot_static.arm_joints[ArmJoint.column]]
-        self._do_arm_motion(joint_ids=joint_ids)
+        self._next_frame_commands.extend(self.__trial.magnebot.get_commands())
         self._end_action()

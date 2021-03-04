@@ -1,11 +1,10 @@
-from typing import List, Tuple, Optional
+from typing import List, Optional
 from abc import ABC, abstractmethod
 import numpy as np
 from tdw.tdw_utils import TDWUtils
-from magnebot import Magnebot, ActionStatus, ArmJoint
+from magnebot import Magnebot, ActionStatus
 from multimodal_challenge.util import get_scene_librarian
 from multimodal_challenge.multimodal_object_init_data import MultiModalObjectInitData
-from multimodal_challenge.magnebot_init_data import MagnebotInitData
 
 
 class MultiModalBase(Magnebot, ABC):
@@ -51,51 +50,6 @@ class MultiModalBase(Magnebot, ABC):
         self._end_action()
         self._set_initial_pose()
         return ActionStatus.success
-
-    def _get_magnebot_init_commands(self, init: MagnebotInitData) -> List[dict]:
-        """
-        :param init: Magnebot initialization data.
-
-        :return: Commands to set the Magnebot to an initial pose.
-        """
-
-        commands = self._get_torso_commands(position=init.torso_height, angle=init.column_angle)[0]
-        for angle, axis in zip([init.camera_pitch, init.camera_yaw], ["pitch", "yaw"]):
-            commands.append({"$type": "rotate_sensor_container_by",
-                             "axis": axis,
-                             "angle": angle})
-        return commands
-
-    def _get_torso_commands(self, position: float, angle: float = None) -> Tuple[List[dict], List[int]]:
-        """
-        :param position: The target vertical position of the torso. Must be between 0 and 1, which corresponds in worldspace units to 0.3691028 and 1.23945 assuming that the Magnebot isn't on an incline and the floor's y coordinate is 0 (which it almost always is).
-        :param angle: If not None, the target rotation of the torso in degrees. The default rotation of the torso is 0.
-
-        :return: Tuple: A list of commands to set the torso; a list of object IDs (torso and maybe also the column).
-        """
-
-        # Clamp the position.
-        if position < 0:
-            position = 0
-        elif position > 1:
-            position = 1
-        max_position = 1.5
-        min_position = 0.6
-        torso_id = self.magnebot_static.arm_joints[ArmJoint.torso]
-        joint_ids = [torso_id]
-        commands = [{"$type": "set_immovable",
-                     "immovable": True},
-                    {"$type": "set_prismatic_target",
-                     "joint_id": torso_id,
-                     "target": (position * (max_position - min_position)) + min_position}]
-        # Rotate the column.
-        if angle is not None:
-            column_id = self.magnebot_static.arm_joints[ArmJoint.column]
-            commands.append({"$type": "set_revolute_target",
-                             "joint_id": column_id,
-                             "target": angle})
-            joint_ids.append(column_id)
-        return commands, joint_ids
 
     @abstractmethod
     def _get_start_trial_commands(self) -> List[dict]:
