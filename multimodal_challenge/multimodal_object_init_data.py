@@ -31,6 +31,7 @@ class MultiModalObjectInitData(AudioInitData):
 
     def _get_record(self) -> ModelRecord:
         record = TransformInitData.LIBRARIES[str(OBJECT_LIBRARY_PATH.resolve())].get_record(self.name)
+        assert record is not None, f"No record for {self.name}"
         # Set the URLs to point at a remote or local asset bundle.
         for platform in record.urls:
             if "ROOT/" in record.urls[platform]:

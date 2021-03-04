@@ -101,12 +101,14 @@ class InitData:
                 record.urls[platform] = record.urls[platform].replace(bucket, "ROOT")
             scene_lib.add_or_update_record(record=record, overwrite=False, write=True)
 
+        model_lib = ModelLibrarian(str(OBJECT_LIBRARY_PATH.resolve()))
+        model_lib_core = ModelLibrarian()
         object_info = PyImpact.get_object_info()
         # Replacements for unusable models.
         replacements = {"rope_table_lamp": "jug05",
                         "jigsaw_puzzle_composite": "puzzle_box_composite",
                         "salt": "pepper",
-                        "rattan_basket": "basket_18inx18inx12iin_bamboo"}
+                        "rattan_basket": "basket_18inx18inx12iin_wicker"}
         # Get a list of kinematic objects.
         kinematic_objects = KINEMATIC_OBJECTS_PATH.read_text(encoding="utf-8").split("\n")
         # Get the commands.
@@ -125,6 +127,14 @@ class InitData:
                 if name in replacements:
                     name = replacements[name]
                 if name in object_info:
+                    # Maybe add a new record.
+                    record = model_lib.get_record(name)
+                    if record is None:
+                        record = model_lib_core.get_record(name)
+                        # Adjust the record URLs.
+                        for platform in record.urls:
+                            record.urls[platform] = record.urls[platform].replace(bucket, "ROOT")
+                        model_lib.add_or_update_record(record=record, overwrite=False)
                     objects.append(MultiModalObjectInitData(name=name,
                                                             position=commands[i]["position"],
                                                             rotation=commands[i + 1]["rotation"],
@@ -134,21 +144,7 @@ class InitData:
                 i += 3
         OBJECT_INIT_DIRECTORY.joinpath(f"{scene}_{layout}.json").write_text(dumps(objects, cls=Encoder, indent=2,
                                                                                   sort_keys=True))
-        # Update the library.
-        model_lib = ModelLibrarian(str(OBJECT_LIBRARY_PATH.resolve()))
-        model_lib_core = ModelLibrarian()
-        model_names = [o.name for o in objects]
-        # Get the drop objects.
-        model_names.extend(TARGET_OBJECTS_PATH.read_text(encoding="utf-8").split("\n"))
-        model_names = list(sorted(model_names))
-        for o in model_names:
-            record = model_lib.get_record(o)
-            if record is None:
-                record = model_lib_core.get_record(o)
-                # Adjust the record URLs.
-                for platform in record.urls:
-                    record.urls[platform] = record.urls[platform].replace(bucket, "ROOT")
-                model_lib.add_or_update_record(record=record, overwrite=False)
+        # Write the records.
         model_lib.write()
 
         # Generate an occupancy map.

@@ -154,6 +154,7 @@ class Dataset(MultiModalBase):
         :param layout: The index of the furniture layout.
         """
 
+        self._start_action()
         # Remember the name of the scene.
         self.scene = scene
         self.layout = int(layout)
