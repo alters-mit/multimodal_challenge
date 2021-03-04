@@ -1,6 +1,4 @@
-from typing import List
 import numpy as np
-from tdw.tdw_utils import TDWUtils
 
 
 class MagnebotInitData:
@@ -22,14 +20,3 @@ class MagnebotInitData:
         The initial rotation of the Magnebot around the y axis in degrees.
         """
         self.rotation: float = float(rotation)
-
-    def get_commands(self) -> List[dict]:
-        """
-        :return: A list of commands to initialize a Magnebot pose.
-        """
-
-        return [{"$type": "teleport_robot_euler_angles",
-                 "position": TDWUtils.array_to_vector3(self.position),
-                 "rotation": {"x": 0, "y": self.rotation, "z": 0}},
-                {"$type": "set_immovable",
-                 "immovable": True}]

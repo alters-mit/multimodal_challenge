@@ -26,7 +26,7 @@ class MultiModalObjectInitData(AudioInitData):
         """
 
         super().__init__(name=name, scale_factor=scale_factor, position=position, rotation=rotation,
-                         kinematic=kinematic, gravity=False if kinematic else True,
+                         kinematic=kinematic, gravity=not kinematic,
                          library=str(OBJECT_LIBRARY_PATH.resolve()))
 
     def _get_record(self) -> ModelRecord:

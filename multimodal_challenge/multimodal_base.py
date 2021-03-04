@@ -26,9 +26,10 @@ class MultiModalBase(Magnebot, ABC):
         The ID of the target object.
         """
         self.target_object_id: int = -1
+        self.scene_librarian = get_scene_librarian()
 
     def init_scene(self, scene: str, layout: int, room: int = None) -> ActionStatus:
-        self.scene_librarian = get_scene_librarian()
+        self._clear_data()
         # Add the scene.
         scene_record = self.scene_librarian.get_record(scene)
         commands: List[dict] = [{"$type": "add_scene",

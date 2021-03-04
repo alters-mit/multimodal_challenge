@@ -2,14 +2,13 @@ from time import sleep
 from typing import List, Optional
 from pathlib import Path
 from json import loads, dumps
-from threading import Thread
 from array import array
 import numpy as np
 import pyaudio
 from tqdm import tqdm
-from tdw.tdw_utils import AudioUtils, TDWUtils
+from tdw.tdw_utils import AudioUtils, TDWUtils, QuaternionUtils
 from tdw.py_impact import PyImpact, ObjectInfo, AudioMaterial
-from tdw.output_data import Rigidbodies, ScreenPosition, Transforms
+from tdw.output_data import Rigidbodies, Transforms, AudioSources
 from magnebot.scene_state import SceneState
 from magnebot.util import get_data
 from multimodal_challenge.multimodal_base import MultiModalBase
@@ -75,17 +74,9 @@ class Dataset(MultiModalBase):
     """
     PY_AUDIO: pyaudio.PyAudio = pyaudio.PyAudio()
     """:class_var
-    True if there is currently audio playing. Don't set this value manually! It is handled in a separate thread.
-    """
-    AUDIO_IS_PLAYING: bool = False
-    """:class_var
-    If True, continue to listen to audio. Use this to stop the PyAudio thread.
-    """
-    LISTEN_TO_AUDIO: bool = False
-    """:class_var
     PyImpact initial amp value.
     """
-    INITIAL_AMP: float = 0.5
+    INITIAL_AMP: float = 0.1
     """:class_var
     The PyImpact object used to generate impact sound audio at runtime.
     """
@@ -140,6 +131,8 @@ class Dataset(MultiModalBase):
         self._magnebot_init_data: Optional[MagnebotInitData] = None
         # The initial position of the Magnebot for this trial.
         self._magnebot_position: Optional[np.array] = None
+        # The PyAudio device index.
+        self._device_index: int = Dataset._get_pyaudio_device_index()
 
     def run(self) -> None:
         """
@@ -187,11 +180,7 @@ class Dataset(MultiModalBase):
         # Create a progress bar.
         pbar = tqdm(total=len(self.trials))
         pbar.update(self.trial_count)
-        # Start listening to audio on a separate thread.
-        t = Thread(target=Dataset._listen_for_audio)
-        t.daemon = True
         try:
-            t.start()
             # Initialize the scene and do the trial.
             for i in range(self.trial_count, len(self.trials)):
                 pbar.set_description(f"{scene}_{layout} {i}")
@@ -199,7 +188,6 @@ class Dataset(MultiModalBase):
                 pbar.update(1)
         # Close the audio thread, stop fmedia, and stop the progress bar.
         finally:
-            Dataset.LISTEN_TO_AUDIO = False
             AudioUtils.stop()
             pbar.close()
 
@@ -239,15 +227,16 @@ class Dataset(MultiModalBase):
         try:
             # Start recording the audio.
             AudioUtils.start(output_path=Dataset.TEMP_AUDIO_PATH)
-            # These commands must be sent here because `init_scene()` will try to make the Magnebot moveable.
+            # These commands must be sent here because `init_scene()` will try to make the Magnebot movable.
+            # Also, we need some extra output data to handle audio recording.
             resp = self.communicate([{"$type": "send_rigidbodies",
-                                      "frequency": "always"},
-                                     {"$type": "send_transforms",
                                       "frequency": "always"},
                                      {"$type": "set_immovable",
                                       "immovable": True},
                                      {"$type": "enable_image_sensor",
-                                      "enable": False}])
+                                      "enable": False},
+                                     {"$type": "send_audio_sources",
+                                      "frequency": "always"}])
             done: bool = False
             # Let the simulation run until there's too many frames or if there's no audio.
             while not done:
@@ -267,11 +256,20 @@ class Dataset(MultiModalBase):
                     if transforms.get_id(i) == self.target_object_id:
                         below_floor = transforms.get_position(i)[1] < -1
                         break
+                audio = get_data(resp=resp, d_type=AudioSources)
+                audio_playing = False
+                for i in range(audio.get_num()):
+                    if audio.get_is_playing(i):
+                        audio_playing = True
+                        break
                 # This trial is done if the object isn't moving, there's no audio playing, and no pending collisions.
-                if below_floor or (sleeping and not Dataset.AUDIO_IS_PLAYING and len(commands) == 0):
+                if below_floor or (sleeping and not audio_playing and len(commands) == 0):
                     done = True
                 else:
                     resp = self.communicate(commands)
+            # Resonance Audio might continue generating reverb after the AudioSource finishes.
+            # So we'll listen to the system audio until we can't hear anything.
+            self._listen_for_audio()
         finally:
             AudioUtils.stop()
 
@@ -332,33 +330,35 @@ class Dataset(MultiModalBase):
                  "force": self.trials[self.trial_count].force}]
 
     def _set_initial_pose(self) -> None:
-        good = False
-        num_attempts: int = 0
-        # Get the expected position of where the target object will land.
-        target_object_position = self.trials[self.trial_count].position
-        self._next_frame_commands.extend([{"$type": "enable_image_sensor",
-                                           "enable": True}])
-        while not good and num_attempts < 100:
-            # Get a random starting rotation.
-            self._magnebot_init_data = MagnebotInitData(position=self._magnebot_position,
-                                                        rotation=self._rng.uniform(-179, 179))
-            # Converts the init data to commands.
-            commands = self._magnebot_init_data.get_commands()
-            commands.append({"$type": "send_screen_positions",
-                             "position_ids": [0],
-                             "positions": [target_object_position]})
-            # If the screen position of the target is negative then it's not in the viewport, and this is a good pose.
-            resp = self.communicate(commands)
-            sx, sy, sz = get_data(resp=resp, d_type=ScreenPosition).get_screen()
-            good = sx < 0 or sz < 0
-            num_attempts += 1
-        self._end_action()
-        # Let the object fall. Do this after _end_action() so we don't lose a frame of audio.
+        # Get the angle to the object.
+        angle = TDWUtils.get_angle_between(v1=self.state.magnebot_transform.forward,
+                                           v2=TDWUtils.vector3_to_array(self.trials[self.trial_count].position) -
+                                              self.state.magnebot_transform.position)
+        if np.abs(angle) > 180:
+            if angle > 0:
+                angle -= 360
+            else:
+                angle += 360
+        # Flip the angle and add some randomness. Then turn by the angle to look away from the object.
+        angle = -angle + self._rng.uniform(-70, 70)
+        # We need every frame for audio recording, but not right now, so let's speed things up.
+        self._skip_frames = 10
+        self.turn_by(angle=angle)
+        # Get the actual angle of the Magnebot (which won't be exactly the same as the target angle).
+        y_rot = QuaternionUtils.get_y_angle(QuaternionUtils.IDENTITY, self.state.magnebot_transform.rotation)
+        # Record the initialization pose.
+        self._magnebot_init_data = MagnebotInitData(position=self._magnebot_position, rotation=y_rot)
+        # Stop skipping frames now that we're done turning.
+        self._skip_frames = 0
+        # Let the object fall.
         self.objects_static[self.target_object_id].kinematic = False
-        self._next_frame_commands.append({"$type": "set_kinematic_state",
-                                          "id": self.target_object_id,
-                                          "is_kinematic": False,
-                                          "use_gravity": True})
+        self._next_frame_commands.extend([{"$type": "set_kinematic_state",
+                                           "id": self.target_object_id,
+                                           "is_kinematic": False,
+                                           "use_gravity": True},
+                                          {"$type": "set_object_collision_detection_mode",
+                                           "id": self.target_object_id,
+                                           "mode": "continuous_dynamic"}])
 
     def _get_magnebot_position(self) -> np.array:
         # Get all free occupancy map positions.
@@ -381,6 +381,32 @@ class Dataset(MultiModalBase):
     def _get_target_object(self) -> Optional[MultiModalObjectInitData]:
         return self.trials[self.trial_count].init_data
 
+    def _listen_for_audio(self) -> None:
+        """
+        Source: https://stackoverflow.com/questions/892199/detect-record-audio-in-python
+
+        Loop until audio stops playing.
+        """
+
+        threshold = 5
+        chunk_size = 1024
+        audio_format = pyaudio.paInt16
+        rate = 44100
+        stream = Dataset.PY_AUDIO.open(format=audio_format, channels=1, rate=rate,
+                                       input=True, output=True,
+                                       frames_per_buffer=chunk_size,
+                                       input_device_index=self._device_index)
+        audio = True
+        try:
+            # Periodically check to see if any audio is playing.
+            while audio:
+                snd_data = array('h', stream.read(chunk_size))
+                audio = max(snd_data) > threshold
+                sleep(0.1)
+        finally:
+            stream.stop_stream()
+            stream.close()
+
     @staticmethod
     def _get_pyaudio_device_index() -> int:
         """
@@ -397,34 +423,6 @@ class Dataset(MultiModalBase):
                 if "Stereo Mix" in device_name:
                     return i
         raise Exception("Couldn't find a suitable audio device!")
-
-    @staticmethod
-    def _listen_for_audio():
-        """
-        Source: https://stackoverflow.com/questions/892199/detect-record-audio-in-python
-
-        Start this process in a thread to listen to the audio to determine if anything is still playing.
-        """
-
-        device_index: int = Dataset._get_pyaudio_device_index()
-        threshold = 5
-        chunk_size = 1024
-        audio_format = pyaudio.paInt16
-        rate = 44100
-        stream = Dataset.PY_AUDIO.open(format=audio_format, channels=1, rate=rate,
-                                       input=True, output=True,
-                                       frames_per_buffer=chunk_size,
-                                       input_device_index=device_index)
-        Dataset.LISTEN_TO_AUDIO = True
-        try:
-            # Periodically check to see if any audio is playing.
-            while Dataset.LISTEN_TO_AUDIO:
-                snd_data = array('h', stream.read(chunk_size))
-                Dataset.AUDIO_IS_PLAYING = max(snd_data) > threshold
-                sleep(0.1)
-        finally:
-            stream.stop_stream()
-            stream.close()
 
 
 if __name__ == "__main__":
