@@ -71,8 +71,6 @@ D:/multimodal_challenge/dataset  # See dataset in config.ini
 
 - `target_object_id` The ID of the target object in the current trial.
 
-- `scale_factors` Cached scale factors per objects for the current trial.
-
 - `env_audio_materials` The PyImpact audio materials used for the environment as an `EnvAudioMaterials` object.
 
 - `env_id` A dummy object ID for the environment. This is reassigned per trial.

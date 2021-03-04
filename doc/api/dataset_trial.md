@@ -12,6 +12,8 @@ Parameters for defining a trial for dataset generation.
 
 - `force` The initial force of the dropped object object as a Vector3 dictionary.
 
+- `position` The position of the object after it falls. This is used to set a valid initial Magnebot pose.
+
 ***
 
 ## Functions

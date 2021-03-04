@@ -9,7 +9,7 @@ import pyaudio
 from tqdm import tqdm
 from tdw.tdw_utils import AudioUtils, TDWUtils
 from tdw.py_impact import PyImpact, ObjectInfo, AudioMaterial
-from tdw.output_data import Rigidbodies, ScreenPosition, StaticRobot
+from tdw.output_data import Rigidbodies, ScreenPosition, Transforms
 from magnebot.scene_state import SceneState
 from magnebot.util import get_data
 from multimodal_challenge.multimodal_base import MultiModalBase
@@ -218,6 +218,8 @@ class Dataset(MultiModalBase):
         object_names = dict()
         for object_id in self.objects_static:
             object_names[object_id] = self.objects_static[object_id].name
+        for j in self.magnebot_static.joints:
+            object_names[j] = self.magnebot_static.joints[j].name
         Dataset.PY_IMPACT.set_default_audio_info(object_names=object_names)
         # Assign audio properties per joint.
         for j in self.magnebot_static.joints:
@@ -239,10 +241,9 @@ class Dataset(MultiModalBase):
                                       "immovable": True},
                                      {"$type": "enable_image_sensor",
                                       "enable": False}])
-            frame: int = 0
             done: bool = False
             # Let the simulation run until there's too many frames or if there's no audio.
-            while not done and frame < 1000:
+            while not done:
                 # Get impact sound commands.
                 commands = Dataset.PY_IMPACT.get_audio_commands(resp=resp, floor=floor, wall=wall, resonance_audio=True)
                 # Check if the object stopped moving (there won't be audio or collisions while it's falling).
@@ -252,12 +253,18 @@ class Dataset(MultiModalBase):
                     if rigidbodies.get_id(i) == self.target_object_id:
                         sleeping = rigidbodies.get_sleeping(i)
                         break
+                transforms = get_data(resp=resp, d_type=Transforms)
+                # Stop if the object somehow fell below the floor.
+                below_floor = False
+                for i in range(transforms.get_num()):
+                    if transforms.get_id(i) == self.target_object_id:
+                        below_floor = transforms.get_position(i)[1] < -1
+                        break
                 # This trial is done if the object isn't moving, there's no audio playing, and no pending collisions.
-                if sleeping and not Dataset.AUDIO_IS_PLAYING and len(commands) == 0:
+                if below_floor or (sleeping and not Dataset.AUDIO_IS_PLAYING and len(commands) == 0):
                     done = True
                 else:
                     resp = self.communicate(commands)
-                frame += 1
         finally:
             AudioUtils.stop()
 

@@ -45,9 +45,7 @@ _Returns:_  A list of commands to add objects to the scene and optionally to sho
 
 #### get_init_data
 
-**`InitData.get_init_data(scene, layout)`**
-
-**`InitData.get_init_data(scene, layout, write=True)`**
+**`InitData.get_init_data(scene, layout, occupancy_map)`**
 
 _This is a static function._
 
@@ -60,7 +58,7 @@ Update the scene and model metadata records in this repo's librarians.
 | --- | --- | --- | --- |
 | scene |  str |  | The name of the scene. |
 | layout |  int |  | The layout index. |
-| write |  bool  | True | If True, write the object init data to disk. |
+| occupancy_map |  bool |  | If True, generate an occupancy map. |
 
 _Returns:_  A list of [`MultiModalObjectInitData`](../api/multimodal_object_init_data.md).
 

@@ -10,13 +10,7 @@ Initialization data for the Magnebot in the challenge controller and the dataset
 
 - `position` The initial position of the Magnebot as an `[x, y, z]` numpy array.
 
-- `torso_height` The initial height of the Magnebot's torso (between 0 and 1).
-
-- `column_angle` The initial rotation of the Magnebot's column in degrees.
-
-- `camera_pitch` The initial pitch of the Magnebot's camera in degrees.
-
-- `camera_yaw` The initial yaw of the Magnebot's camera in degrees.
+- `rotation` The initial rotation of the Magnebot around the y axis in degrees.
 
 ***
 
@@ -24,13 +18,16 @@ Initialization data for the Magnebot in the challenge controller and the dataset
 
 #### \_\_init\_\_
 
-**`MagnebotInitData(position, torso_height, column_angle, camera_pitch, camera_yaw)`**
+**`MagnebotInitData(position, rotation)`**
 
 | Parameter | Type | Default | Description |
 | --- | --- | --- | --- |
 | position |  np.array |  | The initial position of the Magnebot as an `[x, y, z]` numpy array. |
-| torso_height |  float |  | The initial height of the Magnebot's torso (between 0 and 1). |
-| column_angle |  float |  | The initial rotation of the Magnebot's column in degrees. |
-| camera_pitch |  float |  | The initial pitch of the Magnebot's camera in degrees. |
-| camera_yaw |  float |  | The initial yaw of the Magnebot's camera in degrees. |
+| rotation |  float |  | The initial rotation of the Magnebot around the y axis in degrees. |
+
+#### get_commands
+
+**`self.get_commands()`**
+
+_Returns:_  A list of commands to initialize a Magnebot pose.
 

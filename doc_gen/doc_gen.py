@@ -8,10 +8,11 @@ if __name__ == "__main__":
                                                                          "dataset/env_audio_materials.py",
                                                                          "multimodal_object_init_data.py",
                                                                          "magnebot_init_data.py",
+                                                                         "occupancy_mapper.py",
                                                                          "trial.py"],
                  metadata_path=Path("doc_metadata.json"))
     md.get_docs(output_directory=Path("../doc/api"))
     # Dataset generation documentation.
     md = PyMdDoc(input_directory=Path("../dataset_generation"), files=["dataset.py", "rehearsal.py", "init_data.py",
-                                                                       "drop_zone_analyzer.py", "occupancy_mapper.py"])
+                                                                       "drop_zone_analyzer.py"])
     md.get_docs(output_directory=Path("../doc/dataset"))

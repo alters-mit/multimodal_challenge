@@ -9,6 +9,7 @@ from multimodal_challenge.paths import DROP_ZONE_DIRECTORY, OBJECT_INIT_DIRECTOR
     SCENE_LIBRARY_PATH, TARGET_OBJECTS_PATH
 from multimodal_challenge.multimodal_object_init_data import MultiModalObjectInitData
 from multimodal_challenge.encoder import Encoder
+from multimodal_challenge.occupancy_mapper import OccupancyMapper
 
 
 class InitData:
@@ -70,7 +71,7 @@ class InitData:
         return commands
 
     @staticmethod
-    def get_init_data(scene: str, layout: int, write: bool = True) -> List[MultiModalObjectInitData]:
+    def get_init_data(scene: str, layout: int, occupancy_map: bool) -> List[MultiModalObjectInitData]:
         """
         Create object initialization data and update drop zone data.
 
@@ -78,7 +79,7 @@ class InitData:
 
         :param scene: The name of the scene.
         :param layout: The layout index.
-        :param write: If True, write the object init data to disk.
+        :param occupancy_map: If True, generate an occupancy map.
 
         :return: A list of [`MultiModalObjectInitData`](../api/multimodal_object_init_data.md).
         """
@@ -125,30 +126,33 @@ class InitData:
                     objects.append(MultiModalObjectInitData(name=name,
                                                             position=commands[i]["position"],
                                                             rotation=commands[i + 1]["rotation"],
-                                                            scale_factor=commands[i + 2]["scale_factor"],
                                                             kinematic=kinematic))
                 else:
                     print(f"Warning: no audio values for {name}")
                 i += 3
-        if write:
-            OBJECT_INIT_DIRECTORY.joinpath(f"{scene}_{layout}.json").write_text(dumps(objects, cls=Encoder, indent=2,
-                                                                                      sort_keys=True))
-            # Update the library.
-            model_lib = ModelLibrarian(str(OBJECT_LIBRARY_PATH.resolve()))
-            model_lib_core = ModelLibrarian()
-            model_names = [o.name for o in objects]
-            # Get the drop objects.
-            model_names.extend(TARGET_OBJECTS_PATH.read_text(encoding="utf-8").split("\n"))
-            model_names = list(sorted(model_names))
-            for o in model_names:
-                record = model_lib.get_record(o)
-                if record is None:
-                    record = model_lib_core.get_record(o)
-                    # Adjust the record URLs.
-                    for platform in record.urls:
-                        record.urls[platform] = record.urls[platform].replace(bucket, "ROOT")
-                    model_lib.add_or_update_record(record=record, overwrite=False)
-            model_lib.write()
+        OBJECT_INIT_DIRECTORY.joinpath(f"{scene}_{layout}.json").write_text(dumps(objects, cls=Encoder, indent=2,
+                                                                                  sort_keys=True))
+        # Update the library.
+        model_lib = ModelLibrarian(str(OBJECT_LIBRARY_PATH.resolve()))
+        model_lib_core = ModelLibrarian()
+        model_names = [o.name for o in objects]
+        # Get the drop objects.
+        model_names.extend(TARGET_OBJECTS_PATH.read_text(encoding="utf-8").split("\n"))
+        model_names = list(sorted(model_names))
+        for o in model_names:
+            record = model_lib.get_record(o)
+            if record is None:
+                record = model_lib_core.get_record(o)
+                # Adjust the record URLs.
+                for platform in record.urls:
+                    record.urls[platform] = record.urls[platform].replace(bucket, "ROOT")
+                model_lib.add_or_update_record(record=record, overwrite=False)
+        model_lib.write()
+
+        # Generate an occupancy map.
+        if occupancy_map:
+            m = OccupancyMapper()
+            m.create(scene=scene, layout=layout, image_dir=Path("../doc/images"))
         return objects
 
 
@@ -160,6 +164,7 @@ if __name__ == "__main__":
                                                                   "Don't update the init data.")
     parser.add_argument("--drop_zones", action="store_true", help="If included, show the drop zones. Ignored unless "
                                                                   "there is a `--load_scene` flag present.")
+    parser.add_argument("--no_occupancy_map", action="store_true", help="If included, don't generate an occupancy map.")
     args = parser.parse_args()
     if args.load_scene:
         c = Controller(launch_build=False)
@@ -168,4 +173,4 @@ if __name__ == "__main__":
                                           drop_zones=args.drop_zones is not None))
         c.communicate(cmds)
     else:
-        InitData.get_init_data(scene=args.scene, layout=args.layout)
+        InitData.get_init_data(scene=args.scene, layout=args.layout, occupancy_map=not args.no_occupancy_map)
