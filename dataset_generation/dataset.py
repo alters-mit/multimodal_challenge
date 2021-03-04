@@ -83,9 +83,13 @@ class Dataset(MultiModalBase):
     """
     LISTEN_TO_AUDIO: bool = False
     """:class_var
+    PyImpact initial amp value.
+    """
+    INITIAL_AMP: float = 0.5
+    """:class_var
     The PyImpact object used to generate impact sound audio at runtime.
     """
-    PY_IMPACT: PyImpact = PyImpact(initial_amp=0.5)
+    PY_IMPACT: PyImpact = PyImpact(initial_amp=INITIAL_AMP)
     """:class_var
     The path to the temporary audio file.
     """
@@ -210,6 +214,7 @@ class Dataset(MultiModalBase):
         :param output_directory: The output directory for the trial data.
         """
 
+        Dataset.PY_IMPACT.reset(initial_amp=Dataset.INITIAL_AMP)
         self.init_scene(scene=self.scene, layout=self.layout)
         # Get the PyImpact audio materials for the floor and walls.
         floor = EnvAudioMaterials.RESONANCE_AUDIO_TO_PY_IMPACT[self.env_audio_materials.floor]
@@ -236,6 +241,8 @@ class Dataset(MultiModalBase):
             AudioUtils.start(output_path=Dataset.TEMP_AUDIO_PATH)
             # These commands must be sent here because `init_scene()` will try to make the Magnebot moveable.
             resp = self.communicate([{"$type": "send_rigidbodies",
+                                      "frequency": "always"},
+                                     {"$type": "send_transforms",
                                       "frequency": "always"},
                                      {"$type": "set_immovable",
                                       "immovable": True},
@@ -368,7 +375,7 @@ class Dataset(MultiModalBase):
         # Get the latter half of the positions (the further positions).
         occupancy_positions = occupancy_positions[int(len(occupancy_positions) / 2.0):]
         # Pick a random position.
-        self._magnebot_position = self._rng.choice(occupancy_positions)
+        self._magnebot_position = occupancy_positions[self._rng.randint(0, len(occupancy_positions))]
         return self._magnebot_position
 
     def _get_target_object(self) -> Optional[MultiModalObjectInitData]:

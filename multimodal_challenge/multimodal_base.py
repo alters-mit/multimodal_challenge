@@ -1,10 +1,12 @@
 from typing import List, Optional
+from json import loads
 from abc import ABC, abstractmethod
 import numpy as np
 from tdw.tdw_utils import TDWUtils
 from magnebot import Magnebot, ActionStatus
 from multimodal_challenge.util import get_scene_librarian
 from multimodal_challenge.multimodal_object_init_data import MultiModalObjectInitData
+from multimodal_challenge.paths import OCCUPANCY_MAPS_DIRECTORY, SCENE_BOUNDS_DIRECTORY
 
 
 class MultiModalBase(Magnebot, ABC):
@@ -32,6 +34,8 @@ class MultiModalBase(Magnebot, ABC):
         commands: List[dict] = [{"$type": "add_scene",
                                  "name": scene_record.name,
                                  "url": scene_record.get_url()}]
+        self.occupancy_map = np.load(str(OCCUPANCY_MAPS_DIRECTORY.joinpath(f"{scene}_{layout}.npy").resolve()))
+        self._scene_bounds = loads(SCENE_BOUNDS_DIRECTORY.joinpath(f"{scene}_{layout}.json").read_text())
         # Set the post-processing.
         commands.extend(self._get_start_trial_commands())
         # Initialize the objects.

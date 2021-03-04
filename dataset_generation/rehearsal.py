@@ -252,4 +252,4 @@ class Rehearsal(Controller):
 
 if __name__ == "__main__":
     m = Rehearsal(random_seed=0)
-    m.run(num_trials=1000)
+    m.run(num_trials=100)
