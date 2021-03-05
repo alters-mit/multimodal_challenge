@@ -7,7 +7,7 @@ from setuptools import setup, find_packages
 readme = "TODO"
 setup(
     name='multimodal_challenge',
-    version="0.0.2",
+    version="0.0.3",
     description='Multi-modal challenge for TDW and the Magnebot API.',
     long_description=readme,
     long_description_content_type='text/markdown',
