@@ -99,7 +99,7 @@ class Dataset(MultiModalBase):
         self.communicate([{"$type": "set_render_quality",
                            "render_quality": 0},
                           {"$type": "set_target_framerate",
-                           "framerate": 60}])
+                           "framerate": 100}])
         """:field
         The name of the next trial.
         """
