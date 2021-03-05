@@ -7,8 +7,9 @@ from tdw.tdw_utils import TDWUtils
 from tdw.output_data import Transforms, Raycast
 from magnebot.scene_environment import SceneEnvironment
 from magnebot.util import get_data
-from multimodal_challenge.util import DROP_OBJECTS, get_object_init_commands, get_scene_librarian, get_drop_zones
-from multimodal_challenge.paths import REHEARSAL_DIRECTORY, OBJECT_INIT_DIRECTORY
+from multimodal_challenge.util import DROP_OBJECTS, get_object_init_commands, get_scene_librarian, get_drop_zones, \
+    get_scene_layouts
+from multimodal_challenge.paths import REHEARSAL_DIRECTORY
 from multimodal_challenge.dataset.dataset_trial import DatasetTrial
 from multimodal_challenge.dataset.drop_zone import DropZone
 from multimodal_challenge.encoder import Encoder
@@ -183,18 +184,16 @@ class Rehearsal(Controller):
         """
 
         self.scene_librarian = get_scene_librarian()
-        scenes: List[str] = list()
-        # Get the scene_layout schema.
-        for f in OBJECT_INIT_DIRECTORY.iterdir():
-            # Expected: mm_kitchen_1a_0.json, mm_kitchen_1a_1.json, ... , mm_kitchen_2b_2.json, ...
-            if f.is_file() and f.suffix == ".json":
-                scenes.append(f.name.replace(".json", ""))
+        # Get the total number of scene_layout combinations.
+        scene_layouts = get_scene_layouts()
+        num_layouts = 0.0
+        for k in scene_layouts:
+            num_layouts += scene_layouts[k]
         # Do trials for each scene_layout combination.
-        trials_per_scene_layout = int(num_trials / float(len(scenes)))
-        for scene in scenes:
-            scene_name = scene[:-2]
-            layout = int(scene[-1])
-            self.do_trials(scene=scene_name, layout=layout, num_trials=trials_per_scene_layout)
+        trials_per_scene_layout = int(num_trials / num_layouts)
+        for scene in scene_layouts:
+            for layout in range(scene_layouts[scene]):
+                self.do_trials(scene=scene, layout=layout, num_trials=trials_per_scene_layout)
         self.communicate({"$type": "terminate"})
 
     def do_trials(self, scene: str, layout: int, num_trials: int) -> None:
@@ -208,8 +207,7 @@ class Rehearsal(Controller):
         :param num_trials: How many trials we want to save to disk.
         """
 
-        filename = f"{scene}_{layout}.json"
-        self.drop_zones = get_drop_zones(filename=filename)
+        self.drop_zones = get_drop_zones(filename=f"{scene[:-1]}_{layout}.json")
         scene_record = self.scene_librarian.get_record(scene)
         commands: List[dict] = [{"$type": "add_scene",
                                  "name": scene_record.name,
@@ -244,7 +242,8 @@ class Rehearsal(Controller):
             count += 1
         pbar.close()
         # Write the results to disk.
-        REHEARSAL_DIRECTORY.joinpath(filename).write_text(dumps(dataset_trials, cls=Encoder), encoding="utf-8")
+        REHEARSAL_DIRECTORY.joinpath(f"{scene}_{layout}.json").write_text(dumps(dataset_trials, cls=Encoder),
+                                                                          encoding="utf-8")
         # Record the drop zone indices for debugging.
         REHEARSAL_DIRECTORY.joinpath(f"{scene}_{layout}_drop_zones.json").write_text(dumps(drop_zone_indices),
                                                                                      encoding="utf-8")

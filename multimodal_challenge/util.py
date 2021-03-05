@@ -1,5 +1,5 @@
 from json import loads
-from typing import List
+from typing import List, Dict
 from os.path import join
 from tdw.librarian import SceneLibrarian
 from tdw.tdw_utils import TDWUtils
@@ -38,7 +38,7 @@ def get_object_init_commands(scene: str, layout: int) -> List[dict]:
     :return: A list of commands to instantiate objects.
     """
 
-    data = loads(OBJECT_INIT_DIRECTORY.joinpath(f"{scene}_{layout}.json").read_text(encoding="utf-8"))
+    data = loads(OBJECT_INIT_DIRECTORY.joinpath(f"{scene[:-1]}_{layout}.json").read_text(encoding="utf-8"))
     commands = list()
     for o in data:
         commands.extend(MultiModalObjectInitData(**o).get_commands()[1])
@@ -57,3 +57,24 @@ def get_drop_zones(filename: str) -> List[DropZone]:
     for drop_zone in drop_zone_data:
         drop_zones.append(DropZone(center=TDWUtils.vector3_to_array(drop_zone["position"]), radius=drop_zone["size"]))
     return drop_zones
+
+
+def get_scene_layouts() -> Dict[str, int]:
+    """
+    :return: A dictionary. Key = The scene name (of the asset bundle). Value = Number of layouts available.
+    """
+
+    scene_layouts: Dict[str, int] = dict()
+    for f in OBJECT_INIT_DIRECTORY.iterdir():
+        # Expected: mm_kitchen_1_0.json, mm_kitchen_1_1.json, ... , mm_kitchen_2_2.json, ...
+        if f.is_file() and f.suffix == ".json":
+            # Expected: mm_kitchen_1_0
+            s = f.name.replace(".json", "")
+            # Expected: mm_kitchen_1
+            shell = s[:-2]
+            # Expected: 0
+            layout = s[-1]
+            for v in ["a", "b", "c"]:
+                # Expected: {"mm_kitchen_1a": 4}
+                scene_layouts[shell + v] = int(layout) + 1
+    return scene_layouts

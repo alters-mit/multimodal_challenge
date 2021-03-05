@@ -16,9 +16,8 @@ from magnebot.util import get_data
 from multimodal_challenge.multimodal_base import MultiModalBase
 from multimodal_challenge.trial import Trial
 from multimodal_challenge.encoder import Encoder
-from multimodal_challenge.paths import REHEARSAL_DIRECTORY, ENV_AUDIO_MATERIALS_PATH, OBJECT_INIT_DIRECTORY, \
-    DATASET_DIRECTORY
-from multimodal_challenge.util import get_object_init_commands
+from multimodal_challenge.paths import REHEARSAL_DIRECTORY, ENV_AUDIO_MATERIALS_PATH, DATASET_DIRECTORY
+from multimodal_challenge.util import get_object_init_commands, get_scene_layouts
 from multimodal_challenge.multimodal_object_init_data import MultiModalObjectInitData
 from multimodal_challenge.dataset.dataset_trial import DatasetTrial
 from multimodal_challenge.dataset.env_audio_materials import EnvAudioMaterials
@@ -141,12 +140,13 @@ class Dataset(MultiModalBase):
         Generate the entire dataset for each scene_layout combination.
         """
 
-        for f in OBJECT_INIT_DIRECTORY.iterdir():
-            # Expected: mm_kitchen_1a_0.json, mm_kitchen_1a_1.json, ... , mm_kitchen_2b_2.json, ...
-            if f.is_file() and f.suffix == ".json" and f.name.endswith("_0.json"):
-                self.do_trials(scene=f.name.replace(".json", "")[:-2], layout=f.name[-6])
+        scene_layouts = get_scene_layouts()
+        for scene in scene_layouts:
+            for layout in range(scene_layouts[scene]):
+                self.do_trials(scene=scene, layout=layout)
+        self.end()
 
-    def do_trials(self, scene: str, layout: str) -> None:
+    def do_trials(self, scene: str, layout: int) -> None:
         """
         Get the cached trial initialization data for a scene_layout combination and do each trial.
         This will try to avoid overwriting existing trial results.
@@ -159,7 +159,7 @@ class Dataset(MultiModalBase):
         self._start_action()
         # Remember the name of the scene.
         self.scene = scene
-        self.layout = int(layout)
+        self.layout = layout
         output_directory = DATASET_DIRECTORY.joinpath(f"{scene}_{layout}")
         if not output_directory.exists():
             output_directory.mkdir(parents=True)

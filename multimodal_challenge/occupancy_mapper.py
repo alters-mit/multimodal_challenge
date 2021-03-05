@@ -73,11 +73,13 @@ class OccupancyMapper(FloorplanController):
             self.socket.close()
             return
         scene_env = SceneEnvironment(resp=resp)
-        scene_bounds = {"x_min": scene_env.x_min,
-                        "x_max": scene_env.x_max,
-                        "z_min": scene_env.z_min,
-                        "z_max": scene_env.z_max}
-        SCENE_BOUNDS_DIRECTORY.joinpath(f"{scene}_{layout}.json").write_text(dumps(scene_bounds, indent=2))
+        # Save the scene bounds.
+        if layout == 0:
+            scene_bounds = {"x_min": scene_env.x_min,
+                            "x_max": scene_env.x_max,
+                            "z_min": scene_env.z_min,
+                            "z_max": scene_env.z_max}
+            SCENE_BOUNDS_DIRECTORY.joinpath(f"{scene[:-1]}.json").write_text(dumps(scene_bounds, indent=2))
         # Spherecast to each point.
         x = scene_env.x_min
         while x < scene_env.x_max:
@@ -129,7 +131,7 @@ class OccupancyMapper(FloorplanController):
             for p in island:
                 occupancy_map[p[0]][p[1]] = 2
         # Save the occupancy map.
-        np.save(str(OCCUPANCY_MAPS_DIRECTORY.joinpath(f"{scene}_{layout}").resolve()), occupancy_map)
+        np.save(str(OCCUPANCY_MAPS_DIRECTORY.joinpath(f"{scene[:-1]}_{layout}").resolve()), occupancy_map)
 
         self.communicate({"$type": "terminate"})
         self.socket.close()

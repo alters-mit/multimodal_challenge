@@ -35,8 +35,8 @@ class MultiModalBase(Magnebot, ABC):
         commands: List[dict] = [{"$type": "add_scene",
                                  "name": scene_record.name,
                                  "url": scene_record.get_url()}]
-        self.occupancy_map = np.load(str(OCCUPANCY_MAPS_DIRECTORY.joinpath(f"{scene}_{layout}.npy").resolve()))
-        self._scene_bounds = loads(SCENE_BOUNDS_DIRECTORY.joinpath(f"{scene}_{layout}.json").read_text())
+        self.occupancy_map = np.load(str(OCCUPANCY_MAPS_DIRECTORY.joinpath(f"{scene[:-1]}_{layout}.npy").resolve()))
+        self._scene_bounds = loads(SCENE_BOUNDS_DIRECTORY.joinpath(f"{scene[:-1]}.json").read_text())
         # Set the post-processing.
         commands.extend(self._get_start_trial_commands())
         # Initialize the objects.

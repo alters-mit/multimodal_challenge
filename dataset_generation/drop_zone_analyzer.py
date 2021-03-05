@@ -31,7 +31,7 @@ class DropZoneAnalyzer(Controller):
         :param layout: The layout index.
         """
 
-        drop_zones = get_drop_zones(f"{scene}_{layout}.json")
+        drop_zones = get_drop_zones(f"{scene[:-1]}_{layout}.json")
         indices = loads(REHEARSAL_DIRECTORY.joinpath(f"{scene}_{layout}_drop_zones.json").read_text(encoding="utf-8"))
         max_instances = 0
         for i in range(len(indices)):

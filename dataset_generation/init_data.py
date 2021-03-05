@@ -6,7 +6,7 @@ from tdw.py_impact import PyImpact
 from tdw.librarian import ModelLibrarian, SceneLibrarian
 from tdw.controller import Controller
 from multimodal_challenge.paths import DROP_ZONE_DIRECTORY, OBJECT_INIT_DIRECTORY, OBJECT_LIBRARY_PATH, \
-    SCENE_LIBRARY_PATH, TARGET_OBJECTS_PATH, KINEMATIC_OBJECTS_PATH
+    SCENE_LIBRARY_PATH, KINEMATIC_OBJECTS_PATH
 from multimodal_challenge.multimodal_object_init_data import MultiModalObjectInitData
 from multimodal_challenge.encoder import Encoder
 from multimodal_challenge.occupancy_mapper import OccupancyMapper
@@ -51,7 +51,7 @@ class InitData:
         """
 
         root_dir = Path.home().joinpath("tdw_config")
-        filename = f"{scene}_{layout}"
+        filename = f"{scene[:-1]}_{layout}"
         # Append object init commands.
         commands = loads(root_dir.joinpath(f"{filename}.txt").read_text(encoding="utf-8"))
         # Update the drop zone data.
@@ -142,8 +142,8 @@ class InitData:
                 else:
                     print(f"Warning: no audio values for {name}")
                 i += 3
-        OBJECT_INIT_DIRECTORY.joinpath(f"{scene}_{layout}.json").write_text(dumps(objects, cls=Encoder, indent=2,
-                                                                                  sort_keys=True))
+        OBJECT_INIT_DIRECTORY.joinpath(f"{scene[:-1]}_{layout}.json").write_text(dumps(objects, cls=Encoder, indent=2,
+                                                                                       sort_keys=True))
         # Write the records.
         model_lib.write()
 
