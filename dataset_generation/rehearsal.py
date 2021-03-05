@@ -116,6 +116,9 @@ class Rehearsal(Controller):
                          "destination": {"x": position["x"], "y": 0, "z": position["z"]}})
         resp = self.communicate(commands)
         raycast = get_data(resp=resp, d_type=Raycast)
+        # This is outside of the scene.
+        if not raycast.get_hit():
+            return None, -1
         min_y = raycast.get_point()[1] + 0.2
         if min_y > position["y"]:
             min_y = raycast.get_point()[1]

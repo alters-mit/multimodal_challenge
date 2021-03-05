@@ -361,23 +361,23 @@ class Dataset(MultiModalBase):
         return commands
 
     def _get_start_trial_commands(self) -> List[dict]:
-        # Disable any graphics settings that could affect performance (because the camera is off). Set the reverb space.
+        # Disable any graphics settings that could affect performance (because the camera is off).
         return [{"$type": "set_post_process",
                  "value": False},
                 {"$type": "enable_reflection_probes",
-                 "enable": False},
-                {"$type": "set_reverb_space_simple",
+                 "enable": False}]
+
+    def _get_end_init_commands(self) -> List[dict]:
+        # Add a reverb space and an audio sensor. Apply a force.
+        return [{"$type": "set_reverb_space_simple",
                  "env_id": -1,
                  "reverb_floor_material": self.env_audio_materials.floor,
                  "reverb_ceiling_material": self.env_audio_materials.wall,
                  "reverb_front_wall_material": self.env_audio_materials.wall,
                  "reverb_back_wall_material": self.env_audio_materials.wall,
                  "reverb_left_wall_material": self.env_audio_materials.wall,
-                 "reverb_right_wall_material": self.env_audio_materials.wall}]
-
-    def _get_end_init_commands(self) -> List[dict]:
-        # Add an audio sensor. Apply a force.
-        return [{"$type": "add_environ_audio_sensor"},
+                 "reverb_right_wall_material": self.env_audio_materials.wall},
+                {"$type": "add_environ_audio_sensor"},
                 {"$type": "apply_force_to_object",
                  "id": self.target_object_id,
                  "force": self.trials[self.trial_count].force}]

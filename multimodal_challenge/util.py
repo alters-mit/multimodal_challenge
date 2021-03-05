@@ -74,7 +74,7 @@ def get_scene_layouts() -> Dict[str, int]:
             shell = s[:-2]
             # Expected: 0
             layout = s[-1]
-            for v in ["a", "b", "c"]:
+            for v in ["a", "b"]:
                 # Expected: {"mm_kitchen_1a": 4}
                 scene_layouts[shell + v] = int(layout) + 1
     return scene_layouts
