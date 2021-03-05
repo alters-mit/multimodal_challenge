@@ -6,6 +6,7 @@ from array import array
 import numpy as np
 import pyaudio
 from tqdm import tqdm
+from scipy.signal import convolve2d
 from tdw.tdw_utils import AudioUtils, TDWUtils, QuaternionUtils
 from tdw.py_impact import PyImpact, ObjectInfo, AudioMaterial
 from tdw.output_data import Rigidbodies, Transforms, AudioSources
@@ -76,7 +77,7 @@ class Dataset(MultiModalBase):
     """:class_var
     PyImpact initial amp value.
     """
-    INITIAL_AMP: float = 0.1
+    INITIAL_AMP: float = 0.5
     """:class_var
     The PyImpact object used to generate impact sound audio at runtime.
     """
@@ -203,7 +204,6 @@ class Dataset(MultiModalBase):
         :param output_directory: The output directory for the trial data.
         """
 
-        Dataset.PY_IMPACT.reset(initial_amp=Dataset.INITIAL_AMP)
         self.init_scene(scene=self.scene, layout=self.layout)
         # Get the PyImpact audio materials for the floor and walls.
         floor = EnvAudioMaterials.RESONANCE_AUDIO_TO_PY_IMPACT[self.env_audio_materials.floor]
@@ -277,7 +277,13 @@ class Dataset(MultiModalBase):
         # Convert the current state of each object to initialization data.
         state = SceneState(resp=self.communicate([]))
         object_init_data: List[MultiModalObjectInitData] = list()
+        target_object_index: int = -1
+        index: int = 0
         for o_id in self.objects_static:
+            # Get the target object's index in the list.
+            if o_id == self.target_object_id:
+                target_object_index = index
+            index += 1
             name = self.objects_static[o_id].name
             o = MultiModalObjectInitData(name=name,
                                          position=TDWUtils.array_to_vector3(state.object_transforms[o_id].position),
@@ -290,7 +296,7 @@ class Dataset(MultiModalBase):
         ci = Trial(scene=self.scene,
                    magnebot=self._magnebot_init_data,
                    audio=Dataset.TEMP_AUDIO_PATH.read_bytes(),
-                   target_object=self.target_object_id,
+                   target_object_index=target_object_index,
                    object_init_data=object_init_data)
         # Remove the temp file.
         Dataset.TEMP_AUDIO_PATH.unlink()
@@ -341,7 +347,7 @@ class Dataset(MultiModalBase):
             else:
                 angle += 360
         # Flip the angle and add some randomness. Then turn by the angle to look away from the object.
-        angle = -angle + self._rng.uniform(-70, 70)
+        angle += 180 + self._rng.uniform(-45, 45)
         # We need every frame for audio recording, but not right now, so let's speed things up.
         self._skip_frames = 10
         self.turn_by(angle=angle)
@@ -360,13 +366,21 @@ class Dataset(MultiModalBase):
                                           {"$type": "set_object_collision_detection_mode",
                                            "id": self.target_object_id,
                                            "mode": "continuous_dynamic"}])
+        # Reset the modes here to discard any junk generated during setup.
+        Dataset.PY_IMPACT.reset(initial_amp=Dataset.INITIAL_AMP)
 
     def _get_magnebot_position(self) -> np.array:
         # Get all free occupancy map positions.
         occupancy_positions: List[np.array] = list()
         target_object_position = TDWUtils.vector3_to_array(self.trials[self.trial_count].init_data.position)
-        for ix, iy in np.ndindex(self.occupancy_map.shape):
-            if self.occupancy_map[ix][iy] != 0:
+        # Prevent the Magnebot from spawning at edges of the occupancy map.
+        spawn_map = np.zeros_like(self.occupancy_map)
+        spawn_map.fill(1)
+        spawn_map[self.occupancy_map == 0] = 0
+        conv = np.ones((3, 3))
+        spawn_map = convolve2d(spawn_map, conv, mode="same", boundary="fill")
+        for ix, iy in np.ndindex(spawn_map.shape):
+            if spawn_map[ix][iy] != 0:
                 continue
             px, pz = self.get_occupancy_position(ix, iy)
             occupancy_positions.append(np.array([px, 0, pz]))

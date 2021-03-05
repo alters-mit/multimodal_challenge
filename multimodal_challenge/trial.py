@@ -12,12 +12,12 @@ class Trial:
     """
 
     def __init__(self, scene: str, magnebot: MagnebotInitData, object_init_data: List[MultiModalObjectInitData],
-                 target_object: int, audio: bytes):
+                 target_object_index: int, audio: bytes):
         """
         :param scene: The name of the scene.
         :param magnebot: [Initialization data for the Magnebot](magnebot_init_data.md).
         :param object_init_data: [Initialization data](multimodal_object_init_data.md) for each object in the scene.
-        :param target_object: The ID of the target object.
+        :param target_object_index: The index of the target object in `object_init_data`.
         :param audio: The audio that was recorded while the object was moving.
         """
 
@@ -42,9 +42,9 @@ class Trial:
         """
         self.magnebot: MagnebotInitData = magnebot
         """:field
-        The ID of the target object.
+        The index of the target object in `object_init_data`.
         """
-        self.target_object: int = target_object
+        self.target_object_index: int = target_object_index
         if isinstance(audio, str):
             """:field
             The audio that was recorded while the object was moving.
