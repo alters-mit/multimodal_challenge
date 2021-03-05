@@ -10,6 +10,7 @@ from scipy.signal import convolve2d
 from tdw.tdw_utils import AudioUtils, TDWUtils, QuaternionUtils
 from tdw.py_impact import PyImpact, ObjectInfo, AudioMaterial
 from tdw.output_data import Rigidbodies, Transforms, AudioSources
+from magnebot import ActionStatus
 from magnebot.scene_state import SceneState
 from magnebot.util import get_data
 from multimodal_challenge.multimodal_base import MultiModalBase
@@ -305,38 +306,18 @@ class Dataset(MultiModalBase):
                                                                          encoding="utf-8")
         self.trial_count += 1
 
-    def _cache_static_data(self, resp: List[bytes]) -> None:
-        super()._cache_static_data(resp=resp)
-        self.env_id = self.get_unique_id()
+    def init_scene(self, scene: str, layout: int, room: int = None) -> ActionStatus:
+        """
+        Initialize the scene. Turn the Magnebot away from the object. Let the object fall.
 
-    def _get_object_init_commands(self) -> List[dict]:
-        # Get the commands for the scene objects.
-        commands = get_object_init_commands(scene=self.scene, layout=self.layout)
-        return commands
+        :param scene: The name of the scene.
+        :param layout: The layout index.
+        :param room: This parameter is ignored.
 
-    def _get_start_trial_commands(self) -> List[dict]:
-        # Disable any graphics settings that could affect performance (because the camera is off). Set the reverb space.
-        return [{"$type": "set_post_process",
-                 "value": False},
-                {"$type": "enable_reflection_probes",
-                 "enable": False},
-                {"$type": "set_reverb_space_simple",
-                 "env_id": -1,
-                 "reverb_floor_material": self.env_audio_materials.floor,
-                 "reverb_ceiling_material": self.env_audio_materials.wall,
-                 "reverb_front_wall_material": self.env_audio_materials.wall,
-                 "reverb_back_wall_material": self.env_audio_materials.wall,
-                 "reverb_left_wall_material": self.env_audio_materials.wall,
-                 "reverb_right_wall_material": self.env_audio_materials.wall}]
+        :return: An `ActionStatus` (always success).
+        """
 
-    def _get_end_init_commands(self) -> List[dict]:
-        # Add an audio sensor. Apply a force.
-        return [{"$type": "add_environ_audio_sensor"},
-                {"$type": "apply_force_to_object",
-                 "id": self.target_object_id,
-                 "force": self.trials[self.trial_count].force}]
-
-    def _set_initial_pose(self) -> None:
+        super().init_scene(scene=scene, layout=layout, room=room)
         # Get the angle to the object.
         angle = TDWUtils.get_angle_between(v1=self.state.magnebot_transform.forward,
                                            v2=TDWUtils.vector3_to_array(self.trials[self.trial_count].position) -
@@ -368,6 +349,38 @@ class Dataset(MultiModalBase):
                                            "mode": "continuous_dynamic"}])
         # Reset the modes here to discard any junk generated during setup.
         Dataset.PY_IMPACT.reset(initial_amp=Dataset.INITIAL_AMP)
+        return ActionStatus.success
+
+    def _cache_static_data(self, resp: List[bytes]) -> None:
+        super()._cache_static_data(resp=resp)
+        self.env_id = self.get_unique_id()
+
+    def _get_object_init_commands(self) -> List[dict]:
+        # Get the commands for the scene objects.
+        commands = get_object_init_commands(scene=self.scene, layout=self.layout)
+        return commands
+
+    def _get_start_trial_commands(self) -> List[dict]:
+        # Disable any graphics settings that could affect performance (because the camera is off). Set the reverb space.
+        return [{"$type": "set_post_process",
+                 "value": False},
+                {"$type": "enable_reflection_probes",
+                 "enable": False},
+                {"$type": "set_reverb_space_simple",
+                 "env_id": -1,
+                 "reverb_floor_material": self.env_audio_materials.floor,
+                 "reverb_ceiling_material": self.env_audio_materials.wall,
+                 "reverb_front_wall_material": self.env_audio_materials.wall,
+                 "reverb_back_wall_material": self.env_audio_materials.wall,
+                 "reverb_left_wall_material": self.env_audio_materials.wall,
+                 "reverb_right_wall_material": self.env_audio_materials.wall}]
+
+    def _get_end_init_commands(self) -> List[dict]:
+        # Add an audio sensor. Apply a force.
+        return [{"$type": "add_environ_audio_sensor"},
+                {"$type": "apply_force_to_object",
+                 "id": self.target_object_id,
+                 "force": self.trials[self.trial_count].force}]
 
     def _get_magnebot_position(self) -> np.array:
         # Get all free occupancy map positions.

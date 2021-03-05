@@ -1,5 +1,5 @@
 from json import loads
-from typing import List, Optional
+from typing import List, Optional, Dict
 import numpy as np
 from tdw.object_init_data import AudioInitData
 from magnebot import ActionStatus, ArmJoint
@@ -29,10 +29,6 @@ class MultiModal(MultiModalBase):
         The pre-recorded audio data for the current trial.
         """
         self.audio: bytes = b''
-        """:field
-        The ID of the target object in the current trial.
-        """
-        self.target_object: int = -1
         # Data used to initialize the next trial.
         self.__trial: Optional[Trial] = None
 
@@ -69,8 +65,14 @@ class MultiModal(MultiModalBase):
         self.__trial: Trial = \
             Trial(**loads(DATASET_DIRECTORY.joinpath(f"{scene}_{layout}/{trial}.json").read_text(encoding="utf-8")))
         self.audio = self.__trial.audio
-        self.target_object = self.__trial.target_object
-        return super().init_scene(scene=self.__trial.scene, layout=layout)
+        super().init_scene(scene=self.__trial.scene, layout=layout)
+        # Set the target object ID.
+        for i, object_id in enumerate(self.objects_static):
+            if i == self.__trial.target_object_index:
+                print(self.objects_static[object_id].name)
+                self.target_object_id = object_id
+                break
+        return ActionStatus.success
 
     def set_torso(self, position: float, angle: float = None) -> ActionStatus:
         """
@@ -114,6 +116,14 @@ class MultiModal(MultiModalBase):
         self._end_action()
         return status
 
+    def _get_scene_init_commands(self, magnebot_position: Dict[str, float] = None) -> List[dict]:
+        commands = super()._get_scene_init_commands(magnebot_position=magnebot_position)
+        for i in range(len(commands)):
+            # Set an initial  rotation for the Magnebot.
+            if commands[i]["$type"] == "add_magnebot":
+                commands[i]["rotation"] = {"x": 0, "y": self.__trial.magnebot.rotation, "z": 0}
+        return commands
+
     def _get_start_trial_commands(self) -> List[dict]:
         return [{"$type": "set_aperture",
                  "aperture": 8.0},
@@ -148,8 +158,3 @@ class MultiModal(MultiModalBase):
 
     def _get_magnebot_position(self) -> np.array:
         return self.__trial.magnebot.position
-
-    def _set_initial_pose(self) -> None:
-        # Strike a cool pose.
-        self._next_frame_commands.extend(self.__trial.magnebot.get_commands())
-        self._end_action()

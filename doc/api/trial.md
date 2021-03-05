@@ -16,7 +16,7 @@ It also includes the pre-recorded audio.
 
 - `magnebot` [Initialization data for the Magnebot](magnebot_init_data.md).
 
-- `target_object` The ID of the target object.
+- `target_object_index` The index of the target object in `object_init_data`.
 
 - `audio` The audio that was recorded while the object was moving.
 
@@ -26,13 +26,13 @@ It also includes the pre-recorded audio.
 
 #### \_\_init\_\_
 
-**`Trial(scene, magnebot, object_init_data, target_object, audio)`**
+**`Trial(scene, magnebot, object_init_data, target_object_index, audio)`**
 
 | Parameter | Type | Default | Description |
 | --- | --- | --- | --- |
 | scene |  str |  | The name of the scene. |
 | magnebot |  MagnebotInitData |  | [Initialization data for the Magnebot](magnebot_init_data.md). |
 | object_init_data |  List[MultiModalObjectInitData] |  | [Initialization data](multimodal_object_init_data.md) for each object in the scene. |
-| target_object |  int |  | The ID of the target object. |
+| target_object_index |  int |  | The index of the target object in `object_init_data`. |
 | audio |  bytes |  | The audio that was recorded while the object was moving. |
 

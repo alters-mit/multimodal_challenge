@@ -53,7 +53,6 @@ class MultiModalBase(Magnebot, ABC):
         resp = self.communicate(commands)
         self._cache_static_data(resp=resp)
         self._end_action()
-        self._set_initial_pose()
         return ActionStatus.success
 
     @abstractmethod
@@ -92,14 +91,6 @@ class MultiModalBase(Magnebot, ABC):
     def _get_magnebot_position(self) -> np.array:
         """
         :return: The initial position of the Magnebot.
-        """
-
-        raise Exception()
-
-    @abstractmethod
-    def _set_initial_pose(self) -> None:
-        """
-        Set the initial pose of the Magnebot.
         """
 
         raise Exception()
