@@ -108,7 +108,7 @@ This will start a thread to listen to audio on the sound card to determine if a 
 | Parameter | Type | Default | Description |
 | --- | --- | --- | --- |
 | scene |  str |  | The name of the scene. |
-| layout |  str |  | The index of the furniture layout. |
+| layout |  int |  | The index of the furniture layout. |
 
 #### do_trial
 
