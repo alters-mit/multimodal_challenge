@@ -7,7 +7,7 @@ from setuptools import setup, find_packages
 readme = "TODO"
 setup(
     name='multimodal_challenge',
-    version="0.0.3",
+    version="0.0.4",
     description='Multi-modal challenge for TDW and the Magnebot API.',
     long_description=readme,
     long_description_content_type='text/markdown',
@@ -27,5 +27,5 @@ setup(
     keywords='unity simulation tdw robotics magnebot',
     packages=find_packages(),
     include_package_data=True,
-    install_requires=['tdw>=1.8.2.0', 'magnebot', 'numpy', 'tqdm', "py_md_doc"],
+    install_requires=['tdw', 'magnebot', 'numpy', 'tqdm', "py_md_doc"],
 )
