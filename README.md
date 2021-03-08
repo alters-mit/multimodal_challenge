@@ -13,13 +13,13 @@
 
 ## `init_data.py`
 
-This is a backend tool for TDW  developers to convert saved [TDW commands](https://github.com/threedworld-mit/tdw/blob/master/Documentation/api/command_api.md) into [initialization instructions](doc/api/multimodal_object_init_data.md) and [metadata records](https://github.com/threedworld-mit/tdw/blob/master/Documentation/python/librarian/librarian.md).
+This is a backend tool for TDW  developers to convert saved [TDW commands](https://github.com/threedworld-mit/tdw/blob/master/Documentation/api/command_api.md) into [initialization instructions](doc/api/multimodal_object_init_data.md). It will also create [metadata records](https://github.com/threedworld-mit/tdw/blob/master/Documentation/python/librarian/librarian.md), [`DropZone`](doc/api/drop_zone.md) data, and occupancy maps.
 
 [Further documentation here.](doc/dataset/init_data.md)
 
 ## `rehearsal.py`
 
-Define [`Drop`](doc/api/drop.md) initialization parameters for target objects. Drop the object. If it lands in a [`DropZone`](doc/api/drop_zone.md), record the `Drop`. This will give `dataset.py` initialization parameters.
+Define [`DatasetTrial`](doc/api/dataset_trial.md) initialization parameters for target objects. Drop the object. If it lands in a [`DropZone`](doc/api/drop_zone.md), record the `DatasetTrial`. This will give `dataset.py` initialization parameters.
 
 [Further documentation here.](doc/dataset/rehearsal.md)
 
