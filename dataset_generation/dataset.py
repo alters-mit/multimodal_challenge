@@ -246,8 +246,9 @@ class Dataset(MultiModalBase):
                                      {"$type": "send_audio_sources",
                                       "frequency": "always"}])
             done: bool = False
+            num_frames: int = 0
             # Let the simulation run until there's too many frames or if there's no audio.
-            while not done:
+            while not done and num_frames < 1000:
                 # Get impact sound commands.
                 commands = Dataset.PY_IMPACT.get_audio_commands(resp=resp, floor=floor, wall=wall, resonance_audio=True)
                 # Check if the object stopped moving (there won't be audio or collisions while it's falling).
@@ -275,6 +276,7 @@ class Dataset(MultiModalBase):
                     done = True
                 else:
                     resp = self.communicate(commands)
+                num_frames += 1
             # Resonance Audio might continue generating reverb after the AudioSource finishes.
             # So we'll listen to the system audio until we can't hear anything.
             self._listen_for_audio()
