@@ -1,24 +1,27 @@
 from pathlib import Path
 from pkg_resources import resource_filename
+from argparse import ArgumentParser
 
 """
 Paths to data files in this Python module.
 """
 
-# The path to the file describing the root directory of the asset bundles.
-__CONFIG_PATH = Path.home().joinpath("multimodal_challenge/config.ini")
-assert __CONFIG_PATH.exists(), f"Config file not found: {__CONFIG_PATH} (see README)"
-__CONFIG_TEXT = __CONFIG_PATH.read_text(encoding="utf-8")
-__CONFIG = dict()
-for __row in __CONFIG_TEXT.split("\n"):
-    __cols = __row.split("=")
-    __CONFIG[__cols[0]] = __cols[1]
+__parser = ArgumentParser()
+__parser.add_argument("--asset_bundles", type=str, default="https://tdw-public.s3.amazonaws.com",
+                      help="Root local directory or remote URL of scene and model asset bundles.")
+__parser.add_argument("--dataset_directory", type=str, default="D:/multimodal_challenge",
+                      help="Root local directory of the dataset files.")
+__args, __unknown = __parser.parse_known_args()
+
 # The root directory of the asset bundles.
-ASSET_BUNDLES_DIRECTORY: str = __CONFIG["asset_bundles"]
+ASSET_BUNDLES_DIRECTORY: str = __args.asset_bundles
 if ASSET_BUNDLES_DIRECTORY.startswith("~"):
     ASSET_BUNDLES_DIRECTORY = str(Path.home().joinpath(ASSET_BUNDLES_DIRECTORY[2:]).resolve())
+__data_dir = __args.dataset_directory
+if __data_dir.startswith("~"):
+    __data_dir = str(Path.home().joinpath(__data_dir[2:]).resolve())
 # The path to where the dataset data will be generated.
-DATASET_ROOT_DIRECTORY: Path = Path(__CONFIG["dataset"])
+DATASET_ROOT_DIRECTORY: Path = Path(__data_dir)
 # The path to the rehearsal data.
 REHEARSAL_DIRECTORY: Path = DATASET_ROOT_DIRECTORY.joinpath("rehearsal")
 if not REHEARSAL_DIRECTORY.exists():

@@ -38,8 +38,14 @@ class Dataset(MultiModalBase):
     # Usage
 
     1. `cd dataset`
-    2. `python3 dataset.py`
+    2. `python3 dataset.py [ARGUMENTS]`
     3. Run build
+
+    | Argument | Default | Description |
+    | --- | --- | --- |
+    | `--asset_bundles` | https://tdw-public.s3.amazonaws.com | Root local directory or remote URL of asset bundles. |
+    | `--dataset_directory` | D:/multimodal_challenge | Root local directory of the dataset files. |
+    | `--random_seed` | 0 | The random seed. |
 
     **This is a VERY long process.**
 
@@ -454,5 +460,9 @@ class Dataset(MultiModalBase):
 
 
 if __name__ == "__main__":
-    dataset_generator = Dataset()
+    from argparse import ArgumentParser
+    parser = ArgumentParser()
+    parser.add_argument("--random_seed", type=int, default=0, help="The total number of trials.")
+    args = parser.parse_args()
+    dataset_generator = Dataset(random_seed=args.random_seed)
     dataset_generator.run()

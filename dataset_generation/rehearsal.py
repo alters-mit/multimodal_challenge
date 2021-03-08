@@ -36,8 +36,15 @@ class Rehearsal(Controller):
     # Usage
 
     1. `cd dataset`
-    2. `python3 rehearsal.py`
+    2. `python3 rehearsal.py [ARGUMENTS]`
     3. Run build
+
+    | Argument | Default | Description |
+    | --- | --- | --- |
+    | `--asset_bundles` | https://tdw-public.s3.amazonaws.com | Root local directory or remote URL of asset bundles. |
+    | `--dataset_directory` | D:/multimodal_challenge | Root local directory of the dataset files. |
+    | `--random_seed` | 0 | The random seed. |
+    | `--num_trials` | 10000 | Generate this many trials. |
 
     # How it works
 
@@ -102,9 +109,6 @@ class Rehearsal(Controller):
         """
 
         commands = []
-        if self.drop_object is not None:
-            commands.append({"$type": "destroy_object",
-                             "id": self.drop_object})
         # Get a random room.
         # Get a random starting position.
         position = {"x": float(self.rng.uniform(self.scene_environment.x_min, self.scene_environment.x_max)),
@@ -153,21 +157,25 @@ class Rehearsal(Controller):
         p_0 = np.array(get_data(resp=resp, d_type=Transforms).get_position(0))
         done = False
         good = False
+        num_frames = 0
         while not done:
             # Skip some frames because we only care about where the object lands, not its trajectory.
             # This will make the simulation much faster.
             resp = self.communicate([{"$type": "step_physics",
                                       "frames": 10}])
             p_1 = np.array(get_data(resp=resp, d_type=Transforms).get_position(0))
-            # The object fell below the floor.
-            if p_1[1] < -0.1:
+            # The object fell below the floor or took to long to settle.
+            if p_1[1] < -0.1 or num_frames >= 1000:
                 done = True
                 good = False
             # The object stopped moving.
             elif np.linalg.norm(p_0 - p_1) < 0.001:
                 done = True
                 good = True
+            num_frames += 1
             p_0 = p_1
+        self.communicate({"$type": "destroy_object",
+                          "id": self.drop_object})
         if not good:
             return None, -1
         # Check if this object is in a drop zone.
@@ -194,12 +202,14 @@ class Rehearsal(Controller):
             num_layouts += scene_layouts[k]
         # Do trials for each scene_layout combination.
         trials_per_scene_layout = int(num_trials / num_layouts)
+        pbar = tqdm(total=num_trials)
         for scene in scene_layouts:
             for layout in range(scene_layouts[scene]):
-                self.do_trials(scene=scene, layout=layout, num_trials=trials_per_scene_layout)
+                self.do_trials(scene=scene, layout=layout, num_trials=trials_per_scene_layout, pbar=pbar)
+        pbar.close()
         self.communicate({"$type": "terminate"})
 
-    def do_trials(self, scene: str, layout: int, num_trials: int) -> None:
+    def do_trials(self, scene: str, layout: int, num_trials: int, pbar: tqdm = None) -> None:
         """
         Load a scene_layout combination, and its objects, and its drop zones.
         Run random trials until we have enough "good" trials, where "good" means that the object landed in a drop zone.
@@ -208,6 +218,7 @@ class Rehearsal(Controller):
         :param scene: The scene name.
         :param layout: The object layout variant of the scene.
         :param num_trials: How many trials we want to save to disk.
+        :param pbar: Progress bar.
         """
 
         self.drop_zones = get_drop_zones(filename=f"{scene[:-1]}_{layout}.json")
@@ -226,14 +237,16 @@ class Rehearsal(Controller):
         resp = self.communicate(commands)
         # Set the scene environment.
         self.scene_environment = SceneEnvironment(resp=resp)
-        pbar = tqdm(total=num_trials)
+        close_bar = pbar is None
+        if pbar is None:
+            pbar = tqdm(total=num_trials)
         # Remember all good drops.
         dataset_trials: List[DatasetTrial] = list()
         drop_zone_indices: List[int] = list()
         count: int = 0
         while len(dataset_trials) < num_trials:
             # Sometimes it's nice to watch the numbers go up.
-            pbar.set_description(str(count))
+            pbar.set_description(scene + " " + str(count))
             # Do a trial.
             dataset_trial, drop_zone_index = self.do_trial()
             # If we got an object back, then this was a good trial.
@@ -243,15 +256,21 @@ class Rehearsal(Controller):
                 drop_zone_indices.append(drop_zone_index)
                 pbar.update(1)
             count += 1
-        pbar.close()
         # Write the results to disk.
         REHEARSAL_DIRECTORY.joinpath(f"{scene}_{layout}.json").write_text(dumps(dataset_trials, cls=Encoder),
                                                                           encoding="utf-8")
         # Record the drop zone indices for debugging.
         REHEARSAL_DIRECTORY.joinpath(f"{scene}_{layout}_drop_zones.json").write_text(dumps(drop_zone_indices),
                                                                                      encoding="utf-8")
+        if close_bar:
+            pbar.close()
 
 
 if __name__ == "__main__":
-    m = Rehearsal(random_seed=0)
-    m.run(num_trials=100)
+    from argparse import ArgumentParser
+    parser = ArgumentParser()
+    parser.add_argument("--num_trials", type=int, default=10000, help="The total number of trials.")
+    parser.add_argument("--random_seed", type=int, default=0, help="The total number of trials.")
+    args = parser.parse_args()
+    m = Rehearsal(random_seed=args.random_seed)
+    m.run(num_trials=args.num_trials)

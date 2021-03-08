@@ -1,4 +1,3 @@
 .idea/
 *__pycache__/
 multimodal_challenge.egg-info/
-config.ini
