@@ -20,8 +20,15 @@ all objects are kinematic (non-moveable) in order to avoid re-initializing the s
 # Usage
 
 1. `cd dataset`
-2. `python3 rehearsal.py`
+2. `python3 rehearsal.py [ARGUMENTS]`
 3. Run build
+
+| Argument | Default | Description |
+| --- | --- | --- |
+| `--asset_bundles` | https://tdw-public.s3.amazonaws.com | Root local directory or remote URL of asset bundles. |
+| `--dataset_directory` | D:/multimodal_challenge | Root local directory of the dataset files. |
+| `--random_seed` | 0 | The random seed. |
+| `--num_trials` | 10000 | Generate this many trials. |
 
 # How it works
 
@@ -99,6 +106,8 @@ Generate results for each scene_layout combination.
 
 **`self.do_trials(scene, layout, num_trials)`**
 
+**`self.do_trials(scene, layout, num_trials, pbar=None)`**
+
 Load a scene_layout combination, and its objects, and its drop zones.
 Run random trials until we have enough "good" trials, where "good" means that the object landed in a drop zone.
 Save the result to disk.
@@ -108,4 +117,5 @@ Save the result to disk.
 | scene |  str |  | The scene name. |
 | layout |  int |  | The object layout variant of the scene. |
 | num_trials |  int |  | How many trials we want to save to disk. |
+| pbar |  tqdm  | None | Progress bar. |
 

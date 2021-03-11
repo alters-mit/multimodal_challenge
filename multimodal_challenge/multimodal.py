@@ -12,6 +12,8 @@ from multimodal_challenge.magnebot_init_data import MagnebotInitData
 class MultiModal(MultiModalBase):
     """
     TODO ADD DESCRIPTION
+
+    [TOC]
     """
 
     def __init__(self, port: int = 1071, screen_width: int = 256, screen_height: int = 256, random_seed: int = None):
@@ -34,15 +36,7 @@ class MultiModal(MultiModalBase):
 
     def init_scene(self, scene: str, layout: int, trial: int = None) -> ActionStatus:
         """
-        Initialize a scene from a `Trial` object located at: `dataset/scene_layout/trial.json`
-
-        - `dataset` is defined in `config.ini` (see README)
-        - `scene` is the name of the scene.
-        - `layout` is the index of the layout.
-        - `trial` is the name of the file, or the trial number.
-
-        For example, if the dataset is located at `D:/multimodal_challenge/dataset`
-        and you want to load trial 57 from mm_kitchen_1a, layout, 0:
+        Initialize a scene and a furniture layout and begin a trial.
 
         ```python
         from multimodal_challenge import MultiModal
@@ -53,7 +47,7 @@ class MultiModal(MultiModalBase):
 
         :param scene: The name of the scene.
         :param layout: The layout index.
-        :param trial: The trial number. If None, defaults to 0.
+        :param trial: The trial number. If None, defaults to 0. This loads a snapshot of the scene and the audio data.
 
         :return: An `ActionStatus` (always success).
         """
