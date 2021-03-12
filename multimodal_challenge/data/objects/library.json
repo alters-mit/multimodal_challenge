@@ -856,6 +856,77 @@
             "wcategory": "sofa",
             "wnid": "n04256520"
         },
+        "arturoalvarez_v_floor_lamp": {
+            "asset_bundle_sizes": {
+                "Darwin": 2139078,
+                "Linux": 2366057,
+                "Windows": 1974216
+            },
+            "bounds": {
+                "back": {
+                    "x": 0,
+                    "y": 0.8652186,
+                    "z": -0.3989944
+                },
+                "bottom": {
+                    "x": 0,
+                    "y": 0,
+                    "z": 2.980232e-08
+                },
+                "center": {
+                    "x": 0,
+                    "y": 0.8652186,
+                    "z": 2.980232e-08
+                },
+                "front": {
+                    "x": 0,
+                    "y": 0.8652186,
+                    "z": 0.3989945
+                },
+                "left": {
+                    "x": -0.6130896,
+                    "y": 0.8652186,
+                    "z": 2.980232e-08
+                },
+                "right": {
+                    "x": 0.6130896,
+                    "y": 0.8652186,
+                    "z": 2.980232e-08
+                },
+                "top": {
+                    "x": 0,
+                    "y": 1.730437,
+                    "z": 2.980232e-08
+                }
+            },
+            "canonical_rotation": {
+                "x": 0,
+                "y": 0.0,
+                "z": 0
+            },
+            "composite_object": false,
+            "do_not_use": false,
+            "do_not_use_reason": "",
+            "flex": true,
+            "name": "arturoalvarez_v_floor_lamp",
+            "physics_quality": -1,
+            "scale_factor": 1.0,
+            "substructure": [
+                {
+                    "materials": [
+                        "steel_brushed"
+                    ],
+                    "name": "arturoalvarez_v_floor_lamp"
+                }
+            ],
+            "urls": {
+                "Darwin": "ROOT/models/osx/2018-2019.1/arturoalvarez_v_floor_lamp",
+                "Linux": "ROOT/models/linux/2018-2019.1/arturoalvarez_v_floor_lamp",
+                "Windows": "ROOT/models/windows/2018-2019.1/arturoalvarez_v_floor_lamp"
+            },
+            "wcategory": "floor lamp",
+            "wnid": "n03367059"
+        },
         "bakerparisfloorlamp03": {
             "asset_bundle_sizes": {
                 "Darwin": 7668430,
@@ -1071,6 +1142,77 @@
             "wcategory": "bottle cork",
             "wnid": "n03108853"
         },
+        "basket_18inx18inx12iin_plastic_lattice": {
+            "asset_bundle_sizes": {
+                "Darwin": 2028504,
+                "Linux": 2293259,
+                "Windows": 1805067
+            },
+            "bounds": {
+                "back": {
+                    "x": 0,
+                    "y": 0.1525,
+                    "z": -0.2285
+                },
+                "bottom": {
+                    "x": 0,
+                    "y": 0,
+                    "z": 0
+                },
+                "center": {
+                    "x": 0,
+                    "y": 0.1525,
+                    "z": 6.665987e-09
+                },
+                "front": {
+                    "x": 0,
+                    "y": 0.1525,
+                    "z": 0.2285
+                },
+                "left": {
+                    "x": -0.2285,
+                    "y": 0.1525,
+                    "z": 6.665987e-09
+                },
+                "right": {
+                    "x": 0.2285,
+                    "y": 0.1525,
+                    "z": 6.665987e-09
+                },
+                "top": {
+                    "x": 0,
+                    "y": 0.305,
+                    "z": 1.333197e-08
+                }
+            },
+            "canonical_rotation": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "composite_object": false,
+            "do_not_use": false,
+            "do_not_use_reason": "",
+            "flex": true,
+            "name": "basket_18inx18inx12iin_plastic_lattice",
+            "physics_quality": 0.9971961265355677,
+            "scale_factor": 1,
+            "substructure": [
+                {
+                    "materials": [
+                        "3d_printed_mesh_square"
+                    ],
+                    "name": "basket_18inx18inx12iin_plastic_lattice"
+                }
+            ],
+            "urls": {
+                "Darwin": "ROOT/models/osx/2019.2/basket_18inx18inx12iin_plastic_lattice",
+                "Linux": "ROOT/models/linux/2019.2/basket_18inx18inx12iin_plastic_lattice",
+                "Windows": "ROOT/models/windows/2019.2/basket_18inx18inx12iin_plastic_lattice"
+            },
+            "wcategory": "basket",
+            "wnid": "n02801938"
+        },
         "basket_18inx18inx12iin_wicker": {
             "asset_bundle_sizes": {
                 "Darwin": 15045207,
@@ -1138,6 +1280,77 @@
                 "Darwin": "ROOT/models/osx/2019.2/basket_18inx18inx12iin_wicker",
                 "Linux": "ROOT/models/linux/2019.2/basket_18inx18inx12iin_wicker",
                 "Windows": "ROOT/models/windows/2019.2/basket_18inx18inx12iin_wicker"
+            },
+            "wcategory": "basket",
+            "wnid": "n02801938"
+        },
+        "basket_18inx18inx12iin_wood_mesh": {
+            "asset_bundle_sizes": {
+                "Darwin": 1987559,
+                "Linux": 2251488,
+                "Windows": 1763159
+            },
+            "bounds": {
+                "back": {
+                    "x": 0,
+                    "y": 0.1525,
+                    "z": -0.2285
+                },
+                "bottom": {
+                    "x": 0,
+                    "y": 0,
+                    "z": 0
+                },
+                "center": {
+                    "x": 0,
+                    "y": 0.1525,
+                    "z": 6.665987e-09
+                },
+                "front": {
+                    "x": 0,
+                    "y": 0.1525,
+                    "z": 0.2285
+                },
+                "left": {
+                    "x": -0.2285,
+                    "y": 0.1525,
+                    "z": 6.665987e-09
+                },
+                "right": {
+                    "x": 0.2285,
+                    "y": 0.1525,
+                    "z": 6.665987e-09
+                },
+                "top": {
+                    "x": 0,
+                    "y": 0.305,
+                    "z": 1.333197e-08
+                }
+            },
+            "canonical_rotation": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "composite_object": false,
+            "do_not_use": false,
+            "do_not_use_reason": "",
+            "flex": true,
+            "name": "basket_18inx18inx12iin_wood_mesh",
+            "physics_quality": 0.9971961265355677,
+            "scale_factor": 1,
+            "substructure": [
+                {
+                    "materials": [
+                        "wood_speaker_mesh_organic"
+                    ],
+                    "name": "basket_18inx18inx12iin_wood_mesh"
+                }
+            ],
+            "urls": {
+                "Darwin": "ROOT/models/osx/2019.2/basket_18inx18inx12iin_wood_mesh",
+                "Linux": "ROOT/models/linux/2019.2/basket_18inx18inx12iin_wood_mesh",
+                "Windows": "ROOT/models/windows/2019.2/basket_18inx18inx12iin_wood_mesh"
             },
             "wcategory": "basket",
             "wnid": "n02801938"
@@ -1214,6 +1427,164 @@
             },
             "wcategory": "floor lamp",
             "wnid": "n03367059"
+        },
+        "baton_table_lamp_dark": {
+            "asset_bundle_sizes": {
+                "Darwin": 9513488,
+                "Linux": 9937751,
+                "Windows": 9234382
+            },
+            "bounds": {
+                "back": {
+                    "x": 0,
+                    "y": 0.3318183,
+                    "z": -0.20447
+                },
+                "bottom": {
+                    "x": 0,
+                    "y": -0.001269996,
+                    "z": 0
+                },
+                "center": {
+                    "x": 0,
+                    "y": 0.3318183,
+                    "z": 0
+                },
+                "front": {
+                    "x": 0,
+                    "y": 0.3318183,
+                    "z": 0.20447
+                },
+                "left": {
+                    "x": -0.20447,
+                    "y": 0.3318183,
+                    "z": 0
+                },
+                "right": {
+                    "x": 0.20447,
+                    "y": 0.3318183,
+                    "z": 0
+                },
+                "top": {
+                    "x": 0,
+                    "y": 0.6649066,
+                    "z": 0
+                }
+            },
+            "canonical_rotation": {
+                "x": 0,
+                "y": 0.0,
+                "z": 0
+            },
+            "composite_object": false,
+            "do_not_use": false,
+            "do_not_use_reason": "",
+            "flex": true,
+            "name": "baton_table_lamp_dark",
+            "physics_quality": -1,
+            "scale_factor": 1.0,
+            "substructure": [
+                {
+                    "materials": [
+                        "antique_bronze_darkened",
+                        "metal_brushed_copper",
+                        "steel_brushed",
+                        "marble_portoro_gold_clean",
+                        "canvas_beige_2sided"
+                    ],
+                    "name": "BATON_TABLE_LAMP_DARK"
+                }
+            ],
+            "urls": {
+                "Darwin": "ROOT/models/osx/2018-2019.1/baton_table_lamp_dark",
+                "Linux": "ROOT/models/linux/2018-2019.1/baton_table_lamp_dark",
+                "Windows": "ROOT/models/windows/2018-2019.1/baton_table_lamp_dark"
+            },
+            "wcategory": "table lamp",
+            "wnid": "n04380533"
+        },
+        "blue_satchal": {
+            "asset_bundle_sizes": {
+                "Darwin": 341294,
+                "Linux": 570462,
+                "Windows": 181848
+            },
+            "bounds": {
+                "back": {
+                    "x": 0,
+                    "y": 0.1656083,
+                    "z": -0.05863628
+                },
+                "bottom": {
+                    "x": 0,
+                    "y": -0.001766562,
+                    "z": -0.007197246
+                },
+                "center": {
+                    "x": 0,
+                    "y": 0.1656083,
+                    "z": -0.007197246
+                },
+                "front": {
+                    "x": 0,
+                    "y": 0.1656083,
+                    "z": 0.04424179
+                },
+                "left": {
+                    "x": -0.1869625,
+                    "y": 0.1656083,
+                    "z": -0.007197246
+                },
+                "right": {
+                    "x": 0.1869625,
+                    "y": 0.1656083,
+                    "z": -0.007197246
+                },
+                "top": {
+                    "x": 0,
+                    "y": 0.3329832,
+                    "z": -0.007197246
+                }
+            },
+            "canonical_rotation": {
+                "x": 0,
+                "y": 0.0,
+                "z": 0
+            },
+            "composite_object": false,
+            "do_not_use": false,
+            "do_not_use_reason": "",
+            "flex": false,
+            "name": "blue_satchal",
+            "physics_quality": -1,
+            "scale_factor": 1.0,
+            "substructure": [
+                {
+                    "materials": [
+                        "plastic_vinyl_glossy_blue"
+                    ],
+                    "name": "bag_11"
+                },
+                {
+                    "materials": [
+                        "chrome2"
+                    ],
+                    "name": "Object015"
+                },
+                {
+                    "materials": [
+                        "plastic_vinyl_glossy_white"
+                    ],
+                    "name": "Object016"
+                }
+            ],
+            "urls": {
+                "Darwin": "ROOT/models/osx/2018-2019.1/blue_satchal",
+                "Linux": "ROOT/models/linux/2018-2019.1/blue_satchal",
+                "Windows": "ROOT/models/windows/2018-2019.1/blue_satchal"
+            },
+            "wcategory": "suitcase",
+            "wnid": "n02773838"
         },
         "bork_vacuum": {
             "asset_bundle_sizes": {
@@ -1357,6 +1728,77 @@
                 "Darwin": "ROOT/models/osx/2019.2/box_18inx18inx12in_cardboard",
                 "Linux": "ROOT/models/linux/2019.2/box_18inx18inx12in_cardboard",
                 "Windows": "ROOT/models/windows/2019.2/box_18inx18inx12in_cardboard"
+            },
+            "wcategory": "box",
+            "wnid": "n02883344"
+        },
+        "box_24inx18inx12in_cherry": {
+            "asset_bundle_sizes": {
+                "Darwin": 3517490,
+                "Linux": 3735339,
+                "Windows": 3343312
+            },
+            "bounds": {
+                "back": {
+                    "x": 0,
+                    "y": 0.1525,
+                    "z": -0.305
+                },
+                "bottom": {
+                    "x": 0,
+                    "y": 0,
+                    "z": 0
+                },
+                "center": {
+                    "x": 0,
+                    "y": 0.1525,
+                    "z": 6.665987e-09
+                },
+                "front": {
+                    "x": 0,
+                    "y": 0.1525,
+                    "z": 0.305
+                },
+                "left": {
+                    "x": -0.2285,
+                    "y": 0.1525,
+                    "z": 6.665987e-09
+                },
+                "right": {
+                    "x": 0.2285,
+                    "y": 0.1525,
+                    "z": 6.665987e-09
+                },
+                "top": {
+                    "x": 0,
+                    "y": 0.305,
+                    "z": 1.333197e-08
+                }
+            },
+            "canonical_rotation": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "composite_object": false,
+            "do_not_use": false,
+            "do_not_use_reason": "",
+            "flex": true,
+            "name": "box_24inx18inx12in_cherry",
+            "physics_quality": 0.9935789364076434,
+            "scale_factor": 1,
+            "substructure": [
+                {
+                    "materials": [
+                        "wood_american_cherry"
+                    ],
+                    "name": "box_24inx18inx12in_cherry"
+                }
+            ],
+            "urls": {
+                "Darwin": "ROOT/models/osx/2019.2/box_24inx18inx12in_cherry",
+                "Linux": "ROOT/models/linux/2019.2/box_24inx18inx12in_cherry",
+                "Windows": "ROOT/models/windows/2019.2/box_24inx18inx12in_cherry"
             },
             "wcategory": "box",
             "wnid": "n02883344"
@@ -2902,6 +3344,83 @@
                 "Darwin": "ROOT/models/osx/2018-2019.1/chair_billiani_doll",
                 "Linux": "ROOT/models/linux/2018-2019.1/chair_billiani_doll",
                 "Windows": "ROOT/models/windows/2018-2019.1/chair_billiani_doll"
+            },
+            "wcategory": "chair",
+            "wnid": "n03001627"
+        },
+        "chair_eames_plastic_armchair": {
+            "asset_bundle_sizes": {
+                "Darwin": 2197104,
+                "Linux": 2427707,
+                "Windows": 2038175
+            },
+            "bounds": {
+                "back": {
+                    "x": 0,
+                    "y": 0.4057589,
+                    "z": -0.3027339
+                },
+                "bottom": {
+                    "x": 0,
+                    "y": -1.192093e-07,
+                    "z": 0
+                },
+                "center": {
+                    "x": 0,
+                    "y": 0.4057589,
+                    "z": 0
+                },
+                "front": {
+                    "x": 0,
+                    "y": 0.4057589,
+                    "z": 0.3027339
+                },
+                "left": {
+                    "x": -0.3165714,
+                    "y": 0.4057589,
+                    "z": 0
+                },
+                "right": {
+                    "x": 0.3165714,
+                    "y": 0.4057589,
+                    "z": 0
+                },
+                "top": {
+                    "x": 0,
+                    "y": 0.811518,
+                    "z": 0
+                }
+            },
+            "canonical_rotation": {
+                "x": 0,
+                "y": 0.0,
+                "z": 0
+            },
+            "composite_object": false,
+            "do_not_use": false,
+            "do_not_use_reason": "",
+            "flex": false,
+            "name": "chair_eames_plastic_armchair",
+            "physics_quality": -1,
+            "scale_factor": 1.0,
+            "substructure": [
+                {
+                    "materials": [
+                        "aluminium_brushed"
+                    ],
+                    "name": "Chair_eames_plastic_armchair 1"
+                },
+                {
+                    "materials": [
+                        "plastic_vinyl_glossy_orange"
+                    ],
+                    "name": "Object002"
+                }
+            ],
+            "urls": {
+                "Darwin": "ROOT/models/osx/2018-2019.1/chair_eames_plastic_armchair",
+                "Linux": "ROOT/models/linux/2018-2019.1/chair_eames_plastic_armchair",
+                "Windows": "ROOT/models/windows/2018-2019.1/chair_eames_plastic_armchair"
             },
             "wcategory": "chair",
             "wnid": "n03001627"
@@ -4616,6 +5135,77 @@
             "wcategory": "backpack",
             "wnid": "n02769748"
         },
+        "jug03": {
+            "asset_bundle_sizes": {
+                "Darwin": 162394,
+                "Linux": 201878,
+                "Windows": 130683
+            },
+            "bounds": {
+                "back": {
+                    "x": -7.450581e-09,
+                    "y": 0.1041796,
+                    "z": -0.07080388
+                },
+                "bottom": {
+                    "x": -7.450581e-09,
+                    "y": 0,
+                    "z": 0
+                },
+                "center": {
+                    "x": -7.450581e-09,
+                    "y": 0.1041796,
+                    "z": 0
+                },
+                "front": {
+                    "x": -7.450581e-09,
+                    "y": 0.1041796,
+                    "z": 0.07080388
+                },
+                "left": {
+                    "x": -0.07080389,
+                    "y": 0.1041796,
+                    "z": 0
+                },
+                "right": {
+                    "x": 0.07080387,
+                    "y": 0.1041796,
+                    "z": 0
+                },
+                "top": {
+                    "x": -7.450581e-09,
+                    "y": 0.2083592,
+                    "z": 0
+                }
+            },
+            "canonical_rotation": {
+                "x": 0,
+                "y": 0.0,
+                "z": 0
+            },
+            "composite_object": false,
+            "do_not_use": false,
+            "do_not_use_reason": "",
+            "flex": true,
+            "name": "jug03",
+            "physics_quality": -1,
+            "scale_factor": 1.0,
+            "substructure": [
+                {
+                    "materials": [
+                        "kitchen_jug_clean"
+                    ],
+                    "name": "jug03"
+                }
+            ],
+            "urls": {
+                "Darwin": "ROOT/models/osx/2018-2019.1/jug03",
+                "Linux": "ROOT/models/linux/2018-2019.1/jug03",
+                "Windows": "ROOT/models/windows/2018-2019.1/jug03"
+            },
+            "wcategory": "jug",
+            "wnid": "n03603722"
+        },
         "jug05": {
             "asset_bundle_sizes": {
                 "Darwin": 159369,
@@ -5406,6 +5996,89 @@
             "wcategory": "chair",
             "wnid": "n03001627"
         },
+        "luggage_bag_1": {
+            "asset_bundle_sizes": {
+                "Darwin": 6775765,
+                "Linux": 7046129,
+                "Windows": 6574737
+            },
+            "bounds": {
+                "back": {
+                    "x": 0.0005502999,
+                    "y": 0.3544476,
+                    "z": -0.1210889
+                },
+                "bottom": {
+                    "x": 0.0005502999,
+                    "y": -0.01808715,
+                    "z": -0.009990975
+                },
+                "center": {
+                    "x": 0.0005502999,
+                    "y": 0.3544476,
+                    "z": -0.009990975
+                },
+                "front": {
+                    "x": 0.0005502999,
+                    "y": 0.3544476,
+                    "z": 0.1011069
+                },
+                "left": {
+                    "x": -0.2055804,
+                    "y": 0.3544476,
+                    "z": -0.009990975
+                },
+                "right": {
+                    "x": 0.206681,
+                    "y": 0.3544476,
+                    "z": -0.009990975
+                },
+                "top": {
+                    "x": 0.0005502999,
+                    "y": 0.7269824,
+                    "z": -0.009990975
+                }
+            },
+            "canonical_rotation": {
+                "x": 0,
+                "y": 0.0,
+                "z": 0
+            },
+            "composite_object": false,
+            "do_not_use": false,
+            "do_not_use_reason": "",
+            "flex": false,
+            "name": "luggage_bag_1",
+            "physics_quality": -1,
+            "scale_factor": 1.0,
+            "substructure": [
+                {
+                    "materials": [
+                        "leather_fine_touch_white"
+                    ],
+                    "name": "bag_16"
+                },
+                {
+                    "materials": [
+                        "plastic_vinyl_glossy_black"
+                    ],
+                    "name": "Object023"
+                },
+                {
+                    "materials": [
+                        "chrome2"
+                    ],
+                    "name": "Object024"
+                }
+            ],
+            "urls": {
+                "Darwin": "ROOT/models/osx/2018-2019.1/luggage_bag_1",
+                "Linux": "ROOT/models/linux/2018-2019.1/luggage_bag_1",
+                "Windows": "ROOT/models/windows/2018-2019.1/luggage_bag_1"
+            },
+            "wcategory": "suitcase",
+            "wnid": "n02773838"
+        },
         "metal_briefcase": {
             "asset_bundle_sizes": {
                 "Darwin": 525045,
@@ -5701,6 +6374,77 @@
             "wcategory": "pepper mill, pepper grinder",
             "wnid": "n03914337"
         },
+        "pot": {
+            "asset_bundle_sizes": {
+                "Darwin": 687411,
+                "Linux": 730313,
+                "Windows": 660476
+            },
+            "bounds": {
+                "back": {
+                    "x": 0.02022995,
+                    "y": 0.1686875,
+                    "z": -0.1745706
+                },
+                "bottom": {
+                    "x": 0.02022995,
+                    "y": 0,
+                    "z": 0.05425134
+                },
+                "center": {
+                    "x": 0.02022995,
+                    "y": 0.1686875,
+                    "z": 0.05425134
+                },
+                "front": {
+                    "x": 0.02022995,
+                    "y": 0.1686875,
+                    "z": 0.2830732
+                },
+                "left": {
+                    "x": -0.1730299,
+                    "y": 0.1686875,
+                    "z": 0.05425134
+                },
+                "right": {
+                    "x": 0.2134898,
+                    "y": 0.1686875,
+                    "z": 0.05425134
+                },
+                "top": {
+                    "x": 0.02022995,
+                    "y": 0.337375,
+                    "z": 0.05425134
+                }
+            },
+            "canonical_rotation": {
+                "x": 0,
+                "y": 0.0,
+                "z": 0
+            },
+            "composite_object": false,
+            "do_not_use": false,
+            "do_not_use_reason": "",
+            "flex": false,
+            "name": "pot",
+            "physics_quality": -1,
+            "scale_factor": 1.0,
+            "substructure": [
+                {
+                    "materials": [
+                        "chrome2"
+                    ],
+                    "name": "pot"
+                }
+            ],
+            "urls": {
+                "Darwin": "ROOT/models/osx/2018-2019.1/pot",
+                "Linux": "ROOT/models/linux/2018-2019.1/pot",
+                "Windows": "ROOT/models/windows/2018-2019.1/pot"
+            },
+            "wcategory": "pot",
+            "wnid": "n03990474"
+        },
         "puzzle_box_composite": {
             "asset_bundle_sizes": {
                 "Darwin": 9597579,
@@ -5909,6 +6653,149 @@
             "wcategory": "toy",
             "wnid": "n04461879"
         },
+        "red_bag": {
+            "asset_bundle_sizes": {
+                "Darwin": 3445787,
+                "Linux": 3676120,
+                "Windows": 3284740
+            },
+            "bounds": {
+                "back": {
+                    "x": -1.117587e-05,
+                    "y": 0.1557969,
+                    "z": -0.03439457
+                },
+                "bottom": {
+                    "x": -1.117587e-05,
+                    "y": 0,
+                    "z": 6.636977e-05
+                },
+                "center": {
+                    "x": -1.117587e-05,
+                    "y": 0.1557969,
+                    "z": 6.636977e-05
+                },
+                "front": {
+                    "x": -1.117587e-05,
+                    "y": 0.1557969,
+                    "z": 0.03452731
+                },
+                "left": {
+                    "x": -0.1362013,
+                    "y": 0.1557969,
+                    "z": 6.636977e-05
+                },
+                "right": {
+                    "x": 0.136179,
+                    "y": 0.1557969,
+                    "z": 6.636977e-05
+                },
+                "top": {
+                    "x": -1.117587e-05,
+                    "y": 0.3115939,
+                    "z": 6.636977e-05
+                }
+            },
+            "canonical_rotation": {
+                "x": 0,
+                "y": 0.0,
+                "z": 0
+            },
+            "composite_object": false,
+            "do_not_use": false,
+            "do_not_use_reason": "",
+            "flex": false,
+            "name": "red_bag",
+            "physics_quality": -1,
+            "scale_factor": 1.0,
+            "substructure": [
+                {
+                    "materials": [
+                        "plastic_vinyl_glossy_red",
+                        "rubber_black"
+                    ],
+                    "name": "bag_5"
+                }
+            ],
+            "urls": {
+                "Darwin": "ROOT/models/osx/2018-2019.1/red_bag",
+                "Linux": "ROOT/models/linux/2018-2019.1/red_bag",
+                "Windows": "ROOT/models/windows/2018-2019.1/red_bag"
+            },
+            "wcategory": "bag, handbag, pocketbook, purse",
+            "wnid": "n02774152"
+        },
+        "round_bowl_small_beech": {
+            "asset_bundle_sizes": {
+                "Darwin": 3958821,
+                "Linux": 4187782,
+                "Windows": 3778464
+            },
+            "bounds": {
+                "back": {
+                    "x": 5.960464e-08,
+                    "y": 0.1685953,
+                    "z": -0.2986292
+                },
+                "bottom": {
+                    "x": 5.960464e-08,
+                    "y": 0,
+                    "z": 0
+                },
+                "center": {
+                    "x": 5.960464e-08,
+                    "y": 0.1685952,
+                    "z": 7.369532e-09
+                },
+                "front": {
+                    "x": 5.960464e-08,
+                    "y": 0.1685952,
+                    "z": 0.2986292
+                },
+                "left": {
+                    "x": -0.2986291,
+                    "y": 0.1685952,
+                    "z": 7.369532e-09
+                },
+                "right": {
+                    "x": 0.2986292,
+                    "y": 0.1685952,
+                    "z": 7.369532e-09
+                },
+                "top": {
+                    "x": 5.960464e-08,
+                    "y": 0.3371905,
+                    "z": 1.473906e-08
+                }
+            },
+            "canonical_rotation": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "composite_object": false,
+            "do_not_use": false,
+            "do_not_use_reason": "",
+            "flex": true,
+            "name": "round_bowl_small_beech",
+            "physics_quality": 0.968201836217811,
+            "scale_factor": 1,
+            "substructure": [
+                {
+                    "materials": [
+                        "wood_beech_honey"
+                    ],
+                    "name": "round_bowl_small_beech"
+                }
+            ],
+            "urls": {
+                "Darwin": "ROOT/models/osx/2019.2/round_bowl_small_beech",
+                "Linux": "ROOT/models/linux/2019.2/round_bowl_small_beech",
+                "Windows": "ROOT/models/windows/2019.2/round_bowl_small_beech"
+            },
+            "wcategory": "bowl",
+            "wnid": "n00104409"
+        },
         "round_bowl_small_walnut": {
             "asset_bundle_sizes": {
                 "Darwin": 2250408,
@@ -5976,6 +6863,77 @@
                 "Darwin": "ROOT/models/osx/2019.2/round_bowl_small_walnut",
                 "Linux": "ROOT/models/linux/2019.2/round_bowl_small_walnut",
                 "Windows": "ROOT/models/windows/2019.2/round_bowl_small_walnut"
+            },
+            "wcategory": "bowl",
+            "wnid": "n00104409"
+        },
+        "round_bowl_talll_wenge": {
+            "asset_bundle_sizes": {
+                "Darwin": 7129587,
+                "Linux": 7292021,
+                "Windows": 6990799
+            },
+            "bounds": {
+                "back": {
+                    "x": 5.960464e-08,
+                    "y": 0.1840254,
+                    "z": -0.3027368
+                },
+                "bottom": {
+                    "x": 5.960464e-08,
+                    "y": 0,
+                    "z": 0
+                },
+                "center": {
+                    "x": 5.960464e-08,
+                    "y": 0.1840254,
+                    "z": 8.044005e-09
+                },
+                "front": {
+                    "x": 5.960464e-08,
+                    "y": 0.1840253,
+                    "z": 0.3027368
+                },
+                "left": {
+                    "x": -0.3033353,
+                    "y": 0.1840254,
+                    "z": 8.044005e-09
+                },
+                "right": {
+                    "x": 0.3033354,
+                    "y": 0.1840254,
+                    "z": 8.044005e-09
+                },
+                "top": {
+                    "x": 5.960464e-08,
+                    "y": 0.3680507,
+                    "z": 1.608801e-08
+                }
+            },
+            "canonical_rotation": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "composite_object": false,
+            "do_not_use": false,
+            "do_not_use_reason": "",
+            "flex": true,
+            "name": "round_bowl_talll_wenge",
+            "physics_quality": 0.9607712383774648,
+            "scale_factor": 1,
+            "substructure": [
+                {
+                    "materials": [
+                        "wood_wenge"
+                    ],
+                    "name": "round_bowl_talll_wenge"
+                }
+            ],
+            "urls": {
+                "Darwin": "ROOT/models/osx/2019.2/round_bowl_talll_wenge",
+                "Linux": "ROOT/models/linux/2019.2/round_bowl_talll_wenge",
+                "Windows": "ROOT/models/windows/2019.2/round_bowl_talll_wenge"
             },
             "wcategory": "bowl",
             "wnid": "n00104409"
@@ -6626,6 +7584,77 @@
             },
             "wcategory": "carving fork",
             "wnid": "n02973805"
+        },
+        "shallow_basket_wicker": {
+            "asset_bundle_sizes": {
+                "Darwin": 15020489,
+                "Linux": 15235237,
+                "Windows": 14835810
+            },
+            "bounds": {
+                "back": {
+                    "x": 2.980232e-08,
+                    "y": 0.07900514,
+                    "z": -0.333909
+                },
+                "bottom": {
+                    "x": 2.980232e-08,
+                    "y": -1.000995e-10,
+                    "z": 0.00229001
+                },
+                "center": {
+                    "x": 2.980232e-08,
+                    "y": 0.07900512,
+                    "z": 0.002290014
+                },
+                "front": {
+                    "x": 2.980232e-08,
+                    "y": 0.07900511,
+                    "z": 0.338489
+                },
+                "left": {
+                    "x": -0.208782,
+                    "y": 0.07900512,
+                    "z": 0.002290014
+                },
+                "right": {
+                    "x": 0.208782,
+                    "y": 0.07900512,
+                    "z": 0.002290014
+                },
+                "top": {
+                    "x": 2.980232e-08,
+                    "y": 0.1580102,
+                    "z": 0.002290017
+                }
+            },
+            "canonical_rotation": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "composite_object": false,
+            "do_not_use": false,
+            "do_not_use_reason": "",
+            "flex": true,
+            "name": "shallow_basket_wicker",
+            "physics_quality": 0.9969252961227338,
+            "scale_factor": 1,
+            "substructure": [
+                {
+                    "materials": [
+                        "wicker_weave"
+                    ],
+                    "name": "shallow_basket_wicker"
+                }
+            ],
+            "urls": {
+                "Darwin": "ROOT/models/osx/2019.2/shallow_basket_wicker",
+                "Linux": "ROOT/models/linux/2019.2/shallow_basket_wicker",
+                "Windows": "ROOT/models/windows/2019.2/shallow_basket_wicker"
+            },
+            "wcategory": "basket",
+            "wnid": "n02801938"
         },
         "shoebox_fused": {
             "asset_bundle_sizes": {

@@ -38,7 +38,7 @@ def get_object_init_commands(scene: str, layout: int) -> List[dict]:
     :return: A list of commands to instantiate objects.
     """
 
-    data = loads(OBJECT_INIT_DIRECTORY.joinpath(f"{scene[:-1]}_{layout}.json").read_text(encoding="utf-8"))
+    data = loads(OBJECT_INIT_DIRECTORY.joinpath(f"{scene}_{layout}.json").read_text(encoding="utf-8"))
     commands = list()
     for o in data:
         commands.extend(MultiModalObjectInitData(**o).get_commands()[1])

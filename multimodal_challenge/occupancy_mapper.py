@@ -68,14 +68,9 @@ class OccupancyMapper(FloorplanController):
         TDWUtils.save_images(images=images, filename=f"{scene}_{layout}",
                              output_directory=str(image_dir.joinpath("scene_layouts").resolve()),
                              append_pass=False)
-        # If this is a variant of the scene, don't bother creating a new occupancy map.
-        if scene[-1] != "a":
-            self.communicate({"$type": "terminate"})
-            self.socket.close()
-            return
         scene_env = SceneEnvironment(resp=resp)
         # Save the scene bounds.
-        if layout == 0:
+        if scene[-1] == "a" and layout == 0:
             scene_bounds = {"x_min": scene_env.x_min,
                             "x_max": scene_env.x_max,
                             "z_min": scene_env.z_min,

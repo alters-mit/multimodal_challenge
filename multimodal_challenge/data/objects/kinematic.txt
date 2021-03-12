@@ -28,3 +28,8 @@ purple_woven_rug
 refridgerator_slim
 silver_frame_painting
 trunck
+appliance-ge-profile-microwave
+appliance-ge-profile-microwave3
+microwave
+dishwasher_4
+bakerparisfloorlamp03

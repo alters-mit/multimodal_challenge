@@ -54,8 +54,11 @@ class InitData:
         filename = f"{scene}_{layout}"
         # Append object init commands.
         commands = loads(root_dir.joinpath(f"{filename}.txt").read_text(encoding="utf-8"))
+        for i in range(len(commands)):
+            if commands[i]["$type"] == "add_object":
+                commands[i]["scale_factor"] = 1
         # Update the drop zone data.
-        drop_zone_src = root_dir.joinpath(f"{filename}.json")
+        drop_zone_src = root_dir.joinpath(f"layout_{layout}/{filename}.json")
         drop_zone_dst = DROP_ZONE_DIRECTORY.joinpath(f"{filename}.json")
         drop_zone_data = loads(drop_zone_src.read_text(encoding="utf-8"))
         drop_zone_dst.write_text(dumps(drop_zone_data["position_markers"]), encoding="utf-8")
@@ -135,6 +138,7 @@ class InitData:
                         for platform in record.urls:
                             record.urls[platform] = record.urls[platform].replace(bucket, "ROOT")
                         model_lib.add_or_update_record(record=record, overwrite=False)
+                    commands[i]["scale_factor"] = 1
                     objects.append(MultiModalObjectInitData(name=name,
                                                             position=commands[i]["position"],
                                                             rotation=commands[i + 1]["rotation"],
