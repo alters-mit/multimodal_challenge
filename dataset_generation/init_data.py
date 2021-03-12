@@ -147,7 +147,7 @@ class InitData:
                     print(f"Warning: no audio values for {name}")
                 i += 3
         OBJECT_INIT_DIRECTORY.joinpath(f"{scene}_{layout}.json").write_text(dumps(objects, cls=Encoder, indent=2,
-                                                                                       sort_keys=True))
+                                                                                  sort_keys=True))
         # Write the records.
         model_lib.write()
 
