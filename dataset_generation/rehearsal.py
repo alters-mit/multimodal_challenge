@@ -221,7 +221,7 @@ class Rehearsal(Controller):
         :param pbar: Progress bar.
         """
 
-        self.drop_zones = get_drop_zones(filename=f"{scene[:-1]}_{layout}.json")
+        self.drop_zones = get_drop_zones(filename=f"{scene}_{layout}.json")
         scene_record = self.scene_librarian.get_record(scene)
         commands: List[dict] = [{"$type": "add_scene",
                                  "name": scene_record.name,

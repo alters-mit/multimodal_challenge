@@ -51,7 +51,7 @@ class InitData:
         """
 
         root_dir = Path.home().joinpath("tdw_config")
-        filename = f"{scene[:-1]}_{layout}"
+        filename = f"{scene}_{layout}"
         # Append object init commands.
         commands = loads(root_dir.joinpath(f"{filename}.txt").read_text(encoding="utf-8"))
         # Update the drop zone data.
@@ -142,7 +142,7 @@ class InitData:
                 else:
                     print(f"Warning: no audio values for {name}")
                 i += 3
-        OBJECT_INIT_DIRECTORY.joinpath(f"{scene[:-1]}_{layout}.json").write_text(dumps(objects, cls=Encoder, indent=2,
+        OBJECT_INIT_DIRECTORY.joinpath(f"{scene}_{layout}.json").write_text(dumps(objects, cls=Encoder, indent=2,
                                                                                        sort_keys=True))
         # Write the records.
         model_lib.write()

@@ -66,15 +66,13 @@ def get_scene_layouts() -> Dict[str, int]:
 
     scene_layouts: Dict[str, int] = dict()
     for f in OBJECT_INIT_DIRECTORY.iterdir():
-        # Expected: mm_kitchen_1_0.json, mm_kitchen_1_1.json, ... , mm_kitchen_2_2.json, ...
+        # Expected: mm_kitchen_1a_0.json, mm_kitchen_1a_1.json, ... , mm_kitchen_2a_2.json, ...
         if f.is_file() and f.suffix == ".json":
-            # Expected: mm_kitchen_1_0
+            # Expected: mm_kitchen_1a_0
             s = f.name.replace(".json", "")
-            # Expected: mm_kitchen_1
-            shell = s[:-2]
+            # Expected: mm_kitchen_1a
+            scene = s[:-2]
             # Expected: 0
             layout = s[-1]
-            for v in ["a", "b"]:
-                # Expected: {"mm_kitchen_1a": 4}
-                scene_layouts[shell + v] = int(layout) + 1
+            scene_layouts[scene] = int(layout) + 1
     return scene_layouts

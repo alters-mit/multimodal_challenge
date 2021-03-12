@@ -65,7 +65,8 @@ class OccupancyMapper(FloorplanController):
         resp = self.communicate(commands)
         # Save the image.
         images = get_data(resp=resp, d_type=Images)
-        TDWUtils.save_images(images=images, filename=f"{scene}_{layout}", output_directory=str(image_dir.resolve()),
+        TDWUtils.save_images(images=images, filename=f"{scene}_{layout}",
+                             output_directory=str(image_dir.joinpath("scene_layouts").resolve()),
                              append_pass=False)
         # If this is a variant of the scene, don't bother creating a new occupancy map.
         if scene[-1] != "a":
@@ -131,7 +132,7 @@ class OccupancyMapper(FloorplanController):
             for p in island:
                 occupancy_map[p[0]][p[1]] = 2
         # Save the occupancy map.
-        np.save(str(OCCUPANCY_MAPS_DIRECTORY.joinpath(f"{scene[:-1]}_{layout}").resolve()), occupancy_map)
+        np.save(str(OCCUPANCY_MAPS_DIRECTORY.joinpath(f"{scene}_{layout}").resolve()), occupancy_map)
 
         self.communicate({"$type": "terminate"})
         self.socket.close()
