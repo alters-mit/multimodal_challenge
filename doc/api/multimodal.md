@@ -116,14 +116,13 @@ Note that it is possible for the Magnebot to go to positions that aren't "free".
 
 **`MultiModal()`**
 
-**`MultiModal(port=1071, screen_width=256, screen_height=256, random_seed=None)`**
+**`MultiModal(port=1071, screen_width=256, screen_height=256)`**
 
 | Parameter | Type | Default | Description |
 | --- | --- | --- | --- |
 | port |  int  | 1071 | The socket port. [Read this](https://github.com/threedworld-mit/tdw/blob/master/Documentation/getting_started.md#command-line-arguments) for more information. |
 | screen_width |  int  | 256 | The width of the screen in pixels. |
 | screen_height |  int  | 256 | The height of the screen in pixels. |
-| random_seed |  int  | None | The seed used for random numbers. If None, this is chosen randomly. |
 
 ***
 

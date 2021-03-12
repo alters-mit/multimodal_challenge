@@ -16,16 +16,14 @@ class MultiModal(MultiModalBase):
     [TOC]
     """
 
-    def __init__(self, port: int = 1071, screen_width: int = 256, screen_height: int = 256, random_seed: int = None):
+    def __init__(self, port: int = 1071, screen_width: int = 256, screen_height: int = 256):
         """
         :param port: The socket port. [Read this](https://github.com/threedworld-mit/tdw/blob/master/Documentation/getting_started.md#command-line-arguments) for more information.
         :param screen_width: The width of the screen in pixels.
         :param screen_height: The height of the screen in pixels.
-        :param random_seed: The seed used for random numbers. If None, this is chosen randomly.
         """
 
-        super().__init__(port=port, screen_width=screen_width, screen_height=screen_height,
-                         random_seed=random_seed, skip_frames=10)
+        super().__init__(port=port, screen_width=screen_width, screen_height=screen_height, skip_frames=10)
 
         """:field
         The pre-recorded audio data for the current trial.
