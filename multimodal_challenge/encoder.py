@@ -1,4 +1,3 @@
-from base64 import b64encode
 from json import JSONEncoder
 import numpy as np
 from tdw.py_impact import AudioMaterial, ObjectInfo
@@ -36,7 +35,5 @@ class Encoder(JSONEncoder):
             return obj.__dict__
         elif isinstance(obj, AudioMaterial):
             return obj.name
-        elif isinstance(obj, bytes):
-            return b64encode(obj).decode("utf-8")
         else:
             return super(Encoder, self).default(obj)

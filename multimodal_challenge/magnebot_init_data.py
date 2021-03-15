@@ -6,10 +6,10 @@ class MagnebotInitData:
     Initialization data for the Magnebot in the challenge controller and the dataset controller.
     """
 
-    def __init__(self, position: np.array, rotation: float):
+    def __init__(self, position: np.array, rotation: np.array):
         """
         :param position: The initial position of the Magnebot as an `[x, y, z]` numpy array.
-        :param rotation: The initial rotation of the Magnebot around the y axis in degrees.
+        :param rotation: The initial rotation of the Magnebot as an `[x, y, z, w]` numpy array.
         """
 
         """:field
@@ -17,6 +17,6 @@ class MagnebotInitData:
         """
         self.position: np.array = np.array(position)
         """:field
-        The initial rotation of the Magnebot around the y axis in degrees.
+        The initial rotation of the Magnebot as an `[x, y, z, w]` numpy array.
         """
-        self.rotation: float = float(rotation)
+        self.rotation: np.array = rotation

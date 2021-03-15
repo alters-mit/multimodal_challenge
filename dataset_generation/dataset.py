@@ -7,7 +7,7 @@ import numpy as np
 import pyaudio
 from tqdm import tqdm
 from scipy.signal import convolve2d
-from tdw.tdw_utils import AudioUtils, TDWUtils, QuaternionUtils
+from tdw.tdw_utils import AudioUtils, TDWUtils
 from tdw.py_impact import PyImpact, ObjectInfo, AudioMaterial
 from tdw.output_data import Rigidbodies, Transforms, AudioSources
 from magnebot import ActionStatus
@@ -64,7 +64,7 @@ class Dataset(MultiModalBase):
     5. Initialize audio in the scene and audio recording.
     6. Let the object fall. Use PyImpact to generate collisions.
     7. The trial stops either when the sound stops playing or if a maximum number of frames has been reached.
-    8. Save the results as a `Trial` object in a .json file.
+    8. Save the results as a `Trial` object in a .json file. Save the audio recording as a .wav file.
 
     **Result:** A directory of `Trial` objects per scene_layout combination:
 
@@ -300,15 +300,13 @@ class Dataset(MultiModalBase):
                                          kinematic=self.objects_static[o_id].kinematic,
                                          scale_factor={"x": 1, "y": 1, "z": 1})
             object_init_data.append(o)
-
+        # Move the temporary audio file.
+        Dataset.TEMP_AUDIO_PATH.replace(output_directory.joinpath(f"{self.trial_count}.wav"))
         # Cache the result of the trial.
         ci = Trial(scene=self.scene,
                    magnebot=self._magnebot_init_data,
-                   audio=Dataset.TEMP_AUDIO_PATH.read_bytes(),
                    target_object_index=target_object_index,
                    object_init_data=object_init_data)
-        # Remove the temp file.
-        Dataset.TEMP_AUDIO_PATH.unlink()
         # Write the result to disk.
         output_directory.joinpath(f"{self.trial_count}.json").write_text(dumps(ci.__dict__, cls=Encoder),
                                                                          encoding="utf-8")
@@ -340,10 +338,9 @@ class Dataset(MultiModalBase):
         # We need every frame for audio recording, but not right now, so let's speed things up.
         self._skip_frames = 10
         self.turn_by(angle=angle)
-        # Get the actual angle of the Magnebot (which won't be exactly the same as the target angle).
-        y_rot = QuaternionUtils.get_y_angle(QuaternionUtils.IDENTITY, self.state.magnebot_transform.rotation)
         # Record the initialization pose.
-        self._magnebot_init_data = MagnebotInitData(position=self.state.magnebot_transform.position, rotation=y_rot)
+        self._magnebot_init_data = MagnebotInitData(position=self.state.magnebot_transform.position,
+                                                    rotation=self.state.magnebot_transform.rotation)
         # Stop skipping frames now that we're done turning.
         self._skip_frames = 0
         # Let the object fall.
