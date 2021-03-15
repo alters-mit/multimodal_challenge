@@ -46,10 +46,11 @@ all objects are kinematic (non-moveable) in order to avoid re-initializing the s
 **Result:** A list of `DatasetTrial` initialization objects per scene_layout combination:
 
 ```
-D:/multimodal_challenge/dataset  # See dataset in config.ini
-....drops/
-........1_0.json  # scene_layout
-........1_1.json
+D:/multimodal_challenge/
+....rehearsal/
+........mm_kitchen_1a_0.json  # scene_layout
+........mm_kitchen_1a_1.json
+........(etc.)
 ```
 
 ***

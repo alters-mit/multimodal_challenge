@@ -69,12 +69,13 @@ class Dataset(MultiModalBase):
     **Result:** A directory of `Trial` objects per scene_layout combination:
 
     ```
-    D:/multimodal_challenge/dataset  # See dataset in config.ini
-    ....1_0/  # scene_layout
+    D:/multimodal_challenge/
+    ....mm_kitchen_1a_0/  # scene_layout
     ........0.json
     ........0.wav
     ........1.json
     ........1.wav
+    ........(etc.)
     ```
     """
 

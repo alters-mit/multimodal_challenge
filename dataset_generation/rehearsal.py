@@ -62,10 +62,11 @@ class Rehearsal(Controller):
     **Result:** A list of `DatasetTrial` initialization objects per scene_layout combination:
 
     ```
-    D:/multimodal_challenge/dataset  # See dataset in config.ini
-    ....drops/
-    ........1_0.json  # scene_layout
-    ........1_1.json
+    D:/multimodal_challenge/
+    ....rehearsal/
+    ........mm_kitchen_1a_0.json  # scene_layout
+    ........mm_kitchen_1a_1.json
+    ........(etc.)
     ```
     """
 
@@ -259,9 +260,6 @@ class Rehearsal(Controller):
         # Write the results to disk.
         REHEARSAL_DIRECTORY.joinpath(f"{scene}_{layout}.json").write_text(dumps(dataset_trials, cls=Encoder),
                                                                           encoding="utf-8")
-        # Record the drop zone indices for debugging.
-        REHEARSAL_DIRECTORY.joinpath(f"{scene}_{layout}_drop_zones.json").write_text(dumps(drop_zone_indices),
-                                                                                     encoding="utf-8")
         if close_bar:
             pbar.close()
 
