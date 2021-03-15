@@ -18,7 +18,7 @@ from multimodal_challenge.multimodal_base import MultiModalBase
 from multimodal_challenge.trial import Trial
 from multimodal_challenge.encoder import Encoder
 from multimodal_challenge.paths import REHEARSAL_DIRECTORY, ENV_AUDIO_MATERIALS_PATH, DATASET_DIRECTORY
-from multimodal_challenge.util import get_object_init_commands, get_scene_layouts
+from multimodal_challenge.util import get_object_init_commands, get_scene_layouts, get_trial_filename
 from multimodal_challenge.multimodal_object_init_data import MultiModalObjectInitData
 from multimodal_challenge.dataset.dataset_trial import DatasetTrial
 from multimodal_challenge.dataset.env_audio_materials import EnvAudioMaterials
@@ -331,15 +331,15 @@ class Dataset(MultiModalBase):
                                          scale_factor={"x": 1, "y": 1, "z": 1})
             object_init_data.append(o)
         # Move the temporary audio file.
-        Dataset.TEMP_AUDIO_PATH.replace(output_directory.joinpath(f"{self.trial_count}.wav"))
+        filename = get_trial_filename(self.trial_count)
+        Dataset.TEMP_AUDIO_PATH.replace(output_directory.joinpath(f"{filename}.wav"))
         # Cache the result of the trial.
         ci = Trial(scene=self.scene,
                    magnebot=self._magnebot_init_data,
                    target_object_index=target_object_index,
                    object_init_data=object_init_data)
         # Write the result to disk.
-        output_directory.joinpath(f"{self.trial_count}.json").write_text(dumps(ci.__dict__, cls=Encoder),
-                                                                         encoding="utf-8")
+        output_directory.joinpath(f"{filename}.json").write_text(dumps(ci.__dict__, cls=Encoder), encoding="utf-8")
         # Increment the trial counter and the random seed counter.
         self.trial_count += 1
         self._random_seed_index += 1

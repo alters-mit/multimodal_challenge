@@ -76,3 +76,13 @@ def get_scene_layouts() -> Dict[str, int]:
             layout = s[-1]
             scene_layouts[scene] = int(layout) + 1
     return scene_layouts
+
+
+def get_trial_filename(trial: int) -> str:
+    """
+    :param trial: The trial number.
+
+    :return: A zero-padded filename for the trial.
+    """
+
+    return TDWUtils.zero_padding(trial, 5)

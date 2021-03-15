@@ -33,6 +33,11 @@ if __name__ == "__main__":
         api_txt += re.search(f"(#### {action}((.|\n)*?))#", magnebot_api, flags=re.MULTILINE).group(1)
     # Append the movement actions before the Torso section.
     doc = re.sub(r"((.|\n)*?)(### Torso)", r"\1" + api_txt + "***\n\n" + r"\3", doc)
+    # Append camera rotation
+    doc += "### Camera\n\n_These commands rotate the Magnebot's camera or add additional camera to the scene. " \
+           "They advance the simulation by exactly 1 frame._\n\n"
+    for action in ["rotate_camera", "reset_camera"]:
+        doc += re.search(f"(#### {action}((.|\n)*?))#", magnebot_api, flags=re.MULTILINE).group(1)
     # Append fields.
     magnebot_fields = re.search(r"## Fields\n((.|\n)*?)\*", magnebot_api, flags=re.MULTILINE).group(1)
     doc = re.sub(r"## Fields\n((.|\n)*?)\*", r"## Fields\1" + magnebot_fields + "*", doc)
