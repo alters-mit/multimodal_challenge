@@ -72,7 +72,9 @@ class Dataset(MultiModalBase):
     D:/multimodal_challenge/dataset  # See dataset in config.ini
     ....1_0/  # scene_layout
     ........0.json
+    ........0.wav
     ........1.json
+    ........1.wav
     ```
     """
 
