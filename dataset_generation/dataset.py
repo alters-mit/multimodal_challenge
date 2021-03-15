@@ -375,15 +375,15 @@ class Dataset(MultiModalBase):
                                                     rotation=self.state.magnebot_transform.rotation)
         # Stop skipping frames now that we're done turning.
         self._skip_frames = 0
-        # Let the object fall.
+        # Let the object fall and apply the cached force.
         self.objects_static[self.target_object_id].kinematic = False
         self._next_frame_commands.extend([{"$type": "set_kinematic_state",
                                            "id": self.target_object_id,
                                            "is_kinematic": False,
                                            "use_gravity": True},
-                                          {"$type": "set_object_collision_detection_mode",
+                                          {"$type": "apply_force_to_object",
                                            "id": self.target_object_id,
-                                           "mode": "continuous_dynamic"}])
+                                           "force": self.trials[self.trial_count].force}])
         # Reset the modes here to discard any junk generated during setup.
         Dataset.PY_IMPACT.reset(initial_amp=Dataset.INITIAL_AMP)
         return ActionStatus.success
@@ -405,7 +405,7 @@ class Dataset(MultiModalBase):
                  "enable": False}]
 
     def _get_end_init_commands(self) -> List[dict]:
-        # Add a reverb space and an audio sensor. Apply a force.
+        # Add a reverb space and an audio sensor.
         return [{"$type": "set_reverb_space_simple",
                  "env_id": -1,
                  "reverb_floor_material": self.env_audio_materials.floor,
@@ -414,10 +414,7 @@ class Dataset(MultiModalBase):
                  "reverb_back_wall_material": self.env_audio_materials.wall,
                  "reverb_left_wall_material": self.env_audio_materials.wall,
                  "reverb_right_wall_material": self.env_audio_materials.wall},
-                {"$type": "add_environ_audio_sensor"},
-                {"$type": "apply_force_to_object",
-                 "id": self.target_object_id,
-                 "force": self.trials[self.trial_count].force}]
+                {"$type": "add_environ_audio_sensor"}]
 
     def _get_magnebot_position(self) -> np.array:
         # Get all free occupancy map positions.
