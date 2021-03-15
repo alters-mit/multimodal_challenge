@@ -3,6 +3,7 @@ from typing import List, Optional
 from pathlib import Path
 from json import loads, dumps
 from array import array
+from os import walk
 import numpy as np
 import pyaudio
 from tqdm import tqdm
@@ -143,11 +144,30 @@ class Dataset(MultiModalBase):
         self._magnebot_position: Optional[np.array] = None
         # The PyAudio device index.
         self._device_index: int = Dataset._get_pyaudio_device_index()
+        # A list of random seeds per trial. We can use these to re-create any trial exactly the same every time,
+        # which allows us to pause/resume dataset generation without inadvertantly changing it.
+        self._random_seeds: np.array = np.array([])
+        self._random_seed_index: int = 0
 
     def run(self) -> None:
         """
         Generate the entire dataset for each scene_layout combination.
         """
+
+        random_seed_path = DATASET_DIRECTORY.joinpath("random_seeds.json")
+        # Load existing random seeds.
+        if random_seed_path.exists():
+            self._random_seeds = loads(random_seed_path.read_text(encoding="utf-8"))
+        # Generate new random seeds for every trial.
+        else:
+            # Get the total number of trials.
+            num_trials: int = 0
+            for r, ds, fs in walk(str(DATASET_DIRECTORY.resolve())):
+                num_trials += len(fs)
+            # Generate random seeds.
+            self._random_seeds = self._rng.randint(low=-2147483647, high=2147483647, size=100, dtype=int)
+            # Save them to disk.
+            random_seed_path.write_text(dumps(list(self._random_seeds)), encoding="utf-8")
 
         scene_layouts = get_scene_layouts()
         for scene in scene_layouts:
@@ -179,7 +199,11 @@ class Dataset(MultiModalBase):
         self.trial_count: int = 0
         # Get the last trial number, to prevent overwriting files.
         for f in output_directory.iterdir():
+            # Get the last trial completed.
             if f.is_file() and f.suffix == ".json":
+                # Increment the random seed index.
+                self._random_seed_index += 1
+                # Try to get the last trial.
                 tc = int(f.name.replace(".json", ""))
                 if tc > self.trial_count:
                     self.trial_count = tc + 1
@@ -214,6 +238,9 @@ class Dataset(MultiModalBase):
         :param output_directory: The output directory for the trial data.
         """
 
+        # Set the next random seed.
+        self._rng = np.random.RandomState(self._random_seeds[self._random_seed_index])
+        # Initialize the scene.
         self.init_scene(scene=self.scene, layout=self.layout)
         # Get the PyImpact audio materials for the floor and walls.
         floor = EnvAudioMaterials.RESONANCE_AUDIO_TO_PY_IMPACT[self.env_audio_materials.floor]
@@ -313,7 +340,9 @@ class Dataset(MultiModalBase):
         # Write the result to disk.
         output_directory.joinpath(f"{self.trial_count}.json").write_text(dumps(ci.__dict__, cls=Encoder),
                                                                          encoding="utf-8")
+        # Increment the trial counter and the random seed counter.
         self.trial_count += 1
+        self._random_seed_index += 1
 
     def init_scene(self, scene: str, layout: int, room: int = None) -> ActionStatus:
         """
