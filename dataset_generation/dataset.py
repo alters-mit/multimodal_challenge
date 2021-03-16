@@ -358,8 +358,8 @@ class Dataset(MultiModalBase):
         super().init_scene(scene=scene, layout=layout, room=room)
         # Get the angle to the object.
         angle = TDWUtils.get_angle_between(v1=self.state.magnebot_transform.forward,
-                                           v2=TDWUtils.vector3_to_array(self.trials[self.trial_count].position) -
-                                              self.state.magnebot_transform.position)
+                                           v2=TDWUtils.vector3_to_array(self.trials[self.trial_count].position) - self.
+                                           state.magnebot_transform.position)
         if np.abs(angle) > 180:
             if angle > 0:
                 angle -= 360

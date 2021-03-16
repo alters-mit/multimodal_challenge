@@ -8,6 +8,7 @@ if __name__ == "__main__":
                                                                          "dataset/drop_zone.py",
                                                                          "dataset/env_audio_materials.py",
                                                                          "multimodal_object_init_data.py",
+                                                                         "multimodal_base.py",
                                                                          "magnebot_init_data.py",
                                                                          "occupancy_mapper.py",
                                                                          "trial.py"])
@@ -65,6 +66,5 @@ if __name__ == "__main__":
     Path("../doc/api/multimodal.md").write_text(doc, encoding="utf-8")
 
     # Dataset generation documentation.
-    md = PyMdDoc(input_directory=Path("../dataset_generation"), files=["dataset.py", "rehearsal.py", "init_data.py",
-                                                                       "drop_zone_analyzer.py"])
+    md = PyMdDoc(input_directory=Path("../dataset_generation"), files=["dataset.py", "rehearsal.py", "init_data.py"])
     md.get_docs(output_directory=Path("../doc/dataset"))

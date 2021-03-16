@@ -10,6 +10,11 @@ from multimodal_challenge.paths import OCCUPANCY_MAPS_DIRECTORY, SCENE_BOUNDS_DI
 
 
 class MultiModalBase(Magnebot, ABC):
+    """
+    Abstract class controller for the MultiModal challenge.
+    The code in this controller shared between [`Dataset`](../dataset/dataset.md) and [`MultiModal`](multimodal.md).
+    """
+
     def __init__(self, port: int = 1071, screen_width: int = 256, screen_height: int = 256, random_seed: int = None,
                  skip_frames: int = 10):
         """
@@ -29,27 +34,42 @@ class MultiModalBase(Magnebot, ABC):
         self.scene_librarian = get_scene_librarian()
 
     def init_scene(self, scene: str, layout: int, room: int = None) -> ActionStatus:
+        """
+        **Always call this function before starting a new trial.**
+
+        Initialize a scene and a furniture layout. Add and position the Magnebot and dropped object.
+
+        :param scene: The name of the scene.
+        :param layout: The layout index.
+        :param room: The room number (in `MultiModal`, this is the trial. In `Dataset`, this is ignored.)
+
+        :return: An `ActionStatus` (always success).
+        """
+
         self._clear_data()
         # Add the scene.
         scene_record = self.scene_librarian.get_record(scene)
         commands: List[dict] = [{"$type": "add_scene",
                                  "name": scene_record.name,
                                  "url": scene_record.get_url()}]
+        # Load the occupancy map and scene bounds.
         self.occupancy_map = np.load(str(OCCUPANCY_MAPS_DIRECTORY.joinpath(f"{scene}_{layout}.npy").resolve()))
         self._scene_bounds = loads(SCENE_BOUNDS_DIRECTORY.joinpath(f"{scene[:-1]}.json").read_text())
-        # Set the post-processing.
+        # Add commands to start the trial (such as post-processing globals).
         commands.extend(self._get_start_trial_commands())
         # Initialize the objects.
         commands.extend(self._get_object_init_commands())
-
         # Add the target object.
         target_object: MultiModalObjectInitData = self._get_target_object()
         if target_object is not None:
             self.target_object_id, target_object_commands = target_object.get_commands()
             commands.extend(target_object_commands)
+        # Add commands to add the Magnebot and request output data.
         commands.extend(self._get_scene_init_commands(magnebot_position=TDWUtils.array_to_vector3(
             self._get_magnebot_position())))
+        # Add commands at the end of scene initialization.
         commands.extend(self._get_end_init_commands())
+        # Send the commands, cache the static data, and end the action.
         resp = self.communicate(commands)
         self._cache_static_data(resp=resp)
         self._end_action()
