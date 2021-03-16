@@ -77,6 +77,7 @@ class MultiModal(MultiModalBase):
 
         - For a dictionary of valid scene names and layout indices, see: `MultiModal.SCENE_LAYOUTS`.
         - For the total number of trials per scene_layout, see: `MultiModal.TRIALS_PER_SCENE_LAYOUT`
+        - [These are images of every scene_layout combination](https://github.com/alters-mit/multimodal_challenge/tree/main/doc/images/scene_layouts)
 
         :param scene: The name of the scene.
         :param layout: The layout index.
