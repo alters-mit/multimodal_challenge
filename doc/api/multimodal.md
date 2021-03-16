@@ -18,6 +18,23 @@ Each trial has audio data that was generated as the object collided with other o
 
 Using its camera and the audio data, the Magnebot must find the dropped object.
 
+- [The target object](#the-target-object)
+- [Class variables](#class-variables)
+- [Frames](#frames)
+- [Parameter types](#parameter-types)
+- [Fields](#fields)
+- [Functions](#functions)
+  - [\_\_init\_\_](#\_\_init\_\_)
+  - [init_scene](#init_scene)
+  - [turn_by](#turn_by)
+  - [turn_to](#turn_to)
+  - [move_by](#move_by)
+  - [move_to](#move_to)
+  - [set_torso](#set_torso)
+  - [rotate_camera](#rotate_camera)
+  - [reset_camera](#reset_camera)
+
+
 ## The target object
 
 By default, the Magnebot API records the position of every object in the scene as well as images, the position of the Magnebot, etc. See [`self.state`](https://github.com/alters-mit/magnebot/blob/main/doc/api/scene_state.md)
@@ -37,29 +54,18 @@ target_object_transform = m.state.object_transforms[m.target_object_id]
 print(target_object_transform.position)
 ```
 
-- [Frames](#Frames)
-- [Parameter types](#Parameter types)
-- [Class Variables](#Class Variables)
-- [Functions](#Functions)
-  - [\_\_init\_\_](#\_\_init\_\_)
-  - [init_scene](#init_scene)
-  - [turn_by](#turn_by)
-  - [turn_to](#turn_to)
-  - [move_by](#move_by)
-  - [move_to](#move_to)
-  - [set_torso](#set_torso)
-  - [rotate_camera](#rotate_camera)
-  - [reset_camera](#reset_camera)
-
-
 ***
 
 ## Class Variables
-
 | Variable | Type | Description |
 | --- | --- | --- |
 | `SCENE_LAYOUTS` | Dict[str, int] | A dictionary of each scene name and the number of layouts per scene. Use this to set the `scene` and `layout` parameters of `init_scene()`. |
 | `TRIALS_PER_SCENE_LAYOUT` | int | The number of trials per scene_layout combination. Use this to set the `trial` parameter of `init_scene()`: |
+
+
+| Variable | Type | Description |
+| --- | --- | --- |
+| `CAMERA_RPY_CONSTRAINTS` | List[float] | The camera roll, pitch, yaw constraints in degrees. |
 
 ***
 
@@ -98,14 +104,6 @@ Parameters of type `Union[Dict[str, float], int]]` can be either a Vector3 or an
 
 All parameters of type `Arm` require you to import the [Arm enum class](https://github.com/alters-mit/magnebot/blob/main/doc/api/arm.md):
 
-
-***
-
-## Class Variables
-
-| Variable | Type | Description |
-| --- | --- | --- |
-| `CAMERA_RPY_CONSTRAINTS` | List[float] | The camera roll, pitch, yaw constraints in degrees. |
 
 ***
 

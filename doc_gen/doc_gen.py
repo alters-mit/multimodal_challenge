@@ -39,20 +39,22 @@ if __name__ == "__main__":
            "They advance the simulation by exactly 1 frame._\n\n"
     for action in ["rotate_camera", "reset_camera"]:
         doc += re.search(f"(#### {action}((.|\n)*?))#", magnebot_api, flags=re.MULTILINE).group(1)
-    # Append fields.
-    magnebot_fields = re.search(r"## Fields\n((.|\n)*?)\*", magnebot_api, flags=re.MULTILINE).group(1)
-    doc = re.sub(r"## Fields\n((.|\n)*?)\*", r"## Fields\1" + magnebot_fields + "*", doc)
+    # Append fields and class variables.
+    for section in ["Fields", "Class Variables"]:
+        magnebot_fields = re.search(f"## {section}" + r"\n((.|\n)*?)\*", magnebot_api, flags=re.MULTILINE).group(1)
+        doc = re.sub(f"## {section}" + r"\n((.|\n)*?)\*", f"## {section}" + r"\1" + magnebot_fields + "*", doc)
     # Append other sections.
     sections = ""
-    toc = ""
-    for s in ["Frames", "Parameter types", "Class Variables"]:
+    toc = "- [The target object](#the-target-object)\n- [Class variables](#class-variables)\n"
+    for s in ["Frames", "Parameter types"]:
         section = re.search(f"## {s}\n" + r"((.|\n)*?)\*\*\*", magnebot_api, flags=re.MULTILINE).group(0)
         sections += section + "\n\n"
-        toc += f"- [{s}](#{s})\n"
+        toc += f"- [{s}](#{s.lower().replace(' ', '-')})\n"
+    toc += "- [Fields](#fields)\n"
     doc = re.sub(r"## Fields", sections + "\n## Fields\n", doc)
     # Create a table of contents.
     function_txt = doc.split("## Functions")[1]
-    functions = "- [Functions](#Functions)\n"
+    functions = "- [Functions](#functions)\n"
     for line in function_txt.split("\n"):
         # API section.
         if line.startswith("#### "):
