@@ -409,7 +409,7 @@ class Dataset(MultiModalBase):
         return [{"$type": "set_reverb_space_simple",
                  "env_id": -1,
                  "reverb_floor_material": self.env_audio_materials.floor,
-                 "reverb_ceiling_material": self.env_audio_materials.wall,
+                 "reverb_ceiling_material": "acousticTile",
                  "reverb_front_wall_material": self.env_audio_materials.wall,
                  "reverb_back_wall_material": self.env_audio_materials.wall,
                  "reverb_left_wall_material": self.env_audio_materials.wall,

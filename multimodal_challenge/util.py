@@ -8,8 +8,8 @@ from multimodal_challenge.paths import TARGET_OBJECTS_PATH, OBJECT_INIT_DIRECTOR
 from multimodal_challenge.multimodal_object_init_data import MultiModalObjectInitData
 from multimodal_challenge.dataset.drop_zone import DropZone
 
-# A list of the names of droppable objects.
-DROP_OBJECTS: List[str] = TARGET_OBJECTS_PATH.read_text(encoding="utf-8").split("\n")
+# A list of the names of target objects models.
+TARGET_OBJECTS: List[str] = TARGET_OBJECTS_PATH.read_text(encoding="utf-8").split("\n")
 
 
 def get_scene_librarian() -> SceneLibrarian:

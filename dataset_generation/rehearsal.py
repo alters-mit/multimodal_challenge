@@ -7,7 +7,7 @@ from tdw.tdw_utils import TDWUtils
 from tdw.output_data import Transforms, Raycast
 from magnebot.scene_environment import SceneEnvironment
 from magnebot.util import get_data
-from multimodal_challenge.util import DROP_OBJECTS, get_object_init_commands, get_scene_librarian, get_drop_zones, \
+from multimodal_challenge.util import TARGET_OBJECTS, get_object_init_commands, get_scene_librarian, get_drop_zones, \
     get_scene_layouts
 from multimodal_challenge.paths import REHEARSAL_DIRECTORY
 from multimodal_challenge.dataset.dataset_trial import DatasetTrial
@@ -131,7 +131,7 @@ class Rehearsal(Controller):
         position["y"] = self.rng.uniform(min_y, position["y"])
         commands.clear()
         # Get the next object.
-        name = self.rng.choice(DROP_OBJECTS)
+        name = self.rng.choice(TARGET_OBJECTS)
         # Get the init data.
         a = MultiModalObjectInitData(name=name,
                                      position=position,
