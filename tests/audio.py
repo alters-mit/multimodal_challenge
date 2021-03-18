@@ -16,7 +16,7 @@ object_init_commands = get_object_init_commands(scene="mm_kitchen_1a", layout=0)
 
 # Get the env audio materials.
 floor = AudioMaterial.ceramic
-wall = AudioMaterial.wood_soft
+wall = AudioMaterial.wood
 floor_resonance_audio = "tile"
 wall_resonance_audio = "roughPlaster"
 ceiling_resonance_audio = "acousticTile"
@@ -50,6 +50,9 @@ for object_name in TARGET_OBJECTS:
                       "frequency": "always"},
                      {"$type": "send_audio_sources",
                       "frequency": "always"},
+                     {"$type": "apply_torque_to_object",
+                      "id": object_id,
+                      "torque": {"x": 0.2, "y": 0.6, "z": -0.3}},
                      {"$type": "apply_force_to_object",
                       "id": object_id,
                       "force": {"x": -0.07, "y": -0.02, "z": 0.07}}])

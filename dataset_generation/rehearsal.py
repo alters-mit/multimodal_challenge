@@ -82,7 +82,7 @@ class Rehearsal(Controller):
         """:field
         The ID of the dropped object. This changes per trial.
         """
-        self.drop_object: Optional[int] = None
+        self.target_object_id: Optional[int] = None
         # Get a random seed.
         if random_seed is None:
             random_seed = self.get_unique_id()
@@ -139,19 +139,25 @@ class Rehearsal(Controller):
                                                "y": float(self.rng.uniform(-360, 360)),
                                                "z": float(self.rng.uniform(-360, 360))},
                                      kinematic=False)
-        # Define the drop force.
+        # Define the drop force and torque.
         force = {"x": float(self.rng.uniform(-0.1, 0.1)),
                  "y": float(self.rng.uniform(-0.05, 0.05)),
                  "z": float(self.rng.uniform(-0.1, 0.1))}
+        torque = {"x": float(self.rng.uniform(-0.6, 0.6)),
+                  "y": float(self.rng.uniform(-0.6, 0.6)),
+                  "z": float(self.rng.uniform(-0.6, 0.6))}
         # Add the initialization commands.
-        self.drop_object, object_commands = a.get_commands()
+        self.target_object_id, object_commands = a.get_commands()
         commands.extend(object_commands)
         # Apply the force. Request Transforms data for this object.
         commands.extend([{"$type": "apply_force_to_object",
-                          "id": self.drop_object,
+                          "id": self.target_object_id,
                           "force": force},
+                         {"$type": "apply_torque_to_object",
+                          "id": self.target_object_id,
+                          "torque": torque},
                          {"$type": "send_transforms",
-                          "ids": [self.drop_object],
+                          "ids": [self.target_object_id],
                           "frequency": "always"}])
         # Send the commands!
         resp = self.communicate(commands)
@@ -176,7 +182,7 @@ class Rehearsal(Controller):
             num_frames += 1
             p_0 = p_1
         self.communicate({"$type": "destroy_object",
-                          "id": self.drop_object})
+                          "id": self.target_object_id})
         if not good:
             return None, -1
         # Check if this object is in a drop zone.
@@ -185,7 +191,7 @@ class Rehearsal(Controller):
                     np.linalg.norm(p_0 - drop_zone.center) < drop_zone.radius:
                 # In dataset generation, we don't want the object to fall right away, so we make it kinematic.
                 a.kinematic = True
-                return DatasetTrial(init_data=a, force=force, position=TDWUtils.array_to_vector3(p_0)), i
+                return DatasetTrial(init_data=a, force=force, torque=torque, position=TDWUtils.array_to_vector3(p_0)), i
         return None, -1
 
     def run(self, num_trials: int = 10000) -> None:
