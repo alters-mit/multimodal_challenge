@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import List
 from argparse import ArgumentParser
 from tdw.py_impact import PyImpact
+from tdw.object_init_data import TransformInitData
 from tdw.librarian import ModelLibrarian, SceneLibrarian
 from tdw.controller import Controller
 from multimodal_challenge.paths import DROP_ZONE_DIRECTORY, OBJECT_INIT_DIRECTORY, OBJECT_LIBRARY_PATH, \
@@ -50,16 +51,19 @@ class InitData:
         :return: A list of commands to add objects to the scene and optionally to show the drop zones.
         """
 
-        root_dir = Path.home().joinpath("tdw_config")
-        filename = f"{scene}_{layout}"
+        scene_filename = scene.replace("craftroom", "workroom")
+
+        root_dir = Path.home().joinpath(f"tdw_config/WorkRoomVariants/{scene_filename[3:]}")
+        src_filename = f"{scene_filename}_{layout}"
+        dst_filename = f"{scene}_{layout}"
         # Append object init commands.
-        commands = loads(root_dir.joinpath(f"{filename}.txt").read_text(encoding="utf-8"))
+        commands = loads(root_dir.joinpath(f"layout_{layout}/{src_filename}.txt").read_text(encoding="utf-8"))
         for i in range(len(commands)):
             if commands[i]["$type"] == "add_object":
                 commands[i]["scale_factor"] = 1
         # Update the drop zone data.
-        drop_zone_src = root_dir.joinpath(f"layout_{layout}/{filename}.json")
-        drop_zone_dst = DROP_ZONE_DIRECTORY.joinpath(f"{filename}.json")
+        drop_zone_src = root_dir.joinpath(f"layout_{layout}/{src_filename}.json")
+        drop_zone_dst = DROP_ZONE_DIRECTORY.joinpath(f"{dst_filename}.json")
         drop_zone_data = loads(drop_zone_src.read_text(encoding="utf-8"))
         drop_zone_dst.write_text(dumps(drop_zone_data["position_markers"]), encoding="utf-8")
         # Show the drop zones.
@@ -107,11 +111,29 @@ class InitData:
         model_lib = ModelLibrarian(str(OBJECT_LIBRARY_PATH.resolve()))
         model_lib_core = ModelLibrarian()
         object_info = PyImpact.get_object_info()
+        # Update the local model library.
+        for name in object_info:
+            record = model_lib.get_record(name)
+            if record is None:
+                record = model_lib_core.get_record(name)
+                if record is None:
+                    print(f"Record not found: {name}")
+                    continue
+                # Adjust the record URLs.
+                for platform in record.urls:
+                    record.urls[platform] = record.urls[platform].replace(bucket, "ROOT")
+                model_lib.add_or_update_record(record=record, overwrite=False)
+        model_lib.write()
+        # Remember where the local library is.
+        TransformInitData.LIBRARIES[str(OBJECT_LIBRARY_PATH.resolve())] = \
+            ModelLibrarian(library=str(OBJECT_LIBRARY_PATH.resolve()))
+
         # Replacements for unusable models.
         replacements = {"rope_table_lamp": "jug05",
                         "jigsaw_puzzle_composite": "puzzle_box_composite",
                         "salt": "pepper",
-                        "rattan_basket": "basket_18inx18inx12iin_wicker"}
+                        "rattan_basket": "basket_18inx18inx12iin_wicker",
+                        "b05_table_new": "marble_table_white"}
         # Get a list of kinematic objects.
         kinematic_objects = KINEMATIC_OBJECTS_PATH.read_text(encoding="utf-8").split("\n")
         # Get the commands.
@@ -130,14 +152,6 @@ class InitData:
                 if name in replacements:
                     name = replacements[name]
                 if name in object_info:
-                    # Maybe add a new record.
-                    record = model_lib.get_record(name)
-                    if record is None:
-                        record = model_lib_core.get_record(name)
-                        # Adjust the record URLs.
-                        for platform in record.urls:
-                            record.urls[platform] = record.urls[platform].replace(bucket, "ROOT")
-                        model_lib.add_or_update_record(record=record, overwrite=False)
                     commands[i]["scale_factor"] = 1
                     objects.append(MultiModalObjectInitData(name=name,
                                                             position=commands[i]["position"],
@@ -148,9 +162,6 @@ class InitData:
                 i += 3
         OBJECT_INIT_DIRECTORY.joinpath(f"{scene}_{layout}.json").write_text(dumps(objects, cls=Encoder, indent=2,
                                                                                   sort_keys=True))
-        # Write the records.
-        model_lib.write()
-
         # Generate an occupancy map.
         if occupancy_map == "create":
             m = OccupancyMapper()

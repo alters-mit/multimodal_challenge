@@ -1,6 +1,28 @@
 {
     "description": "Scenes for the Multi-Modal Challenge",
     "records": {
+        "mm_craftroom_1a": {
+            "description": "An single-room interior space lit by sunlight from outside.",
+            "hdri": true,
+            "location": "interior",
+            "name": "mm_craftroom_1a",
+            "urls": {
+                "Darwin": "ROOT/scenes/osx/2020.2/mm_craftroom_1a",
+                "Linux": "ROOT/scenes/linux/2020.2/mm_craftroom_1a",
+                "Windows": "ROOT/scenes/windows/2020.2/mm_craftroom_1a"
+            }
+        },
+        "mm_craftroom_1b": {
+            "description": "An single-room interior space lit by sunlight from outside.",
+            "hdri": true,
+            "location": "interior",
+            "name": "mm_craftroom_1b",
+            "urls": {
+                "Darwin": "ROOT/scenes/osx/2020.2/mm_craftroom_1b",
+                "Linux": "ROOT/scenes/linux/2020.2/mm_craftroom_1b",
+                "Windows": "ROOT/scenes/windows/2020.2/mm_craftroom_1b"
+            }
+        },
         "mm_kitchen_1a": {
             "description": "An single-room interior space lit by sunlight from outside.",
             "hdri": true,
