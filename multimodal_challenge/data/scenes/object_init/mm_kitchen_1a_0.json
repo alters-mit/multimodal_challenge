@@ -1,6 +1,6 @@
 [
   {
-    "kinematic": false,
+    "kinematic": true,
     "name": "4ft_shelf_metal",
     "position": {
       "x": 1.97,
