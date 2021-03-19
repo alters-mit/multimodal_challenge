@@ -247,13 +247,11 @@ class Rehearsal(Controller):
         close_bar = pbar is None
         if pbar is None:
             pbar = tqdm(total=num_trials)
+        pbar.set_description(f"{scene}_{layout}")
         # Remember all good drops.
         dataset_trials: List[DatasetTrial] = list()
         drop_zone_indices: List[int] = list()
-        count: int = 0
         while len(dataset_trials) < num_trials:
-            # Sometimes it's nice to watch the numbers go up.
-            pbar.set_description(scene + " " + str(count))
             # Do a trial.
             dataset_trial, drop_zone_index = self.do_trial()
             # If we got an object back, then this was a good trial.
@@ -262,7 +260,6 @@ class Rehearsal(Controller):
                 dataset_trials.append(dataset_trial)
                 drop_zone_indices.append(drop_zone_index)
                 pbar.update(1)
-            count += 1
         # Write the results to disk.
         REHEARSAL_DIRECTORY.joinpath(f"{scene}_{layout}.json").write_text(dumps(dataset_trials, cls=Encoder),
                                                                           encoding="utf-8")
@@ -274,7 +271,7 @@ if __name__ == "__main__":
     from argparse import ArgumentParser
     parser = ArgumentParser()
     parser.add_argument("--num_trials", type=int, default=10000, help="The total number of trials.")
-    parser.add_argument("--random_seed", type=int, default=0, help="The total number of trials.")
+    parser.add_argument("--random_seed", type=int, default=0, help="The random seed.")
     args = parser.parse_args()
     m = Rehearsal(random_seed=args.random_seed)
     m.run(num_trials=args.num_trials)
