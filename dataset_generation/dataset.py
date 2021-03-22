@@ -205,7 +205,7 @@ class Dataset(MultiModalBase):
         # Get the last trial number, to prevent overwriting files.
         for f in output_directory.iterdir():
             # Get the last trial completed.
-            if f.is_file() and f.suffix == ".npy":
+            if f.is_file() and f.suffix == ".json":
                 # Increment the random seed index.
                 self._random_seed_index += 1
                 # Try to get the last trial.
