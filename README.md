@@ -16,7 +16,7 @@ Use a `MultiModal` controller to initialize a scene, populate it with objects (i
 **[Read the API documentation.](doc/api/multimodal.md)**
 
 ```python
-from multimodal_challenge import MultiModal
+from multimodal_challenge.multimodal import MultiModal
 
 m = MultiModal()
 m.init_scene(scene="mm_kitchen_1a", layout=0, trial=57)

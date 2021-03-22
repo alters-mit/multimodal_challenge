@@ -1,6 +1,6 @@
 from typing import List
+import numpy as np
 from multimodal_challenge.multimodal_object_init_data import MultiModalObjectInitData
-from multimodal_challenge.magnebot_init_data import MagnebotInitData
 
 
 class Trial:
@@ -9,19 +9,14 @@ class Trial:
     This class will place the Magnebot and every object in the scene at the position at which it stopped moving.
     """
 
-    def __init__(self, scene: str, magnebot: MagnebotInitData, object_init_data: List[MultiModalObjectInitData],
-                 target_object_index: int):
+    def __init__(self, object_init_data: List[MultiModalObjectInitData], target_object_index: int,
+                 magnebot_position: np.array, magnebot_rotation: np.array):
         """
-        :param scene: The name of the scene.
-        :param magnebot: [Initialization data for the Magnebot](magnebot_init_data.md).
+        :param magnebot_position: The position of the Magnebot as an `[x, y, z]` numpy array.
+        :param magnebot_rotation: The rotation of the Magnebot as an `[x, y, z, w]` numpy array.
         :param object_init_data: [Initialization data](multimodal_object_init_data.md) for each object in the scene.
         :param target_object_index: The index of the target object in `object_init_data`.
         """
-
-        """:field
-        The name of the scene.
-        """
-        self.scene: str = scene
 
         if isinstance(object_init_data[0], dict):
             """:field
@@ -35,10 +30,14 @@ class Trial:
         else:
             self.object_init_data: List[MultiModalObjectInitData] = object_init_data
         """:field
-        [Initialization data for the Magnebot](magnebot_init_data.md).
-        """
-        self.magnebot: MagnebotInitData = magnebot
-        """:field
         The index of the target object in `object_init_data`.
         """
         self.target_object_index: int = target_object_index
+        """:field
+        The position of the Magnebot as an `[x, y, z]` numpy array.
+        """
+        self.magnebot_position: np.array = np.array(magnebot_position)
+        """:field
+        The rotation of the Magnebot as an `[x, y, z, w]` numpy array.
+        """
+        self.magnebot_rotation: np.array = np.array(magnebot_rotation)

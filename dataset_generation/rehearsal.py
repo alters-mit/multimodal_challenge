@@ -208,7 +208,7 @@ class Rehearsal(Controller):
         for k in scene_layouts:
             num_layouts += scene_layouts[k]
         # Do trials for each scene_layout combination.
-        trials_per_scene_layout = int(num_trials / num_layouts)
+        trials_per_scene_layout = int(np.ceil(num_trials / num_layouts))
         pbar = tqdm(total=num_trials)
         for scene in scene_layouts:
             for layout in range(scene_layouts[scene]):

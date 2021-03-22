@@ -57,7 +57,7 @@ D:/multimodal_challenge/
 
 ## Fields
 
-- `drop_object` The ID of the dropped object. This changes per trial.
+- `target_object_id` The ID of the dropped object. This changes per trial.
 
 - `rng` The random number generator.
 

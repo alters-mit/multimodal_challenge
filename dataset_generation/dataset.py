@@ -3,7 +3,6 @@ from typing import List, Optional
 from pathlib import Path
 from json import loads, dumps
 from array import array
-from os import walk
 import numpy as np
 import pyaudio
 from tqdm import tqdm
@@ -15,14 +14,13 @@ from magnebot import ActionStatus
 from magnebot.scene_state import SceneState
 from magnebot.util import get_data
 from multimodal_challenge.multimodal_base import MultiModalBase
-from multimodal_challenge.trial import Trial
-from multimodal_challenge.encoder import Encoder
 from multimodal_challenge.paths import REHEARSAL_DIRECTORY, ENV_AUDIO_MATERIALS_PATH, DATASET_DIRECTORY
 from multimodal_challenge.util import get_object_init_commands, get_scene_layouts, get_trial_filename
 from multimodal_challenge.multimodal_object_init_data import MultiModalObjectInitData
+from multimodal_challenge.trial import Trial
+from multimodal_challenge.encoder import Encoder
 from multimodal_challenge.dataset.dataset_trial import DatasetTrial
 from multimodal_challenge.dataset.env_audio_materials import EnvAudioMaterials
-from multimodal_challenge.magnebot_init_data import MagnebotInitData
 
 
 class Dataset(MultiModalBase):
@@ -65,18 +63,25 @@ class Dataset(MultiModalBase):
     5. Initialize audio in the scene and audio recording.
     6. Let the object fall. Use PyImpact to generate collisions.
     7. The trial stops either when the sound stops playing or if a maximum number of frames has been reached.
-    8. Save the results as a `Trial` object in a .json file. Save the audio recording as a .wav file.
+    8. Save the results to disk.
 
-    **Result:** A directory of `Trial` objects per scene_layout combination:
+    **Result:** A directory dataset files. The dataset has a `random_seeds.npy` file that is used to select random seeds per trial.
 
+    Each trial is saved in a `scene_layout` directory and has two files:
+    
+    1. A .json file of the [`Trial` data](../api/trial.md).
+    2. An audio .wave file.
+    
     ```
     D:/multimodal_challenge/
+    ....random_seeds.npy
     ....mm_kitchen_1a_0/  # scene_layout
-    ........0.json
-    ........0.wav
-    ........1.json
-    ........1.wav
+    ........00000.json
+    ........00000.wav
+    ........00001.json
+    ........00001.wav
     ........(etc.)
+    ....mm_kitchen_1a_1/
     ```
     """
 
@@ -138,10 +143,6 @@ class Dataset(MultiModalBase):
         A dummy object ID for the environment. This is reassigned per trial.
         """
         self.env_id: int = -1
-        # Magnebot initialization data.
-        self._magnebot_init_data: Optional[MagnebotInitData] = None
-        # The initial position of the Magnebot for this trial.
-        self._magnebot_position: Optional[np.array] = None
         # The PyAudio device index.
         self._device_index: int = Dataset._get_pyaudio_device_index()
         # A list of random seeds per trial. We can use these to re-create any trial exactly the same every time,
@@ -154,28 +155,31 @@ class Dataset(MultiModalBase):
         Generate the entire dataset for each scene_layout combination.
         """
 
-        random_seed_path = DATASET_DIRECTORY.joinpath("random_seeds.json")
+        random_seed_path = DATASET_DIRECTORY.joinpath("random_seeds.npy").resolve()
+        if not DATASET_DIRECTORY.exists():
+            DATASET_DIRECTORY.mkdir(parents=True)
         # Load existing random seeds.
         if random_seed_path.exists():
-            self._random_seeds = loads(random_seed_path.read_text(encoding="utf-8"))
+            self._random_seeds = np.load(str(random_seed_path))
         # Generate new random seeds for every trial.
         else:
             # Get the total number of trials.
             num_trials: int = 0
-            for r, ds, fs in walk(str(DATASET_DIRECTORY.resolve())):
-                num_trials += len(fs)
+            for f in REHEARSAL_DIRECTORY.iterdir():
+                if f.is_file() and f.suffix == ".json":
+                    num_trials += len(loads(f.read_text(encoding="utf-8")))
             # Generate random seeds.
-            self._random_seeds = self._rng.randint(low=-2147483647, high=2147483647, size=100, dtype=int)
+            self._random_seeds = self._rng.randint(low=0, high=2**31 - 1, size=num_trials, dtype=int)
             # Save them to disk.
-            random_seed_path.write_text(dumps(list(self._random_seeds)), encoding="utf-8")
-
+            np.save(str(random_seed_path.resolve())[:-4], self._random_seeds)
+        pbar = tqdm(total=len(self._random_seeds))
         scene_layouts = get_scene_layouts()
         for scene in scene_layouts:
             for layout in range(scene_layouts[scene]):
-                self.do_trials(scene=scene, layout=layout)
+                self.do_trials(scene=scene, layout=layout, pbar=pbar)
         self.end()
 
-    def do_trials(self, scene: str, layout: int) -> None:
+    def do_trials(self, scene: str, layout: int, pbar: tqdm) -> None:
         """
         Get the cached trial initialization data for a scene_layout combination and do each trial.
         This will try to avoid overwriting existing trial results.
@@ -183,6 +187,7 @@ class Dataset(MultiModalBase):
 
         :param scene: The name of the scene.
         :param layout: The index of the furniture layout.
+        :param pbar: The progress bar.
         """
 
         self._start_action()
@@ -200,32 +205,27 @@ class Dataset(MultiModalBase):
         # Get the last trial number, to prevent overwriting files.
         for f in output_directory.iterdir():
             # Get the last trial completed.
-            if f.is_file() and f.suffix == ".json":
+            if f.is_file() and f.suffix == ".npy":
                 # Increment the random seed index.
                 self._random_seed_index += 1
                 # Try to get the last trial.
-                tc = int(f.name.replace(".json", ""))
-                if tc > self.trial_count:
-                    self.trial_count = tc + 1
+                self.trial_count += 1
         # Load the cached trial data.
         self.trials = [DatasetTrial(**d) for d in
                        loads(REHEARSAL_DIRECTORY.joinpath(f"{scene}_{layout}.json").read_text(encoding="utf-8"))]
+        pbar.update(self.trial_count)
         # We already completed this portion of the dataset.
         if self.trial_count == len(self.trials):
             return
-        # Create a progress bar.
-        pbar = tqdm(total=len(self.trials))
-        pbar.update(self.trial_count)
         try:
             # Initialize the scene and do the trial.
+            pbar.set_description(f"{scene}_{layout}")
             for i in range(self.trial_count, len(self.trials)):
-                pbar.set_description(f"{scene}_{layout} {i}")
                 self.do_trial(output_directory=output_directory)
                 pbar.update(1)
         # Close the audio thread, stop fmedia, and stop the progress bar.
         finally:
             AudioUtils.stop()
-            pbar.close()
 
     def do_trial(self, output_directory: Path) -> None:
         """
@@ -318,31 +318,32 @@ class Dataset(MultiModalBase):
         # If the object fell through the floor, snap it to floor level (y=0).
         if below_floor:
             state.object_transforms[self.target_object_id].position[1] = 0
+
+        # Capture the state of each object.
         object_init_data: List[MultiModalObjectInitData] = list()
         target_object_index: int = -1
-        index: int = 0
         for o_id in self.objects_static:
-            # Get the target object's index in the list.
-            if o_id == self.target_object_id:
-                target_object_index = index
-            index += 1
-            name = self.objects_static[o_id].name
-            o = MultiModalObjectInitData(name=name,
-                                         position=TDWUtils.array_to_vector3(state.object_transforms[o_id].position),
-                                         rotation=TDWUtils.array_to_vector4(state.object_transforms[o_id].rotation),
+            i = MultiModalObjectInitData(name=self.objects_static[o_id].name,
                                          kinematic=self.objects_static[o_id].kinematic,
-                                         scale_factor={"x": 1, "y": 1, "z": 1})
-            object_init_data.append(o)
-        # Move the temporary audio file.
+                                         position=TDWUtils.array_to_vector3(state.object_transforms[o_id].position),
+                                         rotation=TDWUtils.array_to_vector4(state.object_transforms[o_id].rotation))
+            # Set the target object as non-kinematic and record its index.
+            if o_id == self.target_object_id:
+                i.kinematic = False
+                i.gravity = True
+                target_object_index = len(object_init_data)
+            object_init_data.append(i)
+        # Create the trial.
+        trial = Trial(object_init_data=object_init_data,
+                      target_object_index=target_object_index,
+                      magnebot_rotation=state.magnebot_transform.rotation,
+                      magnebot_position=state.magnebot_transform.position)
+        # Get the zero-padded filename.
         filename = get_trial_filename(self.trial_count)
+        # Save the trial.
+        output_directory.joinpath(f"{filename}.json").write_text(dumps(trial, cls=Encoder), encoding="utf-8")
+        # Move the audio file.
         Dataset.TEMP_AUDIO_PATH.replace(output_directory.joinpath(f"{filename}.wav"))
-        # Cache the result of the trial.
-        ci = Trial(scene=self.scene,
-                   magnebot=self._magnebot_init_data,
-                   target_object_index=target_object_index,
-                   object_init_data=object_init_data)
-        # Write the result to disk.
-        output_directory.joinpath(f"{filename}.json").write_text(dumps(ci.__dict__, cls=Encoder), encoding="utf-8")
         # Increment the trial counter and the random seed counter.
         self.trial_count += 1
         self._random_seed_index += 1
@@ -373,9 +374,6 @@ class Dataset(MultiModalBase):
         # We need every frame for audio recording, but not right now, so let's speed things up.
         self._skip_frames = 10
         self.turn_by(angle=angle)
-        # Record the initialization pose.
-        self._magnebot_init_data = MagnebotInitData(position=self.state.magnebot_transform.position,
-                                                    rotation=self.state.magnebot_transform.rotation)
         # Stop skipping frames now that we're done turning.
         self._skip_frames = 0
         # Let the object fall and apply the cached force and torque.
@@ -443,8 +441,7 @@ class Dataset(MultiModalBase):
         # Get the latter half of the positions (the further positions).
         occupancy_positions = occupancy_positions[int(len(occupancy_positions) / 2.0):]
         # Pick a random position.
-        self._magnebot_position = occupancy_positions[self._rng.randint(0, len(occupancy_positions))]
-        return self._magnebot_position
+        return occupancy_positions[self._rng.randint(0, len(occupancy_positions))]
 
     def _get_target_object(self) -> Optional[MultiModalObjectInitData]:
         return self.trials[self.trial_count].init_data
