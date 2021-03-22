@@ -27,6 +27,7 @@ c = Controller(launch_build=False)
 c.communicate({"$type": "set_target_framerate",
                "framerate": 100})
 for object_name in TARGET_OBJECTS:
+    print(object_name)
     commands = [c.get_add_scene(scene_name="mm_kitchen_1a"),
                 {"$type": "set_floorplan_roof",
                  "show": False}]
@@ -61,7 +62,6 @@ for object_name in TARGET_OBJECTS:
     resp = c.communicate(commands)
     # Loop until the object stops moving and stops making a sound.
     done = False
-    audio_lengths = list()
     while not done:
         rigidbodies = get_data(resp=resp, d_type=Rigidbodies)
         sleeping = False
@@ -76,14 +76,10 @@ for object_name in TARGET_OBJECTS:
                 playing = audio_sources.get_is_playing(i)
                 break
         commands = p.get_audio_commands(resp=resp, floor=floor, wall=wall, resonance_audio=True)
-        for cmd in commands:
-            if cmd["$type"] == "play_point_source_data":
-                audio_lengths.append(len(cmd["wav_data"]))
         if sleeping and not playing and len(commands) == 0:
             done = True
         else:
             resp = c.communicate(commands)
-    print(sum(audio_lengths) / len(audio_lengths))
     p.reset(initial_amp=initial_amp)
     # Wait a bit for the reverb to finish.
     sleep(2)

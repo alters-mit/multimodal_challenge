@@ -276,6 +276,7 @@ class Dataset(MultiModalBase):
                                      {"$type": "send_audio_sources",
                                       "frequency": "always"}])
             done: bool = False
+            below_floor = False
             num_frames: int = 0
             # Let the simulation run until there's too many frames or if there's no audio.
             while not done and num_frames < 1000:
@@ -290,7 +291,6 @@ class Dataset(MultiModalBase):
                         break
                 transforms = get_data(resp=resp, d_type=Transforms)
                 # Stop if the object somehow fell below the floor.
-                below_floor = False
                 for i in range(transforms.get_num()):
                     if transforms.get_id(i) == self.target_object_id:
                         below_floor = transforms.get_position(i)[1] < -1
@@ -315,6 +315,9 @@ class Dataset(MultiModalBase):
 
         # Convert the current state of each object to initialization data.
         state = SceneState(resp=self.communicate([]))
+        # If the object fell through the floor, snap it to floor level (y=0).
+        if below_floor:
+            state.object_transforms[self.target_object_id].position[1] = 0
         object_init_data: List[MultiModalObjectInitData] = list()
         target_object_index: int = -1
         index: int = 0

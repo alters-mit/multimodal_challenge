@@ -12,7 +12,6 @@ fork3
 fork4
 knife1
 knife2
-knife3
 spoon1
 spoon2
 basic_cork_2

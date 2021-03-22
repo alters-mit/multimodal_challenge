@@ -152,7 +152,7 @@ class MultiModal(MultiModalBase):
                      "immovable": True},
                     {"$type": "set_prismatic_target",
                      "joint_id": torso_id,
-                     "target": (position * (torso_max - torso_min)) + torso_max}]
+                     "target": (position * (torso_max - torso_min)) + torso_min}]
         # Rotate the column.
         if angle is not None:
             column_id = self.magnebot_static.arm_joints[ArmJoint.column]
