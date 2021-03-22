@@ -9,13 +9,13 @@ This class will place the Magnebot and every object in the scene at the position
 
 ## Fields
 
-- `scene` The name of the scene.
-
 - `object_init_data` Initialization data for each object in the scene. Includes the target object.
 
-- `magnebot` [Initialization data for the Magnebot](magnebot_init_data.md).
-
 - `target_object_index` The index of the target object in `object_init_data`.
+
+- `magnebot_position` The position of the Magnebot as an `[x, y, z]` numpy array.
+
+- `magnebot_rotation` The rotation of the Magnebot as an `[x, y, z, w]` numpy array.
 
 ***
 
@@ -23,12 +23,12 @@ This class will place the Magnebot and every object in the scene at the position
 
 #### \_\_init\_\_
 
-**`Trial(scene, magnebot, object_init_data, target_object_index)`**
+**`Trial(magnebot_position, magnebot_rotation, object_init_data, target_object_index)`**
 
 | Parameter | Type | Default | Description |
 | --- | --- | --- | --- |
-| scene |  str |  | The name of the scene. |
-| magnebot |  MagnebotInitData |  | [Initialization data for the Magnebot](magnebot_init_data.md). |
+| magnebot_position |  np.array |  | The position of the Magnebot as an `[x, y, z]` numpy array. |
+| magnebot_rotation |  np.array |  | The rotation of the Magnebot as an `[x, y, z, w]` numpy array. |
 | object_init_data |  List[MultiModalObjectInitData] |  | [Initialization data](multimodal_object_init_data.md) for each object in the scene. |
 | target_object_index |  int |  | The index of the target object in `object_init_data`. |
 
