@@ -143,9 +143,9 @@ class Rehearsal(Controller):
         force = {"x": float(self.rng.uniform(-0.1, 0.1)),
                  "y": float(self.rng.uniform(-0.05, 0.05)),
                  "z": float(self.rng.uniform(-0.1, 0.1))}
-        torque = {"x": float(self.rng.uniform(-0.6, 0.6)),
-                  "y": float(self.rng.uniform(-0.6, 0.6)),
-                  "z": float(self.rng.uniform(-0.6, 0.6))}
+        torque = {"x": float(self.rng.uniform(-0.1, 0.1)),
+                  "y": float(self.rng.uniform(-0.1, 0.1)),
+                  "z": float(self.rng.uniform(-0.1, 0.1))}
         # Add the initialization commands.
         self.target_object_id, object_commands = a.get_commands()
         commands.extend(object_commands)
