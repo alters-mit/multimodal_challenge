@@ -31,8 +31,12 @@ Using its camera and the audio data, the Magnebot must find the dropped object.
   - [move_by](#move_by)
   - [move_to](#move_to)
   - [set_torso](#set_torso)
+  - [guess](#guess)
   - [rotate_camera](#rotate_camera)
   - [reset_camera](#reset_camera)
+  - [get_occupancy_position](#get_occupancy_position)
+  - [get_visible_objects](#get_visible_objects)
+  - [end](#end)
 
 
 ## The target object
@@ -61,6 +65,7 @@ print(target_object_transform.position)
 | --- | --- | --- |
 | `SCENE_LAYOUTS` | Dict[str, int] | A dictionary of each scene name and the number of layouts per scene. Use this to set the `scene` and `layout` parameters of `init_scene()`. |
 | `TRIALS_PER_SCENE_LAYOUT` | int | The number of trials per scene_layout combination. Use this to set the `trial` parameter of `init_scene()`: |
+| `TORSO_LIMITS` | Tuple[float, float] | The lower and upper limits of the torso's position from the floor (y=0), assuming that the Magnebot is level. |
 
 
 | Variable | Type | Description |
@@ -322,22 +327,19 @@ _While adjusting the torso, the Magnebot is always "immovable", meaning that its
 
 **`self.set_torso(position)`**
 
-**`self.set_torso(position, angle=None)`**
+Slide the Magnebot's torso up or down.
 
-Slide the Magnebot's torso up or down and optionally rotate it as well.
-
-The torso's position and angle will be reset the next time the Magnebot moves or turns.
+The torso's position will be reset the next time the Magnebot moves or turns.
 
 Possible return values:
 
 - `success`
-- `failed_to_bend` (If the torso failed to reach the target position and/or rotation)
+- `failed_to_bend` (If the torso failed to reach the target position)
 
 
 | Parameter | Type | Default | Description |
 | --- | --- | --- | --- |
-| position |  float |  | The target vertical position of the torso. Must >=0.6 and <=1.5 |
-| angle |  float  | None | If not None, the target rotation of the torso in degrees. The default rotation of the torso is 0. |
+| position |  float |  | The target vertical position of the torso. This is clamped to be within the torso limits (see: `MultiModal.TORSO_LIMITS`). |
 
 _Returns:_  An `ActionStatus` indicating if the torso reached the target position.
 
@@ -346,6 +348,33 @@ _Returns:_  An `ActionStatus` indicating if the torso reached the target positio
 ### Camera
 
 _These commands rotate the Magnebot's camera or add additional camera to the scene. They advance the simulation by exactly 1 frame._
+
+#### guess
+
+**`self.guess(position)`**
+
+**`self.guess(position, radius=0.1, cone_angle=30)`**
+
+Guess where the target object is. For a guess to be correct:
+
+- The target object must be within a sphere defined by `position` and `radius`.
+- The target object must be within a cone relative to the camera angle defined by `cone_angle`.
+
+Possible return values:
+
+- `success`
+- `ongoing` (The guess was incorrect or the target object is not within the cone.)
+
+
+| Parameter | Type | Default | Description |
+| --- | --- | --- | --- |
+| position |  np.array |  | The center of the sphere of the guess. |
+| radius |  float  | 0.1 | The radius of the sphere of the guess. |
+| cone_angle |  float  | 30 | The angle of the cone of the guess. |
+
+_Returns:_  `ActionStatus`: `success` if the guess was correct.
+
+***
 
 #### rotate_camera
 
@@ -392,4 +421,39 @@ Possible [return values](https://github.com/alters-mit/magnebot/blob/main/doc/ap
 - `success`
 
 _Returns:_  An `ActionStatus` (always `success`).
+
+### Misc.
+
+_These are utility functions that won't advance the simulation by any frames._
+
+#### get_occupancy_position
+
+**`self.get_occupancy_position(i, j)`**
+
+Converts the position `(i, j)` in the occupancy map to `(x, z)` worldspace coordinates.
+
+
+
+| Parameter | Type | Default | Description |
+| --- | --- | --- | --- |
+| i |  int |  | The i coordinate in the occupancy map. |
+| j |  int |  | The j coordinate in the occupancy map. |
+
+_Returns:_  Tuple: (x coordinate; z coordinate) of the corresponding worldspace position.
+
+#### get_visible_objects
+
+**`self.get_visible_objects()`**
+
+Get all objects visible to the Magnebot in `self.state` using the id (segmentation color) image.
+
+_Returns:_  A list of IDs of visible objects.
+
+#### end
+
+**`self.end()`**
+
+End the simulation. Terminate the build process.
+
+***
 

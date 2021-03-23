@@ -156,7 +156,25 @@ class MultiModal(MultiModalBase):
         self._end_action()
         return status
 
-    def guess(self, position: np.array, radius: float, cone_angle: float = 30) -> ActionStatus:
+    def guess(self, position: np.array, radius: float = 0.1, cone_angle: float = 30) -> ActionStatus:
+        """
+        Guess where the target object is. For a guess to be correct:
+
+        - The target object must be within a sphere defined by `position` and `radius`.
+        - The target object must be within a cone relative to the camera angle defined by `cone_angle`.
+
+        Possible return values:
+
+        - `success`
+        - `ongoing` (The guess was incorrect or the target object is not within the cone.)
+
+        :param position: The center of the sphere of the guess.
+        :param radius: The radius of the sphere of the guess.
+        :param cone_angle: The angle of the cone of the guess.
+
+        :return: `ActionStatus`: `success` if the guess was correct.
+        """
+
         self._start_action()
         # Get the angle between the camera's forward directional vector
         # and the directional vector defined by the camera's position and the guess' position.

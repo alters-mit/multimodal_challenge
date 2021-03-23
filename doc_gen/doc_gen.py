@@ -33,15 +33,20 @@ if __name__ == "__main__":
         api_txt += re.search(f"(#### {action}((.|\n)*?))#", magnebot_api, flags=re.MULTILINE).group(1)
     # Append the movement actions before the Torso section.
     doc = re.sub(r"((.|\n)*?)(### Torso)", r"\1" + api_txt + "***\n\n" + r"\3", doc)
-    # Append camera rotation
-    doc += "### Camera\n\n_These commands rotate the Magnebot's camera or add additional camera to the scene. " \
-           "They advance the simulation by exactly 1 frame._\n\n"
+    # Append camera actions.
     for action in ["rotate_camera", "reset_camera"]:
         doc += re.search(f"(#### {action}((.|\n)*?))#", magnebot_api, flags=re.MULTILINE).group(1)
+
+    # Append misc.
+    doc += "### Misc.\n\n_These are utility functions that won't advance the simulation by any frames._\n\n"
+    for action in ["get_occupancy_position", "get_visible_objects", "end"]:
+        doc += re.search(f"(#### {action}((.|\n)*?))#", magnebot_api, flags=re.MULTILINE).group(1)
+
     # Append fields and class variables.
     for section in ["Fields", "Class Variables"]:
         magnebot_fields = re.search(f"## {section}" + r"\n((.|\n)*?)\*", magnebot_api, flags=re.MULTILINE).group(1)
         doc = re.sub(f"## {section}" + r"\n((.|\n)*?)\*", f"## {section}" + r"\1" + magnebot_fields + "*", doc)
+
     # Append other sections.
     sections = ""
     toc = "- [The target object](#the-target-object)\n- [Class variables](#class-variables)\n"
