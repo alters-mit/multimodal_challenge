@@ -1,10 +1,12 @@
 import re
 from json import loads
-from typing import List, Optional, Dict
+from typing import List, Optional, Dict, Tuple
 import numpy as np
 from tdw.object_init_data import AudioInitData
 from tdw.tdw_utils import TDWUtils
-from magnebot import ActionStatus, ArmJoint
+from tdw.output_data import ImageSensors, AvatarKinematic
+from magnebot import ActionStatus, ArmJoint, Magnebot
+from magnebot.util import get_data
 from multimodal_challenge.multimodal_base import MultiModalBase
 from multimodal_challenge.paths import DATASET_DIRECTORY
 from multimodal_challenge.util import get_trial_filename, get_scene_layouts
@@ -65,6 +67,11 @@ class MultiModal(MultiModalBase):
         # Expected filename pattern: 00000.json, 00001.json, 00002.json, ... etc.
         if re.search(r"[0-9]{5,}\.json", f.name) is not None:
             TRIALS_PER_SCENE_LAYOUT += 1
+    """:class_var
+    The lower and upper limits of the torso's position from the floor (y=0), assuming that the Magnebot is level.
+    """
+    TORSO_LIMITS: Tuple[float, float] = (Magnebot.COLUMN_Y + Magnebot.TORSO_MIN_Y,
+                                         Magnebot.COLUMN_Y + Magnebot.TORSO_MAX_Y)
 
     def __init__(self, port: int = 1071, screen_width: int = 256, screen_height: int = 256):
         """
@@ -113,49 +120,62 @@ class MultiModal(MultiModalBase):
         # Load the scene.
         return super().init_scene(scene=scene, layout=layout)
 
-    def set_torso(self, position: float, angle: float = None) -> ActionStatus:
+    def set_torso(self, position: float) -> ActionStatus:
         """
-        Slide the Magnebot's torso up or down and optionally rotate it as well.
+        Slide the Magnebot's torso up or down.
 
-        The torso's position and angle will be reset the next time the Magnebot moves or turns.
+        The torso's position will be reset the next time the Magnebot moves or turns.
 
         Possible return values:
 
         - `success`
-        - `failed_to_bend` (If the torso failed to reach the target position and/or rotation)
+        - `failed_to_bend` (If the torso failed to reach the target position)
 
-        :param position: The target vertical position of the torso. Must >=0.6 and <=1.5
-        :param angle: If not None, the target rotation of the torso in degrees. The default rotation of the torso is 0.
+        :param position: The target vertical position of the torso. This is clamped to be within the torso limits (see: `MultiModal.TORSO_LIMITS`).
 
         :return: An `ActionStatus` indicating if the torso reached the target position.
         """
 
         self._start_action()
+
         # Clamp the position.
-        if position < 0:
-            position = 0
-        elif position > 1:
-            position = 1
-        torso_max: float = 1.5
-        torso_min: float = 0.6
-        torso_id = self.magnebot_static.arm_joints[ArmJoint.torso]
-        joint_ids = [torso_id]
-        commands = [{"$type": "set_immovable",
-                     "immovable": True},
-                    {"$type": "set_prismatic_target",
-                     "joint_id": torso_id,
-                     "target": (position * (torso_max - torso_min)) + torso_min}]
-        # Rotate the column.
-        if angle is not None:
-            column_id = self.magnebot_static.arm_joints[ArmJoint.column]
-            commands.append({"$type": "set_revolute_target",
-                             "joint_id": column_id,
-                             "target": angle})
-            joint_ids.append(column_id)
-        self._next_frame_commands.extend(commands)
-        status = self._do_arm_motion(joint_ids=joint_ids)
+        if position > MultiModal.TORSO_LIMITS[1]:
+            position = MultiModal.TORSO_LIMITS[1]
+        elif position < MultiModal.TORSO_LIMITS[0]:
+            position = MultiModal.TORSO_LIMITS[0]
+
+        # Convert the vertical position to a prismatic joint position.
+        position = (((position - Magnebot.COLUMN_Y) * (Magnebot.TORSO_MAX_Y - Magnebot.TORSO_MIN_Y)) +
+                    Magnebot.TORSO_MIN_Y) * 1.5
+        self._next_frame_commands.extend([{"$type": "set_immovable",
+                                           "immovable": True},
+                                          {"$type": "set_prismatic_target",
+                                           "joint_id": self.magnebot_static.arm_joints[ArmJoint.torso],
+                                           "target": position}])
+        status = self._do_arm_motion(joint_ids=[self.magnebot_static.arm_joints[ArmJoint.torso]])
         self._end_action()
         return status
+
+    def guess(self, position: np.array, radius: float, cone_angle: float = 30) -> ActionStatus:
+        self._start_action()
+        # Get the angle between the camera's forward directional vector
+        # and the directional vector defined by the camera's position and the guess' position.
+        resp = self.communicate([{"$type": "send_image_sensors",
+                                 "ids": ["a"]},
+                                 {"$type": "send_avatars",
+                                  "ids": ["a"]}])
+        self._end_action()
+        camera_forward = np.array(get_data(resp=resp, d_type=ImageSensors).get_sensor_forward(0))
+        camera_position = np.array(get_data(resp=resp, d_type=AvatarKinematic).get_position())
+        v = position - camera_position
+        v = v / np.linalg.norm(v)
+        angle = TDWUtils.get_angle_between(v1=camera_forward, v2=v)
+        # Return success if the position is within the cone and the object is within the sphere.
+        if np.abs(angle) > cone_angle or \
+                np.linalg.norm(position - self.state.object_transforms[self.target_object_id].position) > radius:
+            return ActionStatus.ongoing
+        else:
+            return ActionStatus.success
 
     def _get_scene_init_commands(self, magnebot_position: Dict[str, float] = None) -> List[dict]:
         commands = super()._get_scene_init_commands(magnebot_position=magnebot_position)
