@@ -139,13 +139,10 @@ class Rehearsal(Controller):
                                                "y": float(self.rng.uniform(-360, 360)),
                                                "z": float(self.rng.uniform(-360, 360))},
                                      kinematic=False)
-        # Define the drop force and torque.
+        # Define the drop force.
         force = {"x": float(self.rng.uniform(-0.1, 0.1)),
                  "y": float(self.rng.uniform(-0.05, 0.05)),
                  "z": float(self.rng.uniform(-0.1, 0.1))}
-        torque = {"x": float(self.rng.uniform(-0.1, 0.1)),
-                  "y": float(self.rng.uniform(-0.1, 0.1)),
-                  "z": float(self.rng.uniform(-0.1, 0.1))}
         # Add the initialization commands.
         self.target_object_id, object_commands = a.get_commands()
         commands.extend(object_commands)
@@ -153,9 +150,6 @@ class Rehearsal(Controller):
         commands.extend([{"$type": "apply_force_to_object",
                           "id": self.target_object_id,
                           "force": force},
-                         {"$type": "apply_torque_to_object",
-                          "id": self.target_object_id,
-                          "torque": torque},
                          {"$type": "send_transforms",
                           "ids": [self.target_object_id],
                           "frequency": "always"}])
@@ -191,7 +185,7 @@ class Rehearsal(Controller):
                     np.linalg.norm(p_0 - drop_zone.center) < drop_zone.radius:
                 # In dataset generation, we don't want the object to fall right away, so we make it kinematic.
                 a.kinematic = True
-                return DatasetTrial(init_data=a, force=force, torque=torque, position=TDWUtils.array_to_vector3(p_0)), i
+                return DatasetTrial(init_data=a, force=force, position=TDWUtils.array_to_vector3(p_0)), i
         return None, -1
 
     def run(self, num_trials: int = 10000) -> None:
@@ -209,7 +203,7 @@ class Rehearsal(Controller):
             num_layouts += scene_layouts[k]
         # Do trials for each scene_layout combination.
         trials_per_scene_layout = int(np.ceil(num_trials / num_layouts))
-        pbar = tqdm(total=num_trials)
+        pbar = tqdm(total=int(trials_per_scene_layout * num_layouts))
         for scene in scene_layouts:
             for layout in range(scene_layouts[scene]):
                 self.do_trials(scene=scene, layout=layout, num_trials=trials_per_scene_layout, pbar=pbar)

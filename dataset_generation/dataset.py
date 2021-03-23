@@ -376,7 +376,7 @@ class Dataset(MultiModalBase):
         self.turn_by(angle=angle)
         # Stop skipping frames now that we're done turning.
         self._skip_frames = 0
-        # Let the object fall and apply the cached force and torque.
+        # Let the object fall and apply the cached force.
         self.objects_static[self.target_object_id].kinematic = False
         self._next_frame_commands.extend([{"$type": "set_kinematic_state",
                                            "id": self.target_object_id,
@@ -384,10 +384,7 @@ class Dataset(MultiModalBase):
                                            "use_gravity": True},
                                           {"$type": "apply_force_to_object",
                                            "id": self.target_object_id,
-                                           "force": self.trials[self.trial_count].force},
-                                          {"$type": "apply_torque_to_object",
-                                           "id": self.target_object_id,
-                                           "torque": self.trials[self.trial_count].torque}])
+                                           "force": self.trials[self.trial_count].force}])
         # Reset the modes here to discard any junk generated during setup.
         Dataset.PY_IMPACT.reset(initial_amp=Dataset.INITIAL_AMP)
         return ActionStatus.success
