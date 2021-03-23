@@ -46,7 +46,7 @@ By default, the Magnebot API records the position of every object in the scene a
 In the MultiModal API, the ID of the target object is stored as `self.target_object_id`. You can use this ID to verify that the Magnebot successfully found the target object.
 
 ```python
-from multimodal_challenge import MultiModal
+from multimodal_challenge.multimodal import MultiModal
 
 m = MultiModal()
 m.init_scene(scene="mm_kitchen_1a", layout=0, trial=57)
