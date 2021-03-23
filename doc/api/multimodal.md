@@ -18,7 +18,6 @@ Each trial has audio data that was generated as the object collided with other o
 
 Using its camera and the audio data, the Magnebot must find the dropped object.
 
-- [The target object](#the-target-object)
 - [Class variables](#class-variables)
 - [Frames](#frames)
 - [Parameter types](#parameter-types)
@@ -38,25 +37,6 @@ Using its camera and the audio data, the Magnebot must find the dropped object.
   - [get_visible_objects](#get_visible_objects)
   - [end](#end)
 
-
-## The target object
-
-By default, the Magnebot API records the position of every object in the scene as well as images, the position of the Magnebot, etc. See [`self.state`](https://github.com/alters-mit/magnebot/blob/main/doc/api/scene_state.md)
-
-In the MultiModal API, the ID of the target object is stored as `self.target_object_id`. You can use this ID to verify that the Magnebot successfully found the target object.
-
-```python
-from multimodal_challenge.multimodal import MultiModal
-
-m = MultiModal()
-m.init_scene(scene="mm_kitchen_1a", layout=0, trial=57)
-
-if m.target_object_id in m.get_visible_objects():
-    print("Magnebot can see the target object.")
-
-target_object_transform = m.state.object_transforms[m.target_object_id]
-print(target_object_transform.position)
-```
 
 ***
 

@@ -49,7 +49,7 @@ if __name__ == "__main__":
 
     # Append other sections.
     sections = ""
-    toc = "- [The target object](#the-target-object)\n- [Class variables](#class-variables)\n"
+    toc = "- [Class variables](#class-variables)\n"
     for s in ["Frames", "Parameter types"]:
         section = re.search(f"## {s}\n" + r"((.|\n)*?)\*\*\*", magnebot_api, flags=re.MULTILINE).group(0)
         sections += section + "\n\n"
