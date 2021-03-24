@@ -36,7 +36,7 @@ This is a backend tool for TDW  developers to convert saved [TDW commands](https
 
 Define [`DatasetTrial`](doc/api/dataset_trial.md) initialization parameters for target objects. Drop the object. If it lands in a [`DropZone`](doc/api/drop_zone.md), record the `DatasetTrial`. This will give `dataset.py` initialization parameters.
 
-[Further documentation here.](doc/dataset/rehearsal.md)
+[Further documentation here.](doc/dataset/dataset.md)
 
 ## `dataset.py`
 
