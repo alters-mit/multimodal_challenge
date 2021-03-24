@@ -377,6 +377,7 @@ class Dataset(MultiModalBase):
         # Stop skipping frames now that we're done turning.
         self._skip_frames = 0
         # Let the object fall and apply the cached force.
+        # Listen for "stay" collision events to prevent a droning effect.
         self.objects_static[self.target_object_id].kinematic = False
         self._next_frame_commands.extend([{"$type": "set_kinematic_state",
                                            "id": self.target_object_id,
@@ -384,7 +385,12 @@ class Dataset(MultiModalBase):
                                            "use_gravity": True},
                                           {"$type": "apply_force_to_object",
                                            "id": self.target_object_id,
-                                           "force": self.trials[self.trial_count].force}])
+                                           "force": self.trials[self.trial_count].force},
+                                          {"$type": "send_collisions",
+                                           "enter": True,
+                                           "stay": True,
+                                           "exit": True,
+                                           "collision_types": ["obj", "env"]}])
         # Reset the modes here to discard any junk generated during setup.
         Dataset.PY_IMPACT.reset(initial_amp=Dataset.INITIAL_AMP)
         return ActionStatus.success
