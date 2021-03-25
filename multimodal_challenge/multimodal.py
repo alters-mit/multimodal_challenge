@@ -51,8 +51,8 @@ class MultiModal(MultiModalBase):
     """:class_var
     The lower and upper limits of the torso's position from the floor (y=0), assuming that the Magnebot is level.
     """
-    TORSO_LIMITS: Tuple[float, float] = (Magnebot.COLUMN_Y + Magnebot.TORSO_MIN_Y,
-                                         Magnebot.COLUMN_Y + Magnebot.TORSO_MAX_Y)
+    TORSO_LIMITS: Tuple[float, float] = (Magnebot._COLUMN_Y + Magnebot._TORSO_MIN_Y,
+                                         Magnebot._COLUMN_Y + Magnebot._TORSO_MAX_Y)
 
     def __init__(self, port: int = 1071, screen_width: int = 256, screen_height: int = 256):
         """
@@ -119,15 +119,11 @@ class MultiModal(MultiModalBase):
 
         self._start_action()
 
-        # Clamp the position.
-        if position > MultiModal.TORSO_LIMITS[1]:
-            position = MultiModal.TORSO_LIMITS[1]
-        elif position < MultiModal.TORSO_LIMITS[0]:
-            position = MultiModal.TORSO_LIMITS[0]
-
-        # Convert the vertical position to a prismatic joint position.
-        position = (((position - Magnebot.COLUMN_Y) * (Magnebot.TORSO_MAX_Y - Magnebot.TORSO_MIN_Y)) +
-                    Magnebot.TORSO_MIN_Y) * 1.5
+        # Clamp the `position` to be within the torso position limits.
+        position = max(min(position, MultiModal.TORSO_LIMITS[1]), MultiModal.TORSO_LIMITS[0])
+        # Convert `position` to a prismatic joint position.
+        position = self._y_position_to_torso_position(position)
+        # Send the command and wait for the action to finish.
         self._next_frame_commands.extend([{"$type": "set_immovable",
                                            "immovable": True},
                                           {"$type": "set_prismatic_target",
