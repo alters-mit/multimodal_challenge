@@ -249,8 +249,6 @@ class Dataset(MultiModalBase):
         object_names = dict()
         for object_id in self.objects_static:
             object_names[object_id] = self.objects_static[object_id].name
-        for j in self.magnebot_static.joints:
-            object_names[j] = self.magnebot_static.joints[j].name
         Dataset.PY_IMPACT.set_default_audio_info(object_names=object_names)
         # Assign audio properties per joint.
         for j in self.magnebot_static.joints:
@@ -282,9 +280,6 @@ class Dataset(MultiModalBase):
             while not done and num_frames < 1000:
                 # Get impact sound commands.
                 commands = Dataset.PY_IMPACT.get_audio_commands(resp=resp, floor=floor, wall=wall, resonance_audio=True)
-                # Filter out cases where the object isn't a cached object (i.e. a Magnebot?).
-                commands = [cmd for cmd in commands if cmd["$type"] == "play_point_source_data" and
-                            cmd["id"] in self.objects_static]
                 # Check if the object stopped moving (there won't be audio or collisions while it's falling).
                 rigidbodies = get_data(resp=resp, d_type=Rigidbodies)
                 sleeping = False
