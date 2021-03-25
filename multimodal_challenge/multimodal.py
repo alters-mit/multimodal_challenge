@@ -2,9 +2,10 @@ import re
 from json import loads
 from typing import List, Optional, Dict, Tuple
 import numpy as np
+import vg
 from tdw.object_init_data import AudioInitData
 from tdw.tdw_utils import TDWUtils
-from tdw.output_data import ImageSensors, AvatarKinematic
+from tdw.output_data import ImageSensors, AvatarKinematic, Bounds
 from magnebot import ActionStatus, ArmJoint, Magnebot
 from magnebot.util import get_data
 from multimodal_challenge.multimodal_base import MultiModalBase
@@ -153,24 +154,31 @@ class MultiModal(MultiModalBase):
         """
 
         self._start_action()
-        # Get the angle between the camera's forward directional vector
-        # and the directional vector defined by the camera's position and the guess' position.
-        resp = self.communicate([{"$type": "send_image_sensors",
-                                 "ids": ["a"]},
-                                 {"$type": "send_avatars",
-                                  "ids": ["a"]}])
-        self._end_action()
+        # Get data for the image sensor, the avatar, and the object bounds.
+        self._next_frame_commands.extend([{"$type": "send_image_sensors",
+                                           "ids": ["a"]},
+                                          {"$type": "send_avatars",
+                                           "ids": ["a"]},
+                                          {"$type": "send_bounds",
+                                           "ids": [self.target_object_id]}])
+        resp = self._end_action()
+        # Get the camera forward directional vector, the camera position, and the object's center.
         camera_forward = np.array(get_data(resp=resp, d_type=ImageSensors).get_sensor_forward(0))
         camera_position = np.array(get_data(resp=resp, d_type=AvatarKinematic).get_position())
+        object_center = np.array(get_data(resp=resp, d_type=Bounds).get_center(0))
+
+        # Get the angle between the camera forward directional vector
+        # and the angle defined by the camera position and object center.
         v = position - camera_position
         v = v / np.linalg.norm(v)
-        angle = TDWUtils.get_angle_between(v1=camera_forward, v2=v)
+        # noinspection PyTypeChecker
+        angle: float = vg.angle(v1=camera_forward, v2=v)
+
         # Return success if the position is within the cone and the object is within the sphere.
-        if np.abs(angle) > cone_angle or \
-                np.linalg.norm(position - self.state.object_transforms[self.target_object_id].position) > radius:
-            return ActionStatus.ongoing
-        else:
+        if np.abs(angle) <= cone_angle and np.linalg.norm(position - object_center) <= radius:
             return ActionStatus.success
+        else:
+            return ActionStatus.ongoing
 
     def _get_scene_init_commands(self, magnebot_position: Dict[str, float] = None) -> List[dict]:
         commands = super()._get_scene_init_commands(magnebot_position=magnebot_position)
