@@ -438,6 +438,13 @@ class Dataset(MultiModalBase):
                 continue
             px, pz = self.get_occupancy_position(ix, iy)
             occupancy_positions.append(np.array([px, 0, pz]))
+        # If the convolve function shrunk the occupancy map too much, just use the original occupancy map.
+        if len(occupancy_positions) == 0:
+            for ix, iy in np.ndindex(spawn_map.shape):
+                if self.occupancy_map[ix][iy] != 0:
+                    continue
+                px, pz = self.get_occupancy_position(ix, iy)
+                occupancy_positions.append(np.array([px, 0, pz]))
         # Sort the occupancy map positions by distance to the target object.
         occupancy_positions = list(sorted(occupancy_positions,
                                           key=lambda p: np.linalg.norm(p - target_object_position)))
