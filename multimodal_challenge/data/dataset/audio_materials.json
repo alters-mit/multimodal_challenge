@@ -1,6 +1,6 @@
 {
   "mm_craftroom_1a": {
-    "floor": "acousticTile",
+    "floor": "tile",
     "wall": "smoothPlaster"
   },
   "mm_craftroom_1b": {
@@ -16,7 +16,7 @@
     "wall": "roughPlaster"
   },
   "mm_craftroom_3a": {
-    "floor": "acousticTile",
+    "floor": "tile",
     "wall": "roughPlaster"
   },
   "mm_craftroom_3b": {

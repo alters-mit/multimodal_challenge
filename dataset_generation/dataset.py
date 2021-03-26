@@ -1,6 +1,8 @@
+from os import devnull
 from time import sleep
 from typing import List, Optional
 from pathlib import Path
+from subprocess import call
 from json import loads, dumps
 from array import array
 import numpy as np
@@ -42,6 +44,8 @@ class Dataset(MultiModalBase):
       2. To create new initialization data, run [`rehearsal.py`](rehearsal.md) to generate the initialization data.
 
     - Audio drivers
+    - [fmedia](https://stsaz.github.io/fmedia/)
+    - ffmpeg
     - [`PyAudio`](https://people.csail.mit.edu/hubert/pyaudio/) If you're using Windows and Python 3.7 or later, use a wheel from [this site](https://www.lfd.uci.edu/~gohlke/pythonlibs/) and install it via: `pip3 install path/to/the/downloaded.whl` (replace this with the actual path to the downloaded file)
 
     # Usage
@@ -259,8 +263,6 @@ class Dataset(MultiModalBase):
         object_names = dict()
         for object_id in self.objects_static:
             object_names[object_id] = self.objects_static[object_id].name
-        for j in self.magnebot_static.joints:
-            object_names[j] = self.magnebot_static.joints[j].name
         Dataset.PY_IMPACT.set_default_audio_info(object_names=object_names)
         # Assign audio properties per joint.
         for j in self.magnebot_static.joints:
@@ -275,6 +277,8 @@ class Dataset(MultiModalBase):
         try:
             # Start recording the audio.
             AudioUtils.start(output_path=Dataset.TEMP_AUDIO_PATH)
+            # Add a little silence to catch a potential clicking effect.
+            sleep(0.1)
             # These commands must be sent here because `init_scene()` will try to make the Magnebot movable.
             # Also, we need some extra output data to handle audio recording.
             resp = self.communicate([{"$type": "send_rigidbodies",
@@ -352,8 +356,14 @@ class Dataset(MultiModalBase):
         filename = get_trial_filename(self.trial_count)
         # Save the trial.
         output_directory.joinpath(f"{filename}.json").write_text(dumps(trial, cls=Encoder), encoding="utf-8")
+        # Use ffmpeg to remove the initial silence.
+        with open(devnull, "w+") as f:
+            call(["ffmpeg", "-i", str(Dataset.TEMP_AUDIO_PATH.resolve()),
+                  "-ss", "00:00:00.1",
+                  str(output_directory.joinpath(f"{filename}.wav"))],
+                 stderr=f)
         # Move the audio file.
-        Dataset.TEMP_AUDIO_PATH.replace(output_directory.joinpath(f"{filename}.wav"))
+        Dataset.TEMP_AUDIO_PATH.unlink()
         # Increment the trial counter and the random seed counter.
         self.trial_count += 1
         self._random_seed_index += 1
@@ -448,6 +458,13 @@ class Dataset(MultiModalBase):
                 continue
             px, pz = self.get_occupancy_position(ix, iy)
             occupancy_positions.append(np.array([px, 0, pz]))
+        # If the convolve function shrunk the occupancy map too much, just use the original occupancy map.
+        if len(occupancy_positions) == 0:
+            for ix, iy in np.ndindex(spawn_map.shape):
+                if self.occupancy_map[ix][iy] != 0:
+                    continue
+                px, pz = self.get_occupancy_position(ix, iy)
+                occupancy_positions.append(np.array([px, 0, pz]))
         # Sort the occupancy map positions by distance to the target object.
         occupancy_positions = list(sorted(occupancy_positions,
                                           key=lambda p: np.linalg.norm(p - target_object_position)))
