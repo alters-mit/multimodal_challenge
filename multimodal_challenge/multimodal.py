@@ -4,7 +4,7 @@ from typing import List, Optional, Dict, Tuple
 import numpy as np
 import vg
 from tdw.object_init_data import AudioInitData
-from tdw.tdw_utils import TDWUtils
+from tdw.tdw_utils import TDWUtils, QuaternionUtils
 from tdw.output_data import ImageSensors, AvatarKinematic, Bounds
 from magnebot import ActionStatus, ArmJoint, Magnebot
 from magnebot.util import get_data
@@ -100,7 +100,13 @@ class MultiModal(MultiModalBase):
                                      read_text(encoding="utf-8")))
         self.audio: bytes = DATASET_DIRECTORY.joinpath(f"{scene}_{layout}/{trial_filename}.wav").read_bytes()
         # Load the scene.
-        return super().init_scene(scene=scene, layout=layout)
+        super().init_scene(scene=scene, layout=layout)
+
+        # Turn the Magnebot. We don't want to set the rotation in case the joints intersect with something.
+        angle = QuaternionUtils.get_y_angle(QuaternionUtils.IDENTITY,
+                                            TDWUtils.vector4_to_array(self.__trial.magnebot_rotation))
+        self.turn_by(angle)
+        return ActionStatus.success
 
     def set_torso(self, position: float) -> ActionStatus:
         """
@@ -179,14 +185,6 @@ class MultiModal(MultiModalBase):
             return ActionStatus.success
         else:
             return ActionStatus.ongoing
-
-    def _get_scene_init_commands(self, magnebot_position: Dict[str, float] = None) -> List[dict]:
-        commands = super()._get_scene_init_commands(magnebot_position=magnebot_position)
-        # Set the initial rotation of the Magnebot.
-        commands.append({"$type": "teleport_robot",
-                         "position": magnebot_position,
-                         "rotation": TDWUtils.array_to_vector4(self.__trial.magnebot_rotation)})
-        return commands
 
     def _get_start_trial_commands(self) -> List[dict]:
         return [{"$type": "set_aperture",
