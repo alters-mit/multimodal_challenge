@@ -1,6 +1,8 @@
+from os import devnull
 from time import sleep
 from typing import List, Optional
 from pathlib import Path
+from subprocess import call
 from json import loads, dumps
 from array import array
 import numpy as np
@@ -340,8 +342,13 @@ class Dataset(MultiModalBase):
         filename = get_trial_filename(self.trial_count)
         # Save the trial.
         output_directory.joinpath(f"{filename}.json").write_text(dumps(trial, cls=Encoder), encoding="utf-8")
+        with open(devnull, "w+") as f:
+            call(["ffmpeg", "-i", str(Dataset.TEMP_AUDIO_PATH.resolve()),
+                  "-ss", "00:00:00.02",
+                  str(output_directory.joinpath(f"{filename}.wav"))],
+                 stderr=f)
         # Move the audio file.
-        Dataset.TEMP_AUDIO_PATH.replace(output_directory.joinpath(f"{filename}.wav"))
+        # Dataset.TEMP_AUDIO_PATH.replace(output_directory.joinpath(f"{filename}.wav"))
         # Increment the trial counter and the random seed counter.
         self.trial_count += 1
         self._random_seed_index += 1
