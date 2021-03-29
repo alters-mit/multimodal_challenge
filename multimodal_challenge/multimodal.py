@@ -4,7 +4,7 @@ from typing import List, Optional, Dict, Tuple
 import numpy as np
 import vg
 from tdw.object_init_data import AudioInitData
-from tdw.tdw_utils import TDWUtils, QuaternionUtils
+from tdw.tdw_utils import QuaternionUtils
 from tdw.output_data import ImageSensors, AvatarKinematic, Bounds
 from magnebot import ActionStatus, ArmJoint, Magnebot
 from magnebot.util import get_data
@@ -101,10 +101,8 @@ class MultiModal(MultiModalBase):
         self.audio: bytes = DATASET_DIRECTORY.joinpath(f"{scene}_{layout}/{trial_filename}.wav").read_bytes()
         # Load the scene.
         super().init_scene(scene=scene, layout=layout)
-
         # Turn the Magnebot. We don't want to set the rotation in case the joints intersect with something.
-        angle = QuaternionUtils.get_y_angle(QuaternionUtils.IDENTITY,
-                                            TDWUtils.vector4_to_array(self.__trial.magnebot_rotation))
+        angle = QuaternionUtils.get_y_angle(QuaternionUtils.IDENTITY, self.__trial.magnebot_rotation)
         self.turn_by(angle, aligned_at=0.5)
         return ActionStatus.success
 
