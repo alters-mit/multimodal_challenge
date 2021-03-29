@@ -105,7 +105,7 @@ class MultiModal(MultiModalBase):
         # Turn the Magnebot. We don't want to set the rotation in case the joints intersect with something.
         angle = QuaternionUtils.get_y_angle(QuaternionUtils.IDENTITY,
                                             TDWUtils.vector4_to_array(self.__trial.magnebot_rotation))
-        self.turn_by(angle)
+        self.turn_by(angle, aligned_at=0.5)
         return ActionStatus.success
 
     def set_torso(self, position: float) -> ActionStatus:
@@ -140,23 +140,18 @@ class MultiModal(MultiModalBase):
         self._end_action()
         return status
 
-    def guess(self, position: np.array, radius: float = 0.1, cone_angle: float = 30) -> ActionStatus:
+    def guess(self, position: np.array, radius: float = 0.1, cone_angle: float = 30) -> bool:
         """
         Guess where the target object is. For a guess to be correct:
 
         - The target object must be within a sphere defined by `position` and `radius`.
         - The target object must be within a cone relative to the camera angle defined by `cone_angle`.
 
-        Possible return values:
-
-        - `success`
-        - `ongoing` (The guess was incorrect or the target object is not within the cone.)
-
         :param position: The center of the sphere of the guess.
         :param radius: The radius of the sphere of the guess.
         :param cone_angle: The angle of the cone of the guess.
 
-        :return: `ActionStatus`: `success` if the guess was correct.
+        :return: True if the guess was correct.
         """
 
         self._start_action()
@@ -181,10 +176,7 @@ class MultiModal(MultiModalBase):
         angle: float = vg.angle(v1=camera_forward, v2=v)
 
         # Return success if the position is within the cone and the object is within the sphere.
-        if np.abs(angle) <= cone_angle and np.linalg.norm(position - object_center) <= radius:
-            return ActionStatus.success
-        else:
-            return ActionStatus.ongoing
+        return np.abs(angle) <= cone_angle and np.linalg.norm(position - object_center) <= radius
 
     def _get_start_trial_commands(self) -> List[dict]:
         return [{"$type": "set_aperture",

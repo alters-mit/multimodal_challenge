@@ -340,11 +340,6 @@ Guess where the target object is. For a guess to be correct:
 - The target object must be within a sphere defined by `position` and `radius`.
 - The target object must be within a cone relative to the camera angle defined by `cone_angle`.
 
-Possible return values:
-
-- `success`
-- `ongoing` (The guess was incorrect or the target object is not within the cone.)
-
 
 | Parameter | Type | Default | Description |
 | --- | --- | --- | --- |
@@ -352,7 +347,7 @@ Possible return values:
 | radius |  float  | 0.1 | The radius of the sphere of the guess. |
 | cone_angle |  float  | 30 | The angle of the cone of the guess. |
 
-_Returns:_  `ActionStatus`: `success` if the guess was correct.
+_Returns:_  True if the guess was correct.
 
 ***
 
