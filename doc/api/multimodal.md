@@ -30,7 +30,6 @@ Using its camera and the audio data, the Magnebot must find the dropped object.
   - [move_by](#move_by)
   - [move_to](#move_to)
   - [set_torso](#set_torso)
-  - [guess](#guess)
   - [rotate_camera](#rotate_camera)
   - [reset_camera](#reset_camera)
   - [get_occupancy_position](#get_occupancy_position)
@@ -328,28 +327,6 @@ _Returns:_  An `ActionStatus` indicating if the torso reached the target positio
 ### Camera
 
 _These commands rotate the Magnebot's camera or add additional camera to the scene. They advance the simulation by exactly 1 frame._
-
-#### guess
-
-**`self.guess(position)`**
-
-**`self.guess(position, radius=0.1, cone_angle=30)`**
-
-Guess where the target object is. For a guess to be correct:
-
-- The target object must be within a sphere defined by `position` and `radius`.
-- The target object must be within a cone relative to the camera angle defined by `cone_angle`.
-
-
-| Parameter | Type | Default | Description |
-| --- | --- | --- | --- |
-| position |  np.array |  | The center of the sphere of the guess. |
-| radius |  float  | 0.1 | The radius of the sphere of the guess. |
-| cone_angle |  float  | 30 | The angle of the cone of the guess. |
-
-_Returns:_  True if the guess was correct.
-
-***
 
 #### rotate_camera
 

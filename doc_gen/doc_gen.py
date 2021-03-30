@@ -34,6 +34,8 @@ if __name__ == "__main__":
     # Append the movement actions before the Torso section.
     doc = re.sub(r"((.|\n)*?)(### Torso)", r"\1" + api_txt + "***\n\n" + r"\3", doc)
     # Append camera actions.
+    doc += "### Camera\n\n_These commands rotate the Magnebot's camera or add additional camera to the scene." \
+           " They advance the simulation by exactly 1 frame._\n\n"
     for action in ["rotate_camera", "reset_camera"]:
         doc += re.search(f"(#### {action}((.|\n)*?))#", magnebot_api, flags=re.MULTILINE).group(1)
 

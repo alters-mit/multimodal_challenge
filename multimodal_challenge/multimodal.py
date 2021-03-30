@@ -2,12 +2,9 @@ import re
 from json import loads
 from typing import List, Optional, Dict, Tuple
 import numpy as np
-import vg
 from tdw.object_init_data import AudioInitData
 from tdw.tdw_utils import QuaternionUtils
-from tdw.output_data import ImageSensors, AvatarKinematic, Bounds
 from magnebot import ActionStatus, ArmJoint, Magnebot
-from magnebot.util import get_data
 from multimodal_challenge.multimodal_base import MultiModalBase
 from multimodal_challenge.paths import DATASET_DIRECTORY
 from multimodal_challenge.util import get_trial_filename, get_scene_layouts
@@ -137,44 +134,6 @@ class MultiModal(MultiModalBase):
         status = self._do_arm_motion(joint_ids=[self.magnebot_static.arm_joints[ArmJoint.torso]])
         self._end_action()
         return status
-
-    def guess(self, position: np.array, radius: float = 0.1, cone_angle: float = 30) -> bool:
-        """
-        Guess where the target object is. For a guess to be correct:
-
-        - The target object must be within a sphere defined by `position` and `radius`.
-        - The target object must be within a cone relative to the camera angle defined by `cone_angle`.
-
-        :param position: The center of the sphere of the guess.
-        :param radius: The radius of the sphere of the guess.
-        :param cone_angle: The angle of the cone of the guess.
-
-        :return: True if the guess was correct.
-        """
-
-        self._start_action()
-        # Get data for the image sensor, the avatar, and the object bounds.
-        self._next_frame_commands.extend([{"$type": "send_image_sensors",
-                                           "ids": ["a"]},
-                                          {"$type": "send_avatars",
-                                           "ids": ["a"]},
-                                          {"$type": "send_bounds",
-                                           "ids": [self.target_object_id]}])
-        resp = self._end_action()
-        # Get the camera forward directional vector, the camera position, and the object's center.
-        camera_forward = np.array(get_data(resp=resp, d_type=ImageSensors).get_sensor_forward(0))
-        camera_position = np.array(get_data(resp=resp, d_type=AvatarKinematic).get_position())
-        object_center = np.array(get_data(resp=resp, d_type=Bounds).get_center(0))
-
-        # Get the angle between the camera forward directional vector
-        # and the angle defined by the camera position and object center.
-        v = position - camera_position
-        v = v / np.linalg.norm(v)
-        # noinspection PyTypeChecker
-        angle: float = vg.angle(v1=camera_forward, v2=v)
-
-        # Return success if the position is within the cone and the object is within the sphere.
-        return np.abs(angle) <= cone_angle and np.linalg.norm(position - object_center) <= radius
 
     def _get_start_trial_commands(self) -> List[dict]:
         return [{"$type": "set_aperture",
