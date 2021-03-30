@@ -33,7 +33,7 @@ class Dataset(MultiModalBase):
 
     - The `multimodal_challenge` Python module
     - Initialization data. Do one of the following:
-      1. To use pre-calculated initialization data, download [this file](https://alters-mit.github.io/datasets/multimodal_challenge/rehearsal.zip) and extract it to the root directory (see below):
+      1. To use pre-calculated initialization data, download the rehearsal data (LINK TBD) and extract it to the root directory (see below):
       ```
       D:/multimodal_challenge
       ....rehearsal.zip
