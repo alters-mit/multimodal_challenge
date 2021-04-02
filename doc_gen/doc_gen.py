@@ -44,33 +44,22 @@ if __name__ == "__main__":
     for action in ["get_occupancy_position", "get_visible_objects", "end"]:
         doc += re.search(f"(#### {action}((.|\n)*?))#", magnebot_api, flags=re.MULTILINE).group(1)
 
-    # Append fields and class variables.
-    for section in ["Fields", "Class Variables"]:
-        magnebot_fields = re.search(f"## {section}" + r"\n((.|\n)*?)\*", magnebot_api, flags=re.MULTILINE).group(1)
-        doc = re.sub(f"## {section}" + r"\n((.|\n)*?)\*", f"## {section}" + r"\1" + magnebot_fields + "*", doc)
+    # Append class variables.
+    magnebot_class_vars = re.search(f"## Class Variables" + r"\n((.|\n)*?)\*$", magnebot_api,
+                                    flags=re.MULTILINE).group(1). \
+        replace("| Variable | Type | Description |\n| --- | --- | --- |", "").strip()
+    doc = re.sub(f"## Class Variables" + r"\n((.|\n)*?)\n\*", "## Class Variables\n" + r"\1" + magnebot_class_vars, doc)
+    # Append fields.
+    magnebot_fields = re.search(f"## Fields" + r"\n((.|\n)*?)\*$", magnebot_api, flags=re.MULTILINE).group(1)
+    doc = re.sub(f"## Fields" + r"\n((.|\n)*?)\n\*", "## Fields" + r"\1" + magnebot_fields, doc)
 
     # Append other sections.
     sections = ""
-    toc = "- [Class variables](#class-variables)\n"
     for s in ["Frames", "Parameter types"]:
         section = re.search(f"## {s}\n" + r"((.|\n)*?)\*\*\*", magnebot_api, flags=re.MULTILINE).group(0)
         sections += section + "\n\n"
-        toc += f"- [{s}](#{s.lower().replace(' ', '-')})\n"
-    toc += "- [Fields](#fields)\n"
     doc = re.sub(r"## Fields", sections + "\n## Fields\n", doc)
-    # Create a table of contents.
-    function_txt = doc.split("## Functions")[1]
-    functions = "- [Functions](#functions)\n"
-    for line in function_txt.split("\n"):
-        # API section.
-        if line.startswith("#### "):
-            header = line.split("#### ")[1]
-            if header == r"\_\_init\_\_":
-                functions += f"  - [{header}](#{header})\n"
-            else:
-                functions += f"  - [{header}](#{header})\n"
-    toc += functions
-    doc = doc.replace("[TOC]", toc)
+    doc = doc.replace("[TOC-MM]", PyMdDoc.get_toc(doc)).replace("****", "***").replace("\n\n\n", "\n\n")
     Path("../doc/api/multimodal.md").write_text(doc, encoding="utf-8")
 
     # Dataset generation documentation.

@@ -18,38 +18,39 @@ Each trial has audio data that was generated as the object collided with other o
 
 Using its camera and the audio data, the Magnebot must find the dropped object.
 
-- [Class variables](#class-variables)
+- [Class Variables](#class-variables)
 - [Frames](#frames)
 - [Parameter types](#parameter-types)
 - [Fields](#fields)
 - [Functions](#functions)
-  - [\_\_init\_\_](#\_\_init\_\_)
-  - [init_scene](#init_scene)
-  - [turn_by](#turn_by)
-  - [turn_to](#turn_to)
-  - [move_by](#move_by)
-  - [move_to](#move_to)
-  - [set_torso](#set_torso)
-  - [rotate_camera](#rotate_camera)
-  - [reset_camera](#reset_camera)
-  - [get_occupancy_position](#get_occupancy_position)
-  - [get_visible_objects](#get_visible_objects)
-  - [end](#end)
 
+| Function | Description |
+| --- | --- |
+| [\_\_init\_\_()](#\_\_init\_\_) | |
+| [init_scene()](#init_scene) | Initialize a scene and a furniture layout, including the target object after it has fallen. |
+| [turn_by()](#turn_by) | Turn the Magnebot by an angle. |
+| [turn_to()](#turn_to) | Turn the Magnebot to face a target object or position. |
+| [move_by()](#move_by) | Move the Magnebot forward or backward by a given distance. |
+| [move_to()](#move_to) | Move the Magnebot to a target object or position. |
+| [set_torso()](#set_torso) | Slide the Magnebot's torso up or down. |
+| [rotate_camera()](#rotate_camera) | Rotate the Magnebot's camera by the (roll, pitch, yaw) axes. |
+| [reset_camera()](#reset_camera) | Reset the rotation of the Magnebot's camera to its default angles. |
+| [get_occupancy_position()](#get_occupancy_position) | Converts the position `(i, j)` in the occupancy map to `(x, z)` worldspace coordinates. |
+| [get_visible_objects()](#get_visible_objects) | Get all objects visible to the Magnebot in `self.state` using the id (segmentation color) image. |
+| [end()](#end) | End the simulation. |
 
 ***
 
 ## Class Variables
+
 | Variable | Type | Description |
 | --- | --- | --- |
 | `SCENE_LAYOUTS` | Dict[str, int] | A dictionary of each scene name and the number of layouts per scene. Use this to set the `scene` and `layout` parameters of `init_scene()`. |
 | `TRIALS_PER_SCENE_LAYOUT` | int | The number of trials per scene_layout combination. Use this to set the `trial` parameter of `init_scene()`: |
 | `TORSO_LIMITS` | Tuple[float, float] | The lower and upper limits of the torso's position from the floor (y=0), assuming that the Magnebot is level. |
-
-
-| Variable | Type | Description |
-| --- | --- | --- |
 | `CAMERA_RPY_CONSTRAINTS` | List[float] | The camera roll, pitch, yaw constraints in degrees. |
+| `COLLISION_ON` | CollisionDetection | [Collision detection settings](https://github.com/alters-mit/magnebot/blob/main/doc/api/collision_detection.md) if `stop_on_collision == True`. See section description of **Movement** for more information. |
+| `COLLISION_OFF` | CollisionDetection | [Collision detection settings](https://github.com/alters-mit/magnebot/blob/main/doc/api/collision_detection.md) if `stop_on_collision == False`. See section description of **Movement** for more information. |
 
 ***
 
@@ -79,7 +80,6 @@ Parameters of type `Dict[str, float]` are Vector3 dictionaries formatted like th
 
 To convert from or to a numpy array:
 
-
 #### Union[Dict[str, float], int]]
 
 Parameters of type `Union[Dict[str, float], int]]` can be either a Vector3 or an integer (an object ID).
@@ -88,9 +88,7 @@ Parameters of type `Union[Dict[str, float], int]]` can be either a Vector3 or an
 
 All parameters of type `Arm` require you to import the [Arm enum class](https://github.com/alters-mit/magnebot/blob/main/doc/api/arm.md):
 
-
 ***
-
 
 ## Fields
 
@@ -98,9 +96,7 @@ All parameters of type `Arm` require you to import the [Arm enum class](https://
 
 - `target_object_id` The ID of the target object (the object that fell).
 
-
 - `state` [Dynamic data for all of the most recent frame after doing an action.](https://github.com/alters-mit/magnebot/blob/main/doc/api/scene_state.md) This includes image data, physics metadata, etc.       
-
 
 - `auto_save_images` If True, automatically save images to `images_directory` at the end of every action.
 
@@ -114,9 +110,7 @@ All parameters of type `Arm` require you to import the [Arm enum class](https://
 
 - `objects_static` [Data for all objects in the scene that that doesn't change between frames, such as object IDs, mass, etc.](https://github.com/alters-mit/magnebot/blob/main/doc/api/object_static.md) Key = the ID of the object..
 
-
 - `magnebot_static` [Data for the Magnebot that doesn't change between frames.](https://github.com/alters-mit/magnebot/blob/main/doc/api/magnebot_static.md)
-
 
 - `occupancy_map` A numpy array of the occupancy map. This is None until you call `init_scene()`.
 
@@ -130,7 +124,6 @@ Each element is an integer describing the occupancy at that position.
 | 0 | Unoccupied and navigable; the Magnebot can go here. |
 | 1 | This position is occupied by an object(s) or a wall. |
 | 2 | This position is free but not navigable (usually because there are objects in the way. |
-
 
 The occupancy map is static, meaning that it won't update when objects are moved.
 
@@ -156,7 +149,7 @@ Note that it is possible for the Magnebot to go to positions that aren't "free".
 
 ### Scene Setup
 
-_These functions should be sent at the start of the simulation._
+These functions should be sent at the start of the simulation.
 
 #### init_scene
 
@@ -164,15 +157,12 @@ _These functions should be sent at the start of the simulation._
 
 **`self.init_scene(scene, layout, trial=None)`**
 
-**Always call this function before starting a new trial.**
-
-Initialize a scene and a furniture layout, including the target object after it has fallen.
+**Always call this function before starting a new trial.** Initialize a scene and a furniture layout, including the target object after it has fallen.
 Load the corresponding audio that was generated by the fall (`self.fall`) and position the Magnebot in the same spot as where it was when the object fell.
 
 - For a dictionary of valid scene names and layout indices, see: `MultiModal.SCENE_LAYOUTS`.
 - For the total number of trials per scene_layout, see: `MultiModal.TRIALS_PER_SCENE_LAYOUT`
 - [These are images of every scene_layout combination](https://github.com/alters-mit/multimodal_challenge/tree/main/doc/images/scene_layouts)
-
 
 | Parameter | Type | Default | Description |
 | --- | --- | --- | --- |
@@ -186,9 +176,7 @@ _Returns:_  An `ActionStatus` (always success).
 
 ### Movement
 
-_These functions move or turn the Magnebot._
-
-_While moving, the Magnebot might start to tip over (usually because it's holding something heavy). If this happens, the Magnebot will stop moving and drop any objects with mass > 30. You can then prevent the Magnebot from tipping over._
+These functions move or turn the Magnebot.
 
 #### turn_by
 
@@ -207,12 +195,11 @@ Possible [return values](https://github.com/alters-mit/magnebot/blob/main/doc/ap
 - `tipping`
 - `collision`
 
-
 | Parameter | Type | Default | Description |
 | --- | --- | --- | --- |
 | angle |  float |  | The target angle in degrees. Positive value = clockwise turn. |
 | aligned_at |  float  | 3 | If the difference between the current angle and the target angle is less than this value, then the action is successful. |
-| stop_on_collision |  bool  | True | If True, if the Magnebot collides with the environment or a heavy object it will stop turning. It will also stop turn if the previous action ended in a collision and was a `turn_by()` in the same direction as this action. Usually this should be True; set it to False if you need the Magnebot to move away from a bad position (for example, to reverse direction if it's starting to tip over). |
+| stop_on_collision |  bool  | True | If True, if the Magnebot will stop when it detects certain collisions. See the **Movement** section description above for more information. |
 
 _Returns:_  An `ActionStatus` indicating if the Magnebot turned by the angle and if not, why.
 
@@ -233,12 +220,11 @@ Possible [return values](https://github.com/alters-mit/magnebot/blob/main/doc/ap
 - `tipping`
 - `collision`
 
-
 | Parameter | Type | Default | Description |
 | --- | --- | --- | --- |
 | target |  Union[int, Dict[str, float] |  | Either the ID of an object or a Vector3 position. |
 | aligned_at |  float  | 3 | If the different between the current angle and the target angle is less than this value, then the action is successful. |
-| stop_on_collision |  bool  | True | If True, if the Magnebot collides with the environment or a heavy object it will stop turning. Usually this should be True; set it to False if you need the Magnebot to move away from a bad position (for example, to reverse direction if it's starting to tip over). |
+| stop_on_collision |  bool  | True | If True, if the Magnebot will stop when it detects certain collisions. See the **Movement** section description above for more information. |
 
 _Returns:_  An `ActionStatus` indicating if the Magnebot turned by the angle and if not, why.
 
@@ -257,12 +243,11 @@ Possible [return values](https://github.com/alters-mit/magnebot/blob/main/doc/ap
 - `collision`
 - `tipping`
 
-
 | Parameter | Type | Default | Description |
 | --- | --- | --- | --- |
 | distance |  float |  | The target distance. If less than zero, the Magnebot will move backwards. |
 | arrived_at |  float  | 0.3 | If at any point during the action the difference between the target distance and distance traversed is less than this, then the action is successful. |
-| stop_on_collision |  bool  | True | If True, if the Magnebot collides with the environment or a heavy object it will stop moving. Usually this should be True; set it to False if you need the Magnebot to move away from a bad position (for example, to reverse direction if it's starting to tip over). |
+| stop_on_collision |  bool  | True | If True, if the Magnebot will stop when it detects certain collisions. See the **Movement** section description above for more information. |
 
 _Returns:_  An `ActionStatus` indicating if the Magnebot moved by `distance` and if not, why.
 
@@ -284,13 +269,12 @@ Possible [return values](https://github.com/alters-mit/magnebot/blob/main/doc/ap
 - `failed_to_turn`
 - `tipping`
 
-
 | Parameter | Type | Default | Description |
 | --- | --- | --- | --- |
 | target |  Union[int, Dict[str, float] |  | Either the ID of an object or a Vector3 position. |
 | arrived_at |  float  | 0.3 | While moving, if at any point during the action the difference between the target distance and distance traversed is less than this, then the action is successful. |
 | aligned_at |  float  | 3 | While turning, if the different between the current angle and the target angle is less than this value, then the action is successful. |
-| stop_on_collision |  bool  | True | If True, if the Magnebot collides with the environment or a heavy object it will stop moving or turning. Usually this should be True; set it to False if you need the Magnebot to move away from a bad position (for example, to reverse direction if it's starting to tip over). |
+| stop_on_collision |  bool  | True | If True, if the Magnebot will stop when it detects certain collisions. See the **Movement** section description above for more information. |
 
 _Returns:_  An `ActionStatus` indicating if the Magnebot moved to the target and if not, why.
 
@@ -298,9 +282,9 @@ _Returns:_  An `ActionStatus` indicating if the Magnebot moved to the target and
 
 ### Torso
 
-_These functions adjust the Magnebot's torso._
+These functions adjust the Magnebot's torso.
 
-_While adjusting the torso, the Magnebot is always "immovable", meaning that its wheels are locked and it isn't possible for its root object to move or rotate._
+While adjusting the torso, the Magnebot is always "immovable", meaning that its wheels are locked and it isn't possible for its root object to move or rotate.
 
 #### set_torso
 
@@ -314,7 +298,6 @@ Possible return values:
 
 - `success`
 - `failed_to_bend` (If the torso failed to reach the target position)
-
 
 | Parameter | Type | Default | Description |
 | --- | --- | --- | --- |
@@ -346,12 +329,10 @@ Each axis of rotation is constrained (see `Magnebot.CAMERA_RPY_CONSTRAINTS`).
 
 See `self.camera_rpy` for the current (roll, pitch, yaw) angles of the camera.
 
-
 Possible [return values](https://github.com/alters-mit/magnebot/blob/main/doc/api/action_status.md):
 
 - `success`
 - `clamped_camera_rotation`
-
 
 | Parameter | Type | Default | Description |
 | --- | --- | --- | --- |
@@ -366,7 +347,6 @@ _Returns:_  An `ActionStatus` indicating if the camera rotated fully or if the r
 **`self.reset_camera()`**
 
 Reset the rotation of the Magnebot's camera to its default angles.
-
 
 Possible [return values](https://github.com/alters-mit/magnebot/blob/main/doc/api/action_status.md):
 
@@ -383,7 +363,6 @@ _These are utility functions that won't advance the simulation by any frames._
 **`self.get_occupancy_position(i, j)`**
 
 Converts the position `(i, j)` in the occupancy map to `(x, z)` worldspace coordinates.
-
 
 
 | Parameter | Type | Default | Description |
