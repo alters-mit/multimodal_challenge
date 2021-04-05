@@ -16,8 +16,9 @@ from magnebot import ActionStatus
 from magnebot.scene_state import SceneState
 from magnebot.util import get_data
 from multimodal_challenge.multimodal_base import MultiModalBase
-from multimodal_challenge.paths import REHEARSAL_DIRECTORY, ENV_AUDIO_MATERIALS_PATH, DATASET_DIRECTORY
-from multimodal_challenge.util import get_object_init_commands, get_scene_layouts, get_trial_filename
+from multimodal_challenge.paths import REHEARSAL_DIRECTORY, ENV_AUDIO_MATERIALS_PATH, DATASET_DIRECTORY,\
+    OBJECT_INIT_DIRECTORY
+from multimodal_challenge.util import get_scene_layouts, get_trial_filename
 from multimodal_challenge.multimodal_object_init_data import MultiModalObjectInitData
 from multimodal_challenge.trial import Trial
 from multimodal_challenge.encoder import Encoder
@@ -368,18 +369,23 @@ class Dataset(MultiModalBase):
         self.trial_count += 1
         self._random_seed_index += 1
 
-    def init_scene(self, scene: str, layout: int, room: int = None) -> ActionStatus:
+    def init_scene(self, scene: str, layout: int) -> ActionStatus:
         """
         Initialize the scene. Turn the Magnebot away from the object. Let the object fall.
 
         :param scene: The name of the scene.
         :param layout: The layout index.
-        :param room: This parameter is ignored.
 
         :return: An `ActionStatus` (always success).
         """
 
-        super().init_scene(scene=scene, layout=layout, room=room)
+        # Load object initialization data.
+        object_init_data = loads(OBJECT_INIT_DIRECTORY.joinpath(f"{scene}_{layout}.json").read_text(encoding="utf-8"))
+        for o in object_init_data:
+            o_id, o_commands = MultiModalObjectInitData(**o).get_commands()
+            self._object_init_commands[o_id] = o_commands
+        # Initialize the scene.
+        super().init_scene(scene=scene, layout=layout)
         # Get the angle to the object.
         angle = TDWUtils.get_angle_between(v1=self.state.magnebot_transform.forward,
                                            v2=TDWUtils.vector3_to_array(self.trials[self.trial_count].position) - self.
@@ -419,19 +425,14 @@ class Dataset(MultiModalBase):
         super()._cache_static_data(resp=resp)
         self.env_id = self.get_unique_id()
 
-    def _get_object_init_commands(self) -> List[dict]:
-        # Get the commands for the scene objects.
-        commands = get_object_init_commands(scene=self.scene, layout=self.layout)
-        return commands
-
-    def _get_start_trial_commands(self) -> List[dict]:
+    def _get_post_processing_commands(self) -> List[dict]:
         # Disable any graphics settings that could affect performance (because the camera is off).
         return [{"$type": "set_post_process",
                  "value": False},
                 {"$type": "enable_reflection_probes",
                  "enable": False}]
 
-    def _get_end_init_commands(self) -> List[dict]:
+    def _get_end_commands(self) -> List[dict]:
         # Add a reverb space and an audio sensor.
         return [{"$type": "set_reverb_space_simple",
                  "env_id": -1,

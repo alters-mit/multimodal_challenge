@@ -47,8 +47,6 @@ OCCUPANCY_MAPS_DIRECTORY = SCENE_DATA_DIRECTORY.joinpath("occupancy_maps")
 SCENE_LIBRARY_PATH = SCENE_DATA_DIRECTORY.joinpath("library.json")
 # The path to the .json files containing object init data.
 OBJECT_INIT_DIRECTORY = SCENE_DATA_DIRECTORY.joinpath("object_init")
-# The path to the scene bounds data.
-SCENE_BOUNDS_DIRECTORY = SCENE_DATA_DIRECTORY.joinpath("bounds")
 
 # The path to the audio dataset files.
 AUDIO_DATASET_DIRECTORY = DATA_DIRECTORY.joinpath("dataset")

@@ -94,6 +94,13 @@ class MultiModal(MultiModalBase):
         self.__trial = Trial(**loads(DATASET_DIRECTORY.joinpath(f"{scene}_{layout}/{trial_filename}.json").
                                      read_text(encoding="utf-8")))
         self.audio: bytes = DATASET_DIRECTORY.joinpath(f"{scene}_{layout}/{trial_filename}.wav").read_bytes()
+        # Get object initialization commands and find the target object.
+        for i, init_data in enumerate(self.__trial.object_init_data):
+            object_id, object_commands = init_data.get_commands()
+            self._object_init_commands[object_id] = object_commands
+            # Get the target object ID.
+            if i == self.__trial.target_object_index:
+                self.target_object_id = object_id
         # Load the scene.
         super().init_scene(scene=scene, layout=layout)
         # Turn the Magnebot. We don't want to set the rotation in case the joints intersect with something.
@@ -133,33 +140,11 @@ class MultiModal(MultiModalBase):
         self._end_action()
         return status
 
-    def _get_start_trial_commands(self) -> List[dict]:
-        return [{"$type": "set_aperture",
-                 "aperture": 8.0},
-                {"$type": "set_focus_distance",
-                 "focus_distance": 2.25},
-                {"$type": "set_post_exposure",
-                 "post_exposure": 0.4},
-                {"$type": "set_ambient_occlusion_intensity",
-                 "intensity": 0.175},
-                {"$type": "set_ambient_occlusion_thickness_modifier",
-                 "thickness": 3.5}]
-
-    def _get_end_init_commands(self) -> List[dict]:
-        return []
-
     def _get_target_object(self) -> Optional[AudioInitData]:
         return None
 
-    def _get_object_init_commands(self) -> List[dict]:
-        commands = []
-        for i, init_data in enumerate(self.__trial.object_init_data):
-            object_id, object_commands = init_data.get_commands()
-            commands.extend(object_commands)
-            # Get the target object ID.
-            if i == self.__trial.target_object_index:
-                self.target_object_id = object_id
-        return commands
-
     def _get_magnebot_position(self) -> np.array:
         return self.__trial.magnebot_position
+
+    def _get_end_commands(self) -> List[dict]:
+        return []

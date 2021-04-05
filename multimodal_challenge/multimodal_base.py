@@ -1,12 +1,11 @@
-from typing import List, Optional
-from json import loads
+from typing import Optional, List
 from abc import ABC, abstractmethod
 import numpy as np
 from tdw.tdw_utils import TDWUtils
 from magnebot import Magnebot, ActionStatus
 from multimodal_challenge.util import get_scene_librarian
 from multimodal_challenge.multimodal_object_init_data import MultiModalObjectInitData
-from multimodal_challenge.paths import OCCUPANCY_MAPS_DIRECTORY, SCENE_BOUNDS_DIRECTORY
+from multimodal_challenge.paths import OCCUPANCY_MAPS_DIRECTORY
 
 
 class MultiModalBase(Magnebot, ABC):
@@ -33,7 +32,7 @@ class MultiModalBase(Magnebot, ABC):
         self.target_object_id: int = -1
         self.scene_librarian = get_scene_librarian()
 
-    def init_scene(self, scene: str, layout: int, room: int = None) -> ActionStatus:
+    def init_scene(self, scene: str, layout: int) -> ActionStatus:
         """
         **Always call this function before starting a new trial.**
 
@@ -41,63 +40,27 @@ class MultiModalBase(Magnebot, ABC):
 
         :param scene: The name of the scene.
         :param layout: The layout index.
-        :param room: The room number (in `MultiModal`, this is the trial. In `Dataset`, this is ignored.)
 
         :return: An `ActionStatus` (always success).
         """
 
-        self._clear_data()
         # Add the scene.
         scene_record = self.scene_librarian.get_record(scene)
-        commands: List[dict] = [{"$type": "add_scene",
-                                 "name": scene_record.name,
-                                 "url": scene_record.get_url()}]
         # Load the occupancy map and scene bounds.
         self.occupancy_map = np.load(str(OCCUPANCY_MAPS_DIRECTORY.joinpath(f"{scene}_{layout}.npy").resolve()))
-        self._scene_bounds = loads(SCENE_BOUNDS_DIRECTORY.joinpath(f"{scene[:-1]}.json").read_text())
-        # Add commands to start the trial (such as post-processing globals).
-        commands.extend(self._get_start_trial_commands())
-        # Initialize the objects.
-        commands.extend(self._get_object_init_commands())
+
         # Add the target object.
         target_object: MultiModalObjectInitData = self._get_target_object()
         if target_object is not None:
             self.target_object_id, target_object_commands = target_object.get_commands()
-            commands.extend(target_object_commands)
-        # Add commands to add the Magnebot and request output data.
-        commands.extend(self._get_scene_init_commands(magnebot_position=TDWUtils.array_to_vector3(
-            self._get_magnebot_position())))
-        # Add commands at the end of scene initialization.
-        commands.extend(self._get_end_init_commands())
-        # Send the commands, cache the static data, and end the action.
-        resp = self.communicate(commands)
-        self._cache_static_data(resp=resp)
-        self._end_action()
-        return ActionStatus.success
+            self._object_init_commands[self.target_object_id] = target_object_commands
 
-    @abstractmethod
-    def _get_start_trial_commands(self) -> List[dict]:
-        """
-        :return: Commands to send at the start of trial initialization.
-        """
-
-        raise Exception()
-
-    @abstractmethod
-    def _get_end_init_commands(self) -> List[dict]:
-        """
-        :return: Commands to send at the end of trial initialization but before setting the torso position and angle.
-        """
-
-        raise Exception()
-
-    @abstractmethod
-    def _get_object_init_commands(self) -> List[dict]:
-        """
-        :return: A list of commands to initialize the objects.
-        """
-
-        raise Exception()
+        return self._init_scene(scene=[{"$type": "add_scene",
+                                        "name": scene_record.name,
+                                        "url": scene_record.get_url()}],
+                                post_processing=self._get_post_processing_commands(),
+                                end=self._get_end_commands(),
+                                magnebot_position=TDWUtils.array_to_vector3(self._get_magnebot_position()))
 
     @abstractmethod
     def _get_target_object(self) -> Optional[MultiModalObjectInitData]:
@@ -111,6 +74,14 @@ class MultiModalBase(Magnebot, ABC):
     def _get_magnebot_position(self) -> np.array:
         """
         :return: The initial position of the Magnebot.
+        """
+
+        raise Exception()
+
+    @abstractmethod
+    def _get_end_commands(self) -> List[dict]:
+        """
+        :return: A list of commands to send at the end of scene initialization.
         """
 
         raise Exception()

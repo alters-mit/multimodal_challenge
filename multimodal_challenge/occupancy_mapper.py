@@ -1,6 +1,5 @@
 from typing import List, Tuple
 from pathlib import Path
-from json import dumps
 import numpy as np
 from tdw.floorplan_controller import FloorplanController
 from tdw.output_data import Raycast, Images
@@ -8,7 +7,7 @@ from tdw.tdw_utils import TDWUtils
 from magnebot.scene_environment import SceneEnvironment
 from magnebot.constants import OCCUPANCY_CELL_SIZE
 from magnebot.util import get_data
-from multimodal_challenge.paths import OCCUPANCY_MAPS_DIRECTORY, SCENE_BOUNDS_DIRECTORY
+from multimodal_challenge.paths import OCCUPANCY_MAPS_DIRECTORY
 from multimodal_challenge.util import get_object_init_commands
 
 
@@ -69,13 +68,6 @@ class OccupancyMapper(FloorplanController):
                              output_directory=str(image_dir.joinpath("scene_layouts").resolve()),
                              append_pass=False)
         scene_env = SceneEnvironment(resp=resp)
-        # Save the scene bounds.
-        if scene[-1] == "a" and layout == 0:
-            scene_bounds = {"x_min": scene_env.x_min,
-                            "x_max": scene_env.x_max,
-                            "z_min": scene_env.z_min,
-                            "z_max": scene_env.z_max}
-            SCENE_BOUNDS_DIRECTORY.joinpath(f"{scene[:-1]}.json").write_text(dumps(scene_bounds, indent=2))
         # Spherecast to each point.
         x = scene_env.x_min
         while x < scene_env.x_max:
