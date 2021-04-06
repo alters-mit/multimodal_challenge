@@ -6,7 +6,7 @@ from tdw.object_init_data import AudioInitData
 from tdw.tdw_utils import QuaternionUtils
 from magnebot import ActionStatus, ArmJoint, Magnebot
 from multimodal_challenge.multimodal_base import MultiModalBase
-from multimodal_challenge.paths import DATASET_DIRECTORY
+from multimodal_challenge.paths import DATASET_DIRECTORY, KINEMATIC_OBJECTS_PATH
 from multimodal_challenge.util import get_trial_filename, get_scene_layouts
 from multimodal_challenge.trial import Trial
 
@@ -51,6 +51,8 @@ class MultiModal(MultiModalBase):
     """
     TORSO_LIMITS: Tuple[float, float] = (Magnebot._COLUMN_Y + Magnebot._TORSO_MIN_Y,
                                          Magnebot._COLUMN_Y + Magnebot._TORSO_MAX_Y)
+    # A list of kinematic objects.
+    _KINEMATIC: List[str] = KINEMATIC_OBJECTS_PATH.read_text(encoding="utf-8").split("\n")
 
     def __init__(self, port: int = 1071, screen_width: int = 256, screen_height: int = 256):
         """
@@ -96,6 +98,9 @@ class MultiModal(MultiModalBase):
         self.audio: bytes = DATASET_DIRECTORY.joinpath(f"{scene}_{layout}/{trial_filename}.wav").read_bytes()
         # Get object initialization commands and find the target object.
         for i, init_data in enumerate(self.__trial.object_init_data):
+            if init_data.name in MultiModal._KINEMATIC:
+                init_data.kinematic = True
+                init_data.gravity = False
             object_id, object_commands = init_data.get_commands()
             self._object_init_commands[object_id] = object_commands
             # Get the target object ID.
@@ -139,9 +144,6 @@ class MultiModal(MultiModalBase):
         status = self._do_arm_motion(joint_ids=[self.magnebot_static.arm_joints[ArmJoint.torso]])
         self._end_action()
         return status
-
-    def _get_target_object(self) -> Optional[AudioInitData]:
-        return None
 
     def _get_magnebot_position(self) -> np.array:
         return self.__trial.magnebot_position

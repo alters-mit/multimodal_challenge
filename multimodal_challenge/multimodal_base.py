@@ -1,10 +1,9 @@
-from typing import Optional, List
+from typing import List
 from abc import ABC, abstractmethod
 import numpy as np
 from tdw.tdw_utils import TDWUtils
 from magnebot import Magnebot, ActionStatus
 from multimodal_challenge.util import get_scene_librarian
-from multimodal_challenge.multimodal_object_init_data import MultiModalObjectInitData
 from multimodal_challenge.paths import OCCUPANCY_MAPS_DIRECTORY
 
 
@@ -49,26 +48,12 @@ class MultiModalBase(Magnebot, ABC):
         # Load the occupancy map and scene bounds.
         self.occupancy_map = np.load(str(OCCUPANCY_MAPS_DIRECTORY.joinpath(f"{scene}_{layout}.npy").resolve()))
 
-        # Add the target object.
-        target_object: MultiModalObjectInitData = self._get_target_object()
-        if target_object is not None:
-            self.target_object_id, target_object_commands = target_object.get_commands()
-            self._object_init_commands[self.target_object_id] = target_object_commands
-
         return self._init_scene(scene=[{"$type": "add_scene",
                                         "name": scene_record.name,
                                         "url": scene_record.get_url()}],
                                 post_processing=self._get_post_processing_commands(),
                                 end=self._get_end_commands(),
                                 magnebot_position=TDWUtils.array_to_vector3(self._get_magnebot_position()))
-
-    @abstractmethod
-    def _get_target_object(self) -> Optional[MultiModalObjectInitData]:
-        """
-        :return: Object initialization data for the target object.
-        """
-
-        raise Exception()
 
     @abstractmethod
     def _get_magnebot_position(self) -> np.array:

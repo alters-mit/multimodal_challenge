@@ -384,6 +384,11 @@ class Dataset(MultiModalBase):
         for o in object_init_data:
             o_id, o_commands = MultiModalObjectInitData(**o).get_commands()
             self._object_init_commands[o_id] = o_commands
+        # Add the target object.
+        self.target_object_id, target_object_commands = self.trials[self.trial_count].init_data
+        self._object_init_commands[self.target_object_id] = target_object_commands
+        # We need every frame for audio recording, but not right now, so let's speed things up.
+        self._skip_frames = 10
         # Initialize the scene.
         super().init_scene(scene=scene, layout=layout)
         # Get the angle to the object.
@@ -397,8 +402,6 @@ class Dataset(MultiModalBase):
                 angle += 360
         # Flip the angle and add some randomness. Then turn by the angle to look away from the object.
         angle += 180 + self._rng.uniform(-45, 45)
-        # We need every frame for audio recording, but not right now, so let's speed things up.
-        self._skip_frames = 10
         self.turn_by(angle=angle)
         # Stop skipping frames now that we're done turning.
         self._skip_frames = 0
@@ -473,9 +476,6 @@ class Dataset(MultiModalBase):
         occupancy_positions = occupancy_positions[int(len(occupancy_positions) / 2.0):]
         # Pick a random position.
         return occupancy_positions[self._rng.randint(0, len(occupancy_positions))]
-
-    def _get_target_object(self) -> Optional[MultiModalObjectInitData]:
-        return self.trials[self.trial_count].init_data
 
     def _listen_for_audio(self) -> None:
         """
