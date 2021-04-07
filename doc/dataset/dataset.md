@@ -157,8 +157,6 @@ if the simulation continued for too long.
 
 **`self.init_scene(scene, layout)`**
 
-**`self.init_scene(scene, layout, room=None)`**
-
 Initialize the scene. Turn the Magnebot away from the object. Let the object fall.
 
 
@@ -166,7 +164,6 @@ Initialize the scene. Turn the Magnebot away from the object. Let the object fal
 | --- | --- | --- | --- |
 | scene |  str |  | The name of the scene. |
 | layout |  int |  | The layout index. |
-| room |  int  | None | This parameter is ignored. |
 
 _Returns:_  An `ActionStatus` (always success).
 

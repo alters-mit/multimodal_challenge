@@ -18,6 +18,8 @@ Each trial has audio data that was generated as the object collided with other o
 
 Using its camera and the audio data, the Magnebot must find the dropped object.
 
+## Overview of API
+
 - [Class Variables](#class-variables)
 - [Frames](#frames)
 - [Parameter types](#parameter-types)
@@ -26,18 +28,18 @@ Using its camera and the audio data, the Magnebot must find the dropped object.
 
 | Function | Description |
 | --- | --- |
-| [\_\_init\_\_()](#\_\_init\_\_) | |
-| [init_scene()](#init_scene) | Initialize a scene and a furniture layout, including the target object after it has fallen. |
-| [turn_by()](#turn_by) | Turn the Magnebot by an angle. |
-| [turn_to()](#turn_to) | Turn the Magnebot to face a target object or position. |
-| [move_by()](#move_by) | Move the Magnebot forward or backward by a given distance. |
-| [move_to()](#move_to) | Move the Magnebot to a target object or position. |
-| [set_torso()](#set_torso) | Slide the Magnebot's torso up or down. |
-| [rotate_camera()](#rotate_camera) | Rotate the Magnebot's camera by the (roll, pitch, yaw) axes. |
-| [reset_camera()](#reset_camera) | Reset the rotation of the Magnebot's camera to its default angles. |
-| [get_occupancy_position()](#get_occupancy_position) | Converts the position `(i, j)` in the occupancy map to `(x, z)` worldspace coordinates. |
-| [get_visible_objects()](#get_visible_objects) | Get all objects visible to the Magnebot in `self.state` using the id (segmentation color) image. |
-| [end()](#end) | End the simulation. |
+| [\_\_init\_\_](#\_\_init\_\_) | |
+| [init_scene](#init_scene) | Initialize a scene and a furniture layout, including the target object after it has fallen. |
+| [turn_by](#turn_by) | Turn the Magnebot by an angle. |
+| [turn_to](#turn_to) | Turn the Magnebot to face a target object or position. |
+| [move_by](#move_by) | Move the Magnebot forward or backward by a given distance. |
+| [move_to](#move_to) | Move the Magnebot to a target object or position. |
+| [set_torso](#set_torso) | Slide the Magnebot's torso up or down. |
+| [rotate_camera](#rotate_camera) | Rotate the Magnebot's camera by the (roll, pitch, yaw) axes. |
+| [reset_camera](#reset_camera) | Reset the rotation of the Magnebot's camera to its default angles. |
+| [get_occupancy_position](#get_occupancy_position) | Converts the position `(i, j)` in the occupancy map to `(x, z)` worldspace coordinates. |
+| [get_visible_objects](#get_visible_objects) | Get all objects visible to the Magnebot in `self.state` using the id (segmentation color) image. |
+| [end](#end) | End the simulation. |
 
 ***
 
@@ -49,8 +51,6 @@ Using its camera and the audio data, the Magnebot must find the dropped object.
 | `TRIALS_PER_SCENE_LAYOUT` | int | The number of trials per scene_layout combination. Use this to set the `trial` parameter of `init_scene()`: |
 | `TORSO_LIMITS` | Tuple[float, float] | The lower and upper limits of the torso's position from the floor (y=0), assuming that the Magnebot is level. |
 | `CAMERA_RPY_CONSTRAINTS` | List[float] | The camera roll, pitch, yaw constraints in degrees. |
-| `COLLISION_ON` | CollisionDetection | [Collision detection settings](https://github.com/alters-mit/magnebot/blob/main/doc/api/collision_detection.md) if `stop_on_collision == True`. See section description of **Movement** for more information. |
-| `COLLISION_OFF` | CollisionDetection | [Collision detection settings](https://github.com/alters-mit/magnebot/blob/main/doc/api/collision_detection.md) if `stop_on_collision == False`. See section description of **Movement** for more information. |
 
 ***
 
@@ -176,7 +176,7 @@ _Returns:_  An `ActionStatus` (always success).
 
 ### Movement
 
-These functions move or turn the Magnebot.
+These functions move or turn the Magnebot. [Read this for more information about movement and collision detection.](https://github.com/alters-mit/magnebot/blob/main/doc/api/../movement.md)
 
 #### turn_by
 
@@ -199,7 +199,7 @@ Possible [return values](https://github.com/alters-mit/magnebot/blob/main/doc/ap
 | --- | --- | --- | --- |
 | angle |  float |  | The target angle in degrees. Positive value = clockwise turn. |
 | aligned_at |  float  | 3 | If the difference between the current angle and the target angle is less than this value, then the action is successful. |
-| stop_on_collision |  bool  | True | If True, if the Magnebot will stop when it detects certain collisions. See the **Movement** section description above for more information. |
+| stop_on_collision |  Union[bool, CollisionDetection] | True | If True, if the Magnebot will stop when it detects certain collisions. If False, ignore collisions. This can also be a [`CollisionDetection`](https://github.com/alters-mit/magnebot/blob/main/doc/api/collision_detection.md) object. [Read this](https://github.com/alters-mit/magnebot/blob/main/doc/api/../movement.md) for more information. |
 
 _Returns:_  An `ActionStatus` indicating if the Magnebot turned by the angle and if not, why.
 
@@ -224,7 +224,7 @@ Possible [return values](https://github.com/alters-mit/magnebot/blob/main/doc/ap
 | --- | --- | --- | --- |
 | target |  Union[int, Dict[str, float] |  | Either the ID of an object or a Vector3 position. |
 | aligned_at |  float  | 3 | If the different between the current angle and the target angle is less than this value, then the action is successful. |
-| stop_on_collision |  bool  | True | If True, if the Magnebot will stop when it detects certain collisions. See the **Movement** section description above for more information. |
+| stop_on_collision |  Union[bool, CollisionDetection] | True | If True, if the Magnebot will stop when it detects certain collisions. If False, ignore collisions. This can also be a [`CollisionDetection`](https://github.com/alters-mit/magnebot/blob/main/doc/api/collision_detection.md) object. [Read this](https://github.com/alters-mit/magnebot/blob/main/doc/api/../movement.md) for more information. |
 
 _Returns:_  An `ActionStatus` indicating if the Magnebot turned by the angle and if not, why.
 
@@ -247,7 +247,7 @@ Possible [return values](https://github.com/alters-mit/magnebot/blob/main/doc/ap
 | --- | --- | --- | --- |
 | distance |  float |  | The target distance. If less than zero, the Magnebot will move backwards. |
 | arrived_at |  float  | 0.3 | If at any point during the action the difference between the target distance and distance traversed is less than this, then the action is successful. |
-| stop_on_collision |  bool  | True | If True, if the Magnebot will stop when it detects certain collisions. See the **Movement** section description above for more information. |
+| stop_on_collision |  Union[bool, CollisionDetection] | True | If True, if the Magnebot will stop when it detects certain collisions. If False, ignore collisions. This can also be a [`CollisionDetection`](https://github.com/alters-mit/magnebot/blob/main/doc/api/collision_detection.md) object. [Read this](https://github.com/alters-mit/magnebot/blob/main/doc/api/../movement.md) for more information. |
 
 _Returns:_  An `ActionStatus` indicating if the Magnebot moved by `distance` and if not, why.
 
@@ -274,7 +274,7 @@ Possible [return values](https://github.com/alters-mit/magnebot/blob/main/doc/ap
 | target |  Union[int, Dict[str, float] |  | Either the ID of an object or a Vector3 position. |
 | arrived_at |  float  | 0.3 | While moving, if at any point during the action the difference between the target distance and distance traversed is less than this, then the action is successful. |
 | aligned_at |  float  | 3 | While turning, if the different between the current angle and the target angle is less than this value, then the action is successful. |
-| stop_on_collision |  bool  | True | If True, if the Magnebot will stop when it detects certain collisions. See the **Movement** section description above for more information. |
+| stop_on_collision |  Union[bool, CollisionDetection] | True | If True, if the Magnebot will stop when it detects certain collisions. If False, ignore collisions. This can also be a [`CollisionDetection`](https://github.com/alters-mit/magnebot/blob/main/doc/api/collision_detection.md) object. [Read this](https://github.com/alters-mit/magnebot/blob/main/doc/api/../movement.md) for more information. |
 
 _Returns:_  An `ActionStatus` indicating if the Magnebot moved to the target and if not, why.
 
@@ -363,7 +363,6 @@ _These are utility functions that won't advance the simulation by any frames._
 **`self.get_occupancy_position(i, j)`**
 
 Converts the position `(i, j)` in the occupancy map to `(x, z)` worldspace coordinates.
-
 
 | Parameter | Type | Default | Description |
 | --- | --- | --- | --- |

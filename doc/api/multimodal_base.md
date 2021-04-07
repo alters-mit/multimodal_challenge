@@ -33,8 +33,6 @@ The code in this controller shared between [`Dataset`](../dataset/dataset.md) an
 
 **`self.init_scene(scene, layout)`**
 
-**`self.init_scene(scene, layout, room=None)`**
-
 **Always call this function before starting a new trial.**
 
 Initialize a scene and a furniture layout. Add and position the Magnebot and dropped object.
@@ -44,7 +42,6 @@ Initialize a scene and a furniture layout. Add and position the Magnebot and dro
 | --- | --- | --- | --- |
 | scene |  str |  | The name of the scene. |
 | layout |  int |  | The layout index. |
-| room |  int  | None | The room number (in `MultiModal`, this is the trial. In `Dataset`, this is ignored.) |
 
 _Returns:_  An `ActionStatus` (always success).
 

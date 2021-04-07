@@ -20,12 +20,16 @@ if __name__ == "__main__":
     # Get the Magnebot API. This assumes that it's located in the home directory.
     magnebot_api = Path.home().joinpath("magnebot/doc/api/magnebot_controller.md").read_text(encoding="utf-8")
     # Fix relative links.
-    magnebot_api = re.sub(r"\[(.*)\]\((?!https)(.*)\.md\)",
+    magnebot_api = re.sub(r"\[(.*?)\]\((?!https)(.*?)\.md\)",
                           r"[\1](https://github.com/alters-mit/magnebot/blob/main/doc/api/\2.md)", magnebot_api)
+
     # Remove code examples.
     magnebot_api = re.sub(r"(```python((.|\n)*?)```\n)", "", magnebot_api)
     # Remove this paragraph.
     magnebot_api = re.sub(r"(Images of occupancy maps can be found(.*)\.\n\n)", "", magnebot_api, flags=re.MULTILINE)
+    # Remove this sentence.
+    magnebot_api = magnebot_api.replace("This only works if you've loaded an occupancy map via "
+                                        "`self.init_floorplan_scene()`.\n\n\n", "")
     # Get all of the movement actions from the Magnebot API.
     api_txt = re.search(r"(### Movement((.|\n)*?))#", magnebot_api, flags=re.MULTILINE).group(1)
     actions = []
