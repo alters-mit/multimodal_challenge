@@ -1,6 +1,6 @@
 # 0.3.0
 
-- Required version of TDW: 1.8.7
+- Required version of TDW: 1.8.8
 - Required version of Magnebot: 1.2.0
 - Added changelog
 - Fixed: `MultiModal` doesn't sets the kinematic state incorrectly for some objects
