@@ -1,3 +1,7 @@
+# 0.3.1
+
+- Replaced some small target objects with larger target objects
+
 # 0.3.0
 
 - Required version of TDW: 1.8.8
