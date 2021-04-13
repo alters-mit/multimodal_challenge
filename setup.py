@@ -28,5 +28,5 @@ setup(
     keywords='unity simulation tdw robotics magnebot',
     packages=find_packages(),
     include_package_data=True,
-    install_requires=['tdw==1.8.7.0', 'magnebot==1.2.0', 'numpy', 'tqdm', "py_md_doc", "scipy"],
+    install_requires=['tdw==1.8.8.0', 'magnebot==1.2.0', 'numpy', 'tqdm', "py_md_doc", "scipy"],
 )
