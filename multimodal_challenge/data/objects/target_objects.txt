@@ -14,10 +14,11 @@ jug02
 knife2
 spoon1
 kettle
-iron_box_2
 button_two_hole_green_mottled
 square_coaster_001_cork
-hammer
+lint_roller01
+toaster_002
+glass2
 round_coaster_indent_wood
 square_coaster_001_marble
 glass1
@@ -38,7 +39,6 @@ vase_03
 button_four_hole_mottled
 button_four_hole_large_black
 bung
-iron_box
 round_coaster_indent_rubber
 round_coaster_stone
 vase_02
