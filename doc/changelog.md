@@ -1,6 +1,9 @@
 # 0.3.1
 
 - Replaced some small target objects with larger target objects
+- Set the asset bundles directory/bucket and the dataset directory with environment variables instead of command line arguments
+- Added: `download.py` Download asset bundles from the S3 server to a local directory
+- (Backend): Added `requests` as a required module
 
 # 0.3.0
 

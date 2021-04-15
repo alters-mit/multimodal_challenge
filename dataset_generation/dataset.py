@@ -52,16 +52,43 @@ class Dataset(MultiModalBase):
     # Usage
 
     1. `cd dataset`
-    2. `python3 dataset.py [ARGUMENTS]`
+    2. `[ENV VARIABLES] python3 dataset.py [ARGUMENTS]`
     3. Run build
+
+    This will take approximately 8 hours to complete. It can be stopped and restarted without losing progress.
+
+    ## Environment variables
+
+    #### 1. `MULTIMODAL_ASSET_BUNDLES`
+
+    **The root directory to download scenes and asset bundles from.** Default value: `"https://tdw-public.s3.amazonaws.com"`
+
+    Every scene (room environment) and model (furniture, cabinets, cups, etc.) is stored in TDW as an [asset bundle](https://docs.unity3d.com/Manual/AssetBundlesIntro.html). These asset bundles are downloaded at runtime from a remote S3 server, but it is possible to download them *before* run time and load them locally. **If your Internet connection will make it difficult/slow/impossible to download large US-based files at runtime, we strongly suggest you download them locally.** To do this:
+
+    1. `cd path/to/multimodal_challenge`
+    2. `python3 download.py --dst [DST]`. The `--dst` argument sets the root download directory. Example: `python3 download.py --dst /home/mm_asset_bundles`.
+
+    #### 2. `MULTIMODAL_DATASET`
+
+    **The directory where the Trial files will be saved.** Default value: `"D:/multimodal_challenge"`
+
+    #### How to set the environment variables
+
+    Replace `[asset_bundles]` and `[dataset]` with the actual paths. For example: `export MULTIMODAL_ASSET_BUNDLES=/home/mm_asset_bundles`.
+
+    | Platform             | Command                                                      |
+    | -------------------- | ------------------------------------------------------------ |
+    | OS X or Linux        | `export MULTIMODAL_ASSET_BUNDLES=[asset_bundles] && export MULTIMODAL_DATASET=[dataset] && python3 dataset.py` |
+    | Windows (cmd)        | `set MULTIMODAL_ASSET_BUNDLES=[asset_bundles] && set MULTIMODAL_DATASET=[dataset] && py -3 dataset.py` |
+    | Windows (powershell) | `$env:MULTIMODAL_ASSET_BUNDLES="[asset_bundles]" ; $env:MULTIMODAL_DATASET="[dataset]" ; py -3 dataset.py` |
+
+    ## Arguments
 
     | Argument | Default | Description |
     | --- | --- | --- |
-    | `--asset_bundles` | https://tdw-public.s3.amazonaws.com | Root local directory or remote URL of asset bundles. |
-    | `--dataset_directory` | D:/multimodal_challenge | Root local directory of the dataset files. |
     | `--random_seed` | 0 | The random seed. |
 
-    **This is a VERY long process.**
+    Example: `python3 dataset.py --random_seed 12345`
 
     # How it works
 

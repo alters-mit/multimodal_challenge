@@ -40,6 +40,8 @@ class MultiModalObjectInitData(AudioInitData):
                 url = join(ASSET_BUNDLES_DIRECTORY, url).replace("\\", "/").replace("puzzle_box_composite",
                                                                                     "/puzzle_box_composite")
                 if not url.startswith("http"):
+                    # Replace double-slashes, e.g. in the URL for baking_sheet01.
+                    url = url.replace("//", "/")
                     url = "file:///" + url
                 record.urls[platform] = url
         return record

@@ -18,8 +18,35 @@ Each trial has audio data that was generated as the object collided with other o
 
 Using its camera and the audio data, the Magnebot must find the dropped object.
 
+## Environment variables
+
+#### 1. `MULTIMODAL_ASSET_BUNDLES`
+
+**The root directory to download scenes and asset bundles from.** Default value: `"https://tdw-public.s3.amazonaws.com"`
+
+Every scene (room environment) and model (furniture, cabinets, cups, etc.) is stored in TDW as an [asset bundle](https://docs.unity3d.com/Manual/AssetBundlesIntro.html). These asset bundles are downloaded at runtime from a remote S3 server, but it is possible to download them *before* run time and load them locally. **If your Internet connection will make it difficult/slow/impossible to download large US-based files at runtime, we strongly suggest you download them locally.** To do this:
+
+1. `cd path/to/multimodal_challenge`
+2. `python3 download.py --dst [DST]`. The `--dst` argument sets the root download directory. Example: `python3 download.py --dst /home/mm_asset_bundles`.
+
+#### 2. `MULTIMODAL_DATASET`
+
+**The directory where the Trial files will be saved.** Default value: `"D:/multimodal_challenge"`
+
+#### How to set the environment variables
+
+- Replace `[asset_bundles]` and `[dataset]` with the actual paths. For example: `export MULTIMODAL_ASSET_BUNDLES=/home/mm_asset_bundles`.
+- Replace `my_controller.py` with the name of your controller script.
+
+| Platform             | Command                                                      |
+| -------------------- | ------------------------------------------------------------ |
+| OS X or Linux        | `export MULTIMODAL_ASSET_BUNDLES=[asset_bundles] && export MULTIMODAL_DATASET=[dataset] && python3 my_controller.py` |
+| Windows (cmd)        | `set MULTIMODAL_ASSET_BUNDLES=[asset_bundles] && set MULTIMODAL_DATASET=[dataset] && py -3 my_controller.py` |
+| Windows (powershell) | `$env:MULTIMODAL_ASSET_BUNDLES="[asset_bundles]" ; $env:MULTIMODAL_DATASET="[dataset]" ; py -3 my_controller.py` |
+
 ## Overview of API
 
+- [Environment variables](#environment-variables)
 - [Class Variables](#class-variables)
 - [Frames](#frames)
 - [Parameter types](#parameter-types)

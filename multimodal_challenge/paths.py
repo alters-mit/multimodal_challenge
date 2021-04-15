@@ -1,25 +1,26 @@
 from pathlib import Path
 from pkg_resources import resource_filename
-from argparse import ArgumentParser
+from os import environ
 
 """
 Paths to data files in this Python module.
 """
 
-__parser = ArgumentParser()
-__parser.add_argument("--asset_bundles", type=str, default="https://tdw-public.s3.amazonaws.com",
-                      help="Root local directory or remote URL of scene and model asset bundles.")
-__parser.add_argument("--dataset_directory", type=str, default="D:/multimodal_challenge",
-                      help="Root local directory of the dataset files.")
-__args, __unknown = __parser.parse_known_args()
+__asset_bundles_key = "MULTIMODAL_ASSET_BUNDLES"
+# Use local asset bundles.
+if __asset_bundles_key in environ:
+    ASSET_BUNDLES_DIRECTORY: str = environ[__asset_bundles_key]
+    if ASSET_BUNDLES_DIRECTORY.startswith("~"):
+        ASSET_BUNDLES_DIRECTORY = str(Path.home().joinpath(ASSET_BUNDLES_DIRECTORY[2:]).resolve())
+# Use remote asset bundles.
+else:
+    ASSET_BUNDLES_DIRECTORY = "https://tdw-public.s3.amazonaws.com"
 
-# The root directory of the asset bundles.
-ASSET_BUNDLES_DIRECTORY: str = __args.asset_bundles
-if ASSET_BUNDLES_DIRECTORY.startswith("~"):
-    ASSET_BUNDLES_DIRECTORY = str(Path.home().joinpath(ASSET_BUNDLES_DIRECTORY[2:]).resolve())
-__data_dir = __args.dataset_directory
-if __data_dir.startswith("~"):
-    __data_dir = str(Path.home().joinpath(__data_dir[2:]).resolve())
+__dataset_directory_key = "MULTIMODAL_DATASET"
+if __dataset_directory_key in environ:
+    __data_dir: str = environ[__dataset_directory_key]
+else:
+    __data_dir: str = "D:/multimodal_challenge"
 # The path to where the dataset data will be generated.
 DATASET_ROOT_DIRECTORY: Path = Path(__data_dir)
 # The path to the rehearsal data.
