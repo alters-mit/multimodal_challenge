@@ -20,7 +20,7 @@ all objects are kinematic (non-moveable) in order to avoid re-initializing the s
 # Usage
 
 1. `cd dataset`
-2. `python3 rehearsal.py [ARGUMENTS]`
+2. `[ENV VARIABLES] python3 rehearsal.py [ARGUMENTS]`
 3. Run build
 
 ## Environment variables

@@ -1,3 +1,8 @@
+# 0.3.2
+
+- Required version of TDW: 1.8.11.1
+- Replaced various target objects with new objects that were formerly only in `models_full.json`
+
 # 0.3.1
 
 - Replaced some small target objects with larger target objects
