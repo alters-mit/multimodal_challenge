@@ -256,7 +256,8 @@ class Rehearsal(Controller):
                                  "url": scene_record.get_url()},
                                 {"$type": "send_environments"},
                                 {"$type": "enable_reflection_probes",
-                                 "enable": False}]
+                                 "enable": False},
+                                {"$type": "destroy_all_objects"}]
         commands.extend(get_object_init_commands(scene=scene, layout=layout))
         # Make all objects kinematic.
         for i in range(len(commands)):

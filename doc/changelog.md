@@ -1,3 +1,8 @@
+# 0.3.4
+
+- Fixed: `dataset.py` immediately crashes
+  - (Backend): Added cached scene bounds data to `multimodal/data/scenes/bounds`
+
 # 0.3.3
 
 - Required version of TDW: 1.8.12.0

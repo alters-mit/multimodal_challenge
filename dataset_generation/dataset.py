@@ -17,7 +17,7 @@ from magnebot.scene_state import SceneState
 from magnebot.util import get_data
 from multimodal_challenge.multimodal_base import MultiModalBase
 from multimodal_challenge.paths import REHEARSAL_DIRECTORY, ENV_AUDIO_MATERIALS_PATH, DATASET_DIRECTORY,\
-    OBJECT_INIT_DIRECTORY
+    OBJECT_INIT_DIRECTORY, SCENE_BOUNDS_DIRECTORY
 from multimodal_challenge.util import get_scene_layouts, get_trial_filename
 from multimodal_challenge.multimodal_object_init_data import MultiModalObjectInitData
 from multimodal_challenge.trial import Trial
@@ -412,10 +412,11 @@ class Dataset(MultiModalBase):
             o_id, o_commands = MultiModalObjectInitData(**o).get_commands()
             self._object_init_commands[o_id] = o_commands
         # Add the target object.
-        self.target_object_id, target_object_commands = self.trials[self.trial_count].init_data
+        self.target_object_id, target_object_commands = self.trials[self.trial_count].init_data.get_commands()
         self._object_init_commands[self.target_object_id] = target_object_commands
         # We need every frame for audio recording, but not right now, so let's speed things up.
         self._skip_frames = 10
+        self._scene_bounds = loads(SCENE_BOUNDS_DIRECTORY.joinpath(f"{scene[:-1]}.json").read_text())
         # Initialize the scene.
         super().init_scene(scene=scene, layout=layout)
         # Get the angle to the object.
