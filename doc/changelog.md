@@ -1,3 +1,7 @@
+# 0.3.5
+
+- Required version of TDW: 1.8.13.0
+
 # 0.3.4
 
 - Fixed: `dataset.py` immediately crashes
