@@ -1,3 +1,7 @@
+# 0.3.6
+
+- Required version of TDW: 1.8.14.0 (Includes size buckets for object audio info)
+
 # 0.3.5
 
 - Required version of TDW: 1.8.13.0

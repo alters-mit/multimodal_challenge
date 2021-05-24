@@ -10,11 +10,11 @@ class EnvAudioMaterials:
     """:class_var
     A dictionary. Key = A Resonance Audio material. Value = The corresponding PyImpact `AudioMaterial`.
     """
-    RESONANCE_AUDIO_TO_PY_IMPACT: Dict[str, AudioMaterial] = {"roughPlaster": AudioMaterial.wood,
+    RESONANCE_AUDIO_TO_PY_IMPACT: Dict[str, AudioMaterial] = {"roughPlaster": AudioMaterial.wood_soft,
                                                               "tile": AudioMaterial.ceramic,
                                                               "concrete": AudioMaterial.ceramic,
-                                                              "wood": AudioMaterial.wood,
-                                                              "smoothPlaster": AudioMaterial.wood,
+                                                              "wood": AudioMaterial.wood_soft,
+                                                              "smoothPlaster": AudioMaterial.wood_soft,
                                                               "acousticTile": AudioMaterial.cardboard}
 
     def __init__(self, floor: str, wall: str):

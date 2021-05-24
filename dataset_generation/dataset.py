@@ -301,6 +301,7 @@ class Dataset(MultiModalBase):
                 resonance=0.65,
                 material=AudioMaterial.metal,
                 bounciness=0.6,
+                size=1,
                 library="")
         try:
             # Start recording the audio.
