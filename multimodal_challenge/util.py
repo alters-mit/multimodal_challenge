@@ -4,9 +4,8 @@ from os.path import join
 from tdw.librarian import SceneLibrarian
 from tdw.tdw_utils import TDWUtils
 from multimodal_challenge.paths import TARGET_OBJECTS_PATH, OBJECT_INIT_DIRECTORY, SCENE_LIBRARY_PATH, \
-    ASSET_BUNDLES_DIRECTORY, DROP_ZONE_DIRECTORY
+    ASSET_BUNDLES_DIRECTORY
 from multimodal_challenge.multimodal_object_init_data import MultiModalObjectInitData
-from multimodal_challenge.dataset.drop_zone import DropZone
 
 # A list of the names of target objects models.
 TARGET_OBJECTS: List[str] = TARGET_OBJECTS_PATH.read_text(encoding="utf-8").split("\n")
@@ -43,20 +42,6 @@ def get_object_init_commands(scene: str, layout: int) -> List[dict]:
     for o in data:
         commands.extend(MultiModalObjectInitData(**o).get_commands()[1])
     return commands
-
-
-def get_drop_zones(filename: str) -> List[DropZone]:
-    """
-    :param filename: The filename of the drop zone .json file.
-
-    :return: A list of drop zones.
-    """
-
-    drop_zone_data = loads(DROP_ZONE_DIRECTORY.joinpath(filename).read_text(encoding="utf-8"))
-    drop_zones: List[DropZone] = list()
-    for drop_zone in drop_zone_data:
-        drop_zones.append(DropZone(center=TDWUtils.vector3_to_array(drop_zone["position"]), radius=drop_zone["size"]))
-    return drop_zones
 
 
 def get_scene_layouts() -> Dict[str, int]:

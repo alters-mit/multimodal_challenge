@@ -23,8 +23,6 @@ else:
     __data_dir: str = "D:/multimodal_challenge"
 # The path to where the dataset data will be generated.
 DATASET_ROOT_DIRECTORY: Path = Path(__data_dir)
-# The path to the distractors data.
-DISTRACTORS_DIRECTORY: Path = DATASET_ROOT_DIRECTORY.joinpath("distractors")
 # The path to the rehearsal data.
 REHEARSAL_DIRECTORY: Path = DATASET_ROOT_DIRECTORY.joinpath("rehearsal")
 if not REHEARSAL_DIRECTORY.exists():

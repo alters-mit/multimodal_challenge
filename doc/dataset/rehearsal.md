@@ -6,9 +6,10 @@
 
 This is meant only for backend developers; the Python module already has cached rehearsal data.
 
-Each scene has a corresponding list of [`DropZones`](../api/drop_zone.md). These are already cached.
-If the target object lands in a `DropZone`, then this was a valid trial.
-As a result, this script will cut down on dev time and generation time.
+Per trial, a random number of random "distractor objects" will be dropped on the floor.
+Then, a random "target object" will be dropped on the floor.
+
+The trial is considered good if all of the objects land on a surface and stop moving after a reasonable length of time; if not, the trial is discarded.
 
 There will be a small discrepancy in physics behavior when running `dataset.py` because in this controller,
 all objects are kinematic (non-moveable) in order to avoid re-initializing the scene per trial (which is slow).
@@ -61,14 +62,15 @@ Example: `python3 rehearsal.py --random_seed 12345 --num_trials 300`
 
 **Per scene_layout combination** (i.e. scene `mm_kitchen_1_a` layout `0`):
 
-1. Load the corresponding object init data and `DropZone` data.
+1. Load the corresponding object init data.
 2. Run trials per scene_layout combination until there's enough (for example, 2000 per scene_layout combination).
 
 **Per trial:**
 
 1. Randomly set the parameters of a new [`DatasetTrial`](../api/dataset_trial.md) for initialization.
-2. Let the target object fall. **The only output data is the `Transform` of the target object.**
-3. When the target object stops falling, if it's is in a `DropZone`, record the `DatasetTrial`.
+2. Let each distractor object fall, one at a time (to avoid interpentration). If the objects fall in acceptable positions, continue.
+3. Let the target object fall.
+4. If the target object is in an acceptable position, generate a `DatasetTrial` object.
 
 **Result:** A list of `DatasetTrial` initialization objects per scene_layout combination:
 
@@ -82,6 +84,19 @@ D:/multimodal_challenge/
 
 ***
 
+## Class Variables
+
+| Variable | Type | Description |
+| --- | --- | --- |
+| `DISTANCE_FROM_CENTER` | float | The maximum distance from the center of the room that an object can be placed. |
+| `MIN_DISTRACTORS` | int | The minimum number of distractors in the scene. |
+| `MAX_DISTRACTORS` | int | The maximum number of distractors in the scene. |
+| `MIN_DROP_Y` | float | The minimum y value for the initial position of an object. |
+| `MAX_DROP_Y` | float | The maximum y value for the initial position of an object. |
+| `SKIPPED_FRAMES` | int | The amount of frames skipped while objects are falling. |
+
+***
+
 ## Fields
 
 - `target_object_id` The ID of the dropped object. This changes per trial.
@@ -90,7 +105,9 @@ D:/multimodal_challenge/
 
 - `scene_environment` Environment data used for setting drop positions.
 
-- `drop_zones` The drop zones for the current scene.
+- `distractors` Metadata for distractor objects.
+
+- `object_positions` A list of all possible initial object positions per trial.
 
 ***
 
@@ -116,7 +133,7 @@ Create the network socket and bind the socket to the port.
 Choose a random object. Assign a random (constrained) scale, position, rotation, and force.
 Let the object fall. When it stops moving, determine if the object is in a drop zone.
 
-_Returns:_  Tuple: A `DatasetTrial` if the object landed in the drop zone, otherwise None; drop zone ID.
+_Returns:_  A `DatasetTrial` if this is a good trial.
 
 #### run
 

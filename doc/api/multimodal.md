@@ -57,10 +57,10 @@ Every scene (room environment) and model (furniture, cabinets, cups, etc.) is st
 | --- | --- |
 | [\_\_init\_\_](#\_\_init\_\_) | |
 | [init_scene](#init_scene) | Initialize a scene and a furniture layout, including the target object after it has fallen. |
-| [turn_by](#turn_by) | Turn the Magnebot by an angle. |
-| [turn_to](#turn_to) | Turn the Magnebot to face a target object or position. |
-| [move_by](#move_by) | Move the Magnebot forward or backward by a given distance. |
-| [move_to](#move_to) | Move the Magnebot to a target object or position. |
+| [reach_for](#reach_for) | Reach for a target position. |
+| [grasp](#grasp) | Try to grasp the target object with the arm. |
+| [drop](#drop) | Drop an object held by a magnet. |
+| [reset_arm](#reset_arm) | Reset an arm to its neutral position. |
 | [set_torso](#set_torso) | Slide the Magnebot's torso up or down. |
 | [rotate_camera](#rotate_camera) | Rotate the Magnebot's camera by the (roll, pitch, yaw) axes. |
 | [reset_camera](#reset_camera) | Reset the rotation of the Magnebot's camera to its default angles. |
@@ -201,109 +201,110 @@ _Returns:_  An `ActionStatus` (always success).
 
 ***
 
-### Movement
+### Arm Articulation
 
-These functions move or turn the Magnebot. [Read this for more information about movement and collision detection.](https://github.com/alters-mit/magnebot/blob/main/doc/api/../movement.md)
+These functions move and bend the joints of the Magnebots's arms.
 
-#### turn_by
+During an arm articulation action, the Magnebot is always "immovable", meaning that its wheels are locked and it isn't possible for its root object to move or rotate.
 
-**`self.turn_by(angle)`**
+For more information regarding how arm articulation works, [read this](https://github.com/alters-mit/magnebot/blob/main/doc/api/../arm_articulation.md).
 
-**`self.turn_by(angle, aligned_at=3, stop_on_collision=True)`**
+#### reach_for
 
-Turn the Magnebot by an angle.
+**`self.reach_for(target, arm)`**
 
-When turning, the left wheels will turn one way and the right wheels in the opposite way, allowing the Magnebot to turn in place.
+**`self.reach_for(target, arm, absolute=True, arrived_at=0.125, target_orientation=TargetOrientation.auto, orientation_mode=OrientationMode.auto)`**
 
-Possible [return values](https://github.com/alters-mit/magnebot/blob/main/doc/api/action_status.md):
+Reach for a target position.
 
-- `success`
-- `failed_to_turn`
-- `tipping`
-- `collision`
-
-| Parameter | Type | Default | Description |
-| --- | --- | --- | --- |
-| angle |  float |  | The target angle in degrees. Positive value = clockwise turn. |
-| aligned_at |  float  | 3 | If the difference between the current angle and the target angle is less than this value, then the action is successful. |
-| stop_on_collision |  Union[bool, CollisionDetection] | True | If True, if the Magnebot will stop when it detects certain collisions. If False, ignore collisions. This can also be a [`CollisionDetection`](https://github.com/alters-mit/magnebot/blob/main/doc/api/collision_detection.md) object. [Read this](https://github.com/alters-mit/magnebot/blob/main/doc/api/../movement.md) for more information. |
-
-_Returns:_  An `ActionStatus` indicating if the Magnebot turned by the angle and if not, why.
-
-#### turn_to
-
-**`self.turn_to(target)`**
-
-**`self.turn_to(target, aligned_at=3, stop_on_collision=True)`**
-
-Turn the Magnebot to face a target object or position.
-
-When turning, the left wheels will turn one way and the right wheels in the opposite way, allowing the Magnebot to turn in place.
+The action ends when the arm stops moving. The arm might stop moving if it succeeded at finishing the motion, in which case the action is successful. Or, the arms might stop moving because the motion is impossible, there's an obstacle in the way, if the arm is holding something heavy, and so on.
 
 Possible [return values](https://github.com/alters-mit/magnebot/blob/main/doc/api/action_status.md):
 
 - `success`
-- `failed_to_turn`
-- `tipping`
-- `collision`
+- `cannot_reach`
+- `failed_to_reach`
 
 | Parameter | Type | Default | Description |
 | --- | --- | --- | --- |
-| target |  Union[int, Dict[str, float] |  | Either the ID of an object or a Vector3 position. |
-| aligned_at |  float  | 3 | If the different between the current angle and the target angle is less than this value, then the action is successful. |
-| stop_on_collision |  Union[bool, CollisionDetection] | True | If True, if the Magnebot will stop when it detects certain collisions. If False, ignore collisions. This can also be a [`CollisionDetection`](https://github.com/alters-mit/magnebot/blob/main/doc/api/collision_detection.md) object. [Read this](https://github.com/alters-mit/magnebot/blob/main/doc/api/../movement.md) for more information. |
+| target |  Dict[str, float] |  | The target position for the magnet at the arm to reach. |
+| arm |  Arm |  | The arm that will reach for the target. |
+| absolute |  bool  | True | If True, `target` is in absolute world coordinates. If `False`, `target` is relative to the position and rotation of the Magnebot. |
+| arrived_at |  float  | 0.125 | If the magnet is this distance or less from `target`, then the action is successful. |
+| target_orientation |  TargetOrientation  | TargetOrientation.auto | [The target orientation of the IK solution.](https://github.com/alters-mit/magnebot/blob/main/doc/api/../arm_articulation.md) |
+| orientation_mode |  OrientationMode  | OrientationMode.auto | [The orientation mode of the IK solution.](https://github.com/alters-mit/magnebot/blob/main/doc/api/../arm_articulation.md) |
 
-_Returns:_  An `ActionStatus` indicating if the Magnebot turned by the angle and if not, why.
+_Returns:_  An `ActionStatus` indicating if the magnet at the end of the `arm` is at the `target` and if not, why.
 
-#### move_by
+#### grasp
 
-**`self.move_by(distance)`**
+**`self.grasp(target, arm)`**
 
-**`self.move_by(distance, arrived_at=0.3, stop_on_collision=True)`**
+**`self.grasp(target, arm, target_orientation=TargetOrientation.auto, orientation_mode=OrientationMode.auto)`**
 
-Move the Magnebot forward or backward by a given distance.
+Try to grasp the target object with the arm. The Magnebot will reach for the nearest position on the object.
+
+If the magnet grasps the object, the arm will stop moving and the action is successful.
 
 Possible [return values](https://github.com/alters-mit/magnebot/blob/main/doc/api/action_status.md):
 
 - `success`
-- `failed_to_move`
-- `collision`
-- `tipping`
+- `cannot_reach`
+- `failed_to_grasp`
 
 | Parameter | Type | Default | Description |
 | --- | --- | --- | --- |
-| distance |  float |  | The target distance. If less than zero, the Magnebot will move backwards. |
-| arrived_at |  float  | 0.3 | If at any point during the action the difference between the target distance and distance traversed is less than this, then the action is successful. |
-| stop_on_collision |  Union[bool, CollisionDetection] | True | If True, if the Magnebot will stop when it detects certain collisions. If False, ignore collisions. This can also be a [`CollisionDetection`](https://github.com/alters-mit/magnebot/blob/main/doc/api/collision_detection.md) object. [Read this](https://github.com/alters-mit/magnebot/blob/main/doc/api/../movement.md) for more information. |
+| target |  int |  | The ID of the target object. |
+| arm |  Arm |  | The arm of the magnet that will try to grasp the object. |
+| target_orientation |  TargetOrientation  | TargetOrientation.auto | [The target orientation of the IK solution.](https://github.com/alters-mit/magnebot/blob/main/doc/api/../arm_articulation.md) |
+| orientation_mode |  OrientationMode  | OrientationMode.auto | [The orientation mode of the IK solution.](https://github.com/alters-mit/magnebot/blob/main/doc/api/../arm_articulation.md) |
 
-_Returns:_  An `ActionStatus` indicating if the Magnebot moved by `distance` and if not, why.
+_Returns:_  An `ActionStatus` indicating if the magnet at the end of the `arm` is holding the `target` and if not, why.
 
-#### move_to
+#### drop
 
-**`self.move_to(target)`**
+**`self.drop(target, arm)`**
 
-**`self.move_to(target, arrived_at=0.3, aligned_at=3, stop_on_collision=True)`**
+**`self.drop(target, arm, wait_for_objects=True)`**
 
-Move the Magnebot to a target object or position.
+Drop an object held by a magnet.
 
-This is a wrapper function for `turn_to()` followed by `move_by()`.
+See [`SceneState.held`](https://github.com/alters-mit/magnebot/blob/main/doc/api/scene_state.md) for a dictionary of held objects.
 
 Possible [return values](https://github.com/alters-mit/magnebot/blob/main/doc/api/action_status.md):
 
 - `success`
-- `failed_to_move`
-- `collision`
-- `failed_to_turn`
-- `tipping`
+- `not_holding`
 
 | Parameter | Type | Default | Description |
 | --- | --- | --- | --- |
-| target |  Union[int, Dict[str, float] |  | Either the ID of an object or a Vector3 position. |
-| arrived_at |  float  | 0.3 | While moving, if at any point during the action the difference between the target distance and distance traversed is less than this, then the action is successful. |
-| aligned_at |  float  | 3 | While turning, if the different between the current angle and the target angle is less than this value, then the action is successful. |
-| stop_on_collision |  Union[bool, CollisionDetection] | True | If True, if the Magnebot will stop when it detects certain collisions. If False, ignore collisions. This can also be a [`CollisionDetection`](https://github.com/alters-mit/magnebot/blob/main/doc/api/collision_detection.md) object. [Read this](https://github.com/alters-mit/magnebot/blob/main/doc/api/../movement.md) for more information. |
+| target |  int |  | The ID of the object currently held by the magnet. |
+| arm |  Arm |  | The arm of the magnet holding the object. |
+| wait_for_objects |  bool  | True | If True, the action will continue until the objects have finished falling. If False, the action advances the simulation by exactly 1 frame. |
 
-_Returns:_  An `ActionStatus` indicating if the Magnebot moved to the target and if not, why.
+_Returns:_  An `ActionStatus` indicating if the magnet at the end of the `arm` dropped the `target`.
+
+#### reset_arm
+
+**`self.reset_arm(arm)`**
+
+**`self.reset_arm(arm, reset_torso=True)`**
+
+Reset an arm to its neutral position.
+
+Possible [return values](https://github.com/alters-mit/magnebot/blob/main/doc/api/action_status.md):
+
+- `success`
+- `failed_to_bend`
+
+| Parameter | Type | Default | Description |
+| --- | --- | --- | --- |
+| arm |  Arm |  | The arm that will be reset. |
+| reset_torso |  bool  | True | If True, rotate and slide the torso to its neutral rotation and height. |
+
+_Returns:_  An `ActionStatus` indicating if the arm reset and if not, why.
+
+***
 
 ***
 
