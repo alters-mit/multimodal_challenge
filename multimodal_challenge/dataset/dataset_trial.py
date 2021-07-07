@@ -8,12 +8,14 @@ class DatasetTrial:
     """
 
     def __init__(self, target_object: MultiModalObjectInitData, force: Dict[str, float],
+                 magnebot_position: Dict[str, float],
                  target_object_position: Dict[str, float],
                  distractors: List[MultiModalObjectInitData]):
         """
         :param target_object: [`MultiModalObjectInitData` initialization data](multimodal_object_init_data.md) for the target object.
         :param force: The initial force of the target object as a Vector3 dictionary.
-        :param target_object_position: The position of the object after it falls. This is used to set a valid initial Magnebot pose.
+        :param magnebot_position: The initial position of the Magnebot.
+        :param target_object_position: The final position of the target object.
         :param distractors: Initialization data for the distractor objects.
         """
 
@@ -31,7 +33,11 @@ class DatasetTrial:
         """
         self.force: Dict[str, float] = force
         """:field
-        The position of the target object after it falls. This is used to set a valid initial Magnebot pose.
+        The initial position of the Magnebot.
+        """
+        self.magnebot_position: Dict[str, float] = magnebot_position
+        """:field
+        The final position of the target object.
         """
         self.target_object_position: Dict[str, float] = target_object_position
         """:field

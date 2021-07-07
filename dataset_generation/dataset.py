@@ -8,7 +8,6 @@ from array import array
 import numpy as np
 import pyaudio
 from tqdm import tqdm
-from scipy.signal import convolve2d
 from tdw.tdw_utils import AudioUtils, TDWUtils
 from tdw.py_impact import PyImpact, ObjectInfo, AudioMaterial
 from tdw.output_data import Rigidbodies, Transforms, AudioSources
@@ -413,8 +412,12 @@ class Dataset(MultiModalBase):
             o_id, o_commands = MultiModalObjectInitData(**o).get_commands()
             self._object_init_commands[o_id] = o_commands
         # Add the target object.
-        self.target_object_id, target_object_commands = self.trials[self.trial_count].init_data.get_commands()
+        self.target_object_id, target_object_commands = self.trials[self.trial_count].target_object.get_commands()
         self._object_init_commands[self.target_object_id] = target_object_commands
+        # Add the distractors.
+        for distractor in self.trials[self.trial_count].distractors:
+            o_id, o_commands = distractor.get_commands()
+            self._object_init_commands[o_id] = o_commands
         # We need every frame for audio recording, but not right now, so let's speed things up.
         self._skip_frames = 10
         self._scene_bounds = loads(SCENE_BOUNDS_DIRECTORY.joinpath(f"{scene[:-1]}.json").read_text())
@@ -422,8 +425,7 @@ class Dataset(MultiModalBase):
         super().init_scene(scene=scene, layout=layout)
         # Get the angle to the object.
         angle = TDWUtils.get_angle_between(v1=self.state.magnebot_transform.forward,
-                                           v2=TDWUtils.vector3_to_array(self.trials[self.trial_count].position) - self.
-                                           state.magnebot_transform.position)
+                                           v2=TDWUtils.vector3_to_array(self.trials[self.trial_count].target_object_position) - self.state.magnebot_transform.position)
         if np.abs(angle) > 180:
             if angle > 0:
                 angle -= 360
@@ -477,34 +479,7 @@ class Dataset(MultiModalBase):
                 {"$type": "add_environ_audio_sensor"}]
 
     def _get_magnebot_position(self) -> np.array:
-        # Get all free occupancy map positions.
-        occupancy_positions: List[np.array] = list()
-        target_object_position = TDWUtils.vector3_to_array(self.trials[self.trial_count].init_data.position)
-        # Prevent the Magnebot from spawning at edges of the occupancy map.
-        spawn_map = np.zeros_like(self.occupancy_map)
-        spawn_map.fill(1)
-        spawn_map[self.occupancy_map == 0] = 0
-        conv = np.ones((3, 3))
-        spawn_map = convolve2d(spawn_map, conv, mode="same", boundary="fill")
-        for ix, iy in np.ndindex(spawn_map.shape):
-            if spawn_map[ix][iy] != 0:
-                continue
-            px, pz = self.get_occupancy_position(ix, iy)
-            occupancy_positions.append(np.array([px, 0, pz]))
-        # If the convolve function shrunk the occupancy map too much, just use the original occupancy map.
-        if len(occupancy_positions) == 0:
-            for ix, iy in np.ndindex(spawn_map.shape):
-                if self.occupancy_map[ix][iy] != 0:
-                    continue
-                px, pz = self.get_occupancy_position(ix, iy)
-                occupancy_positions.append(np.array([px, 0, pz]))
-        # Sort the occupancy map positions by distance to the target object.
-        occupancy_positions = list(sorted(occupancy_positions,
-                                          key=lambda p: np.linalg.norm(p - target_object_position)))
-        # Get the latter half of the positions (the further positions).
-        occupancy_positions = occupancy_positions[int(len(occupancy_positions) / 2.0):]
-        # Pick a random position.
-        return occupancy_positions[self._rng.randint(0, len(occupancy_positions))]
+        return TDWUtils.vector3_to_array(self.trials[self.trial_count].magnebot_position)
 
     def _listen_for_audio(self) -> None:
         """

@@ -4,7 +4,7 @@ from tqdm import tqdm
 import numpy as np
 from tdw.controller import Controller
 from tdw.tdw_utils import TDWUtils
-from tdw.output_data import Transforms
+from tdw.output_data import OutputData, Transforms, Raycast
 from tdw.object_init_data import TransformInitData
 from magnebot.scene_environment import SceneEnvironment
 from magnebot.constants import OCCUPANCY_CELL_SIZE
@@ -160,6 +160,10 @@ class Rehearsal(Controller):
         A list of all possible initial object positions per trial.
         """
         self.object_positions: List[np.array] = list()
+        """:field
+        A list of all possible initial Magnebot positions per trial.
+        """
+        self.magnebot_positions: List[np.array] = list()
 
     def do_trial(self) -> Optional[DatasetTrial]:
         """
@@ -239,18 +243,34 @@ class Rehearsal(Controller):
         # Get the transform data.
         object_ids = distractor_ids[:]
         object_ids.append(self.target_object_id)
-        resp = self.communicate({"$type": "send_transforms",
-                                 "frequency": "once",
-                                 "ids": object_ids})
-        # Destroy all non-floorplan objects.
-        destroy_objects.append({"$type": "destroy_object",
-                                "id": self.target_object_id})
+        commands = [{"$type": "send_transforms",
+                     "frequency": "once",
+                     "ids": object_ids},
+                    {"$type": "set_floorplan_roof",
+                     "show": False}]
+        for i, position in enumerate(self.magnebot_positions):
+            commands.append({"$type": "send_spherecast",
+                             "origin": {"x": float(position[0]),
+                                        "y": 4,
+                                        "z": float(position[1])},
+                             "destination": {"x": float(position[0]),
+                                             "y": 0,
+                                             "z": float(position[1])},
+                             "radius": OCCUPANCY_CELL_SIZE / 2,
+                             "id": i})
+        resp = self.communicate(commands)
+        # Destroy all non-floorplan objects and re-enable the roof.
+        destroy_objects.extend([{"$type": "destroy_object",
+                                "id": self.target_object_id},
+                                {"$type": "set_floorplan_roof",
+                                 "show": True}])
         self.communicate(destroy_objects)
         if not good:
             return None
+        # Get the positions of the distractors and the target object.
         distractor_init_data: List[MultiModalObjectInitData] = list()
         target_object_position: Dict[str, float] = dict()
-        tr = Transforms(resp[0])
+        tr = get_data(resp=resp, d_type=Transforms)
         for i in range(tr.get_num()):
             object_id = tr.get_id(i)
             if object_id == self.target_object_id:
@@ -264,8 +284,27 @@ class Rehearsal(Controller):
                                                                          tr.get_rotation(i))))
         # We don't want the target object to fall right away.
         a.kinematic = True
-        return DatasetTrial(target_object=a, force=force, target_object_position=target_object_position,
-                            distractors=distractor_init_data)
+        # Get a spawn position for the Magnebot.
+        magnebot_positions: List[np.array] = list()
+        target_position = TDWUtils.vector3_to_array(target_object_position)
+        for i in range(len(resp) - 1):
+            r_id = OutputData.get_data_type_id(resp[i])
+            if r_id == "rayc":
+                raycast = Raycast(resp[i])
+                # Get a free position.
+                if raycast.get_hit() and not raycast.get_hit_object():
+                    mp = self.magnebot_positions[raycast.get_raycast_id()]
+                    magnebot_positions.append(np.array([mp[0], 0, mp[1]]))
+        magnebot_positions = list(sorted(magnebot_positions, key=lambda p: np.linalg.norm(p - target_position)))
+        # Get the further away positions.
+        magnebot_positions = magnebot_positions[int(len(magnebot_positions) / 2):]
+        magnebot_position = magnebot_positions[self.rng.randint(0, len(magnebot_positions))]
+
+        return DatasetTrial(target_object=a,
+                            force=force,
+                            magnebot_position=TDWUtils.array_to_vector3(magnebot_position),
+                            distractors=distractor_init_data,
+                            target_object_position=target_object_position)
 
     def run(self, num_trials: int = 10000) -> None:
         """
@@ -320,6 +359,7 @@ class Rehearsal(Controller):
 
         # Get all object positions. A valid position is a free position not too far from the center of the room.
         self.object_positions.clear()
+        self.magnebot_positions.clear()
         # Get the occupancy map.
         occupancy_map: np.array = np.load(str(OCCUPANCY_MAPS_DIRECTORY.joinpath(f"{scene}_{layout}.npy").resolve()))
         # Get the maximum distance from the center of the room that the objects can be dropped at.
@@ -335,7 +375,9 @@ class Rehearsal(Controller):
             z = self.scene_environment.z_min + (iy * OCCUPANCY_CELL_SIZE)
             p = np.array([x, z])
             if np.linalg.norm(p - origin) <= max_distance:
-                self.object_positions.append(np.array([x, z]))
+                self.object_positions.append(p)
+            else:
+                self.magnebot_positions.append(p)
 
         close_bar = pbar is None
         if pbar is None:
