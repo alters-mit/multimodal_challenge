@@ -8,7 +8,7 @@ readme = re.sub(r'!\[\]\((.*?)\)', r'https://raw.githubusercontent.com/alters-mi
 
 setup(
     name='multimodal_challenge',
-    version="0.3.6",
+    version="0.4.0",
     description='Multi-modal challenge for TDW and the Magnebot API.',
     long_description=readme,
     long_description_content_type='text/markdown',
@@ -28,5 +28,6 @@ setup(
     keywords='unity simulation tdw robotics magnebot',
     packages=find_packages(),
     include_package_data=True,
-    install_requires=['tdw==1.8.14.0', 'magnebot==1.2.1', 'numpy', 'tqdm', "py_md_doc", "scipy", "requests"],
+    install_requires=['tdw==1.8.17.1', 'magnebot==1.2.1', 'numpy', 'tqdm', "py_md_doc", "scipy", "requests",
+                      "overrides"],
 )

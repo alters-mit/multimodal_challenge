@@ -23,6 +23,8 @@ else:
     __data_dir: str = "D:/multimodal_challenge"
 # The path to where the dataset data will be generated.
 DATASET_ROOT_DIRECTORY: Path = Path(__data_dir)
+# The path to the distractors data.
+DISTRACTORS_DIRECTORY: Path = DATASET_ROOT_DIRECTORY.joinpath("distractors")
 # The path to the rehearsal data.
 REHEARSAL_DIRECTORY: Path = DATASET_ROOT_DIRECTORY.joinpath("rehearsal")
 if not REHEARSAL_DIRECTORY.exists():
@@ -53,7 +55,7 @@ SCENE_BOUNDS_DIRECTORY = SCENE_DATA_DIRECTORY.joinpath("bounds")
 
 # The path to the audio dataset files.
 AUDIO_DATASET_DIRECTORY = DATA_DIRECTORY.joinpath("dataset")
-# The path to the .json files containing drop zone data.
-DROP_ZONE_DIRECTORY = AUDIO_DATASET_DIRECTORY.joinpath("drop_zones")
 # The path to the environment audio materials.
 ENV_AUDIO_MATERIALS_PATH = AUDIO_DATASET_DIRECTORY.joinpath("audio_materials.json")
+# The path to the list of distractor objects.
+DISTRACTOR_OBJECTS_PATH = AUDIO_DATASET_DIRECTORY.joinpath("distractor_objects.txt")

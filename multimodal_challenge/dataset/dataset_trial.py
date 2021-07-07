@@ -1,8 +1,9 @@
 from typing import Dict
 from multimodal_challenge.multimodal_object_init_data import MultiModalObjectInitData
+from multimodal_challenge.dataset.dataset_trial_base import DatasetTrialBase
 
 
-class DatasetTrial:
+class DatasetTrial(DatasetTrialBase):
     """
     Parameters for defining a trial for dataset generation.
     """
