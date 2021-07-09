@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Union
 from multimodal_challenge.multimodal_object_init_data import MultiModalObjectInitData
 
 
@@ -10,7 +10,7 @@ class DatasetTrial:
     def __init__(self, target_object: MultiModalObjectInitData, force: Dict[str, float],
                  magnebot_position: Dict[str, float],
                  target_object_position: Dict[str, float],
-                 distractors: List[MultiModalObjectInitData]):
+                 distractors: List[Union[dict, MultiModalObjectInitData]]):
         """
         :param target_object: [`MultiModalObjectInitData` initialization data](multimodal_object_init_data.md) for the target object.
         :param force: The initial force of the target object as a Vector3 dictionary.
@@ -43,4 +43,5 @@ class DatasetTrial:
         """:field
         Initialization data for the distractor objects.
         """
-        self.distractors: List[MultiModalObjectInitData] = distractors
+        self.distractors: List[MultiModalObjectInitData] = [d if isinstance(d, MultiModalObjectInitData) else
+                                                            MultiModalObjectInitData(**d) for d in distractors]
