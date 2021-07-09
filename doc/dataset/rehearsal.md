@@ -109,6 +109,8 @@ D:/multimodal_challenge/
 
 - `object_positions` A list of all possible initial object positions per trial.
 
+- `magnebot_positions` A list of all possible initial Magnebot positions per trial.
+
 ***
 
 ## Functions
@@ -131,7 +133,7 @@ Create the network socket and bind the socket to the port.
 **`self.do_trial()`**
 
 Choose a random object. Assign a random (constrained) scale, position, rotation, and force.
-Let the object fall. When it stops moving, determine if the object is in a drop zone.
+Let the object fall. When it stops moving, determine if the object is in an acceptable location.
 
 _Returns:_  A `DatasetTrial` if this is a good trial.
 
@@ -153,8 +155,8 @@ Generate results for each scene_layout combination.
 
 **`self.do_trials(scene, layout, num_trials, pbar=None)`**
 
-Load a scene_layout combination, and its objects, and its drop zones.
-Run random trials until we have enough "good" trials, where "good" means that the object landed in a drop zone.
+Load a scene_layout combination and its objects.
+Run random trials until we have enough "good" trials.
 Save the result to disk.
 
 | Parameter | Type | Default | Description |

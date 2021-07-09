@@ -168,7 +168,7 @@ class Rehearsal(Controller):
     def do_trial(self) -> Optional[DatasetTrial]:
         """
         Choose a random object. Assign a random (constrained) scale, position, rotation, and force.
-        Let the object fall. When it stops moving, determine if the object is in a drop zone.
+        Let the object fall. When it stops moving, determine if the object is in an acceptable location.
 
         :return: A `DatasetTrial` if this is a good trial.
         """
@@ -330,8 +330,8 @@ class Rehearsal(Controller):
 
     def do_trials(self, scene: str, layout: int, num_trials: int, pbar: tqdm = None) -> None:
         """
-        Load a scene_layout combination, and its objects, and its drop zones.
-        Run random trials until we have enough "good" trials, where "good" means that the object landed in a drop zone.
+        Load a scene_layout combination and its objects.
+        Run random trials until we have enough "good" trials.
         Save the result to disk.
 
         :param scene: The scene name.

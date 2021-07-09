@@ -7,9 +7,7 @@ This is a backend tool for TDW  developers to convert saved [TDW commands](https
 # Requirements
 
 - The `multimodal_challenge` Python module.
-- Two files of initialization data:
-    - `~/tdw_config/scene_layout.txt` The object initialization data
-    - `~/tdw_config/scene_layout.json` The drop zone data
+- `~/tdw_config/scene_layout.txt` The object initialization data
 
 `~` is the home directory and `scene_layout` is the scene_layout combination, e.g. `mm_kitchen_1_a_0`.
 
@@ -24,14 +22,13 @@ This is a backend tool for TDW  developers to convert saved [TDW commands](https
 | `--scene` | str | The name of the scene. |
 | `--layout` | int | The layout index. |
 | `--load_scene` | | If included, load the scene. Don't update the init data. |
-| `--drop_zones` | | If included, show the drop zones. Ignored unless there is a `--load_scene` flag present. |
 | `--occupancy_map` | str | Set how the occupancy map will be generated. `create`=Create an occupancy map from the list of commands. `update`=Update an occupancy map from existing init data (and don't overwrite that init data). `skip`=Don't modify the existing occupancy map. |
 
 ***
 
 #### get_commands
 
-**`InitData.get_commands(scene, layout, drop_zones)`**
+**`InitData.get_commands(scene, layout)`**
 
 _This is a static function._
 
@@ -40,9 +37,8 @@ _This is a static function._
 | --- | --- | --- | --- |
 | scene |  str |  | The name of the scene. |
 | layout |  int |  | The layout index. |
-| drop_zones |  bool |  | If True, append commands to show the drop zones. |
 
-_Returns:_  A list of commands to add objects to the scene and optionally to show the drop zones.
+_Returns:_  A list of commands to add objects to the scene.
 
 #### get_init_data
 
@@ -50,7 +46,7 @@ _Returns:_  A list of commands to add objects to the scene and optionally to sho
 
 _This is a static function._
 
-Create object initialization data and update drop zone data.
+Create object initialization data.
 
 Update the scene and model metadata records in this repo's librarians.
 

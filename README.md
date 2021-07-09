@@ -7,7 +7,7 @@ Search for a dropped object in a room using the [Magnebot API](https://github.co
 1. `git clone https://github.com/alters-mit/multimodal_challenge.git`
 2. `cd path/to/multimodal_challenge` (replace `path/to` with the actual path)
 3. `pip3 install -e .`
-4. (Optional) Download the asset bundles (read [this]((doc/api/multimodal.md)) for more information).
+4. (Optional) Download the asset bundles (read [this](doc/api/multimodal.md) for more information).
 
 # `MultiModal` challenge controller
 
@@ -28,13 +28,13 @@ m.init_scene(scene="mm_kitchen_1a", layout=0, trial=57)
 
 ## `init_data.py`
 
-This is a backend tool for TDW  developers to convert saved [TDW commands](https://github.com/threedworld-mit/tdw/blob/master/Documentation/api/command_api.md) into [initialization instructions](doc/api/multimodal_object_init_data.md). It will also create [metadata records](https://github.com/threedworld-mit/tdw/blob/master/Documentation/python/librarian/librarian.md), [`DropZone`](doc/api/drop_zone.md) data, and occupancy maps.
+This is a backend tool for TDW  developers to convert saved [TDW commands](https://github.com/threedworld-mit/tdw/blob/master/Documentation/api/command_api.md) into [initialization instructions](doc/api/multimodal_object_init_data.md). It will also create [metadata records](https://github.com/threedworld-mit/tdw/blob/master/Documentation/python/librarian/librarian.md) and occupancy maps.
 
 [Further documentation here.](doc/dataset/init_data.md)
 
 ## `rehearsal.py`
 
-Define [`DatasetTrial`](doc/api/dataset_trial.md) initialization parameters for target objects. Drop the object. If it lands in a [`DropZone`](doc/api/drop_zone.md), record the `DatasetTrial`. This will give `dataset.py` initialization parameters.
+Define [`DatasetTrial`](doc/api/dataset_trial.md) initialization parameters for target objects. Drop the object. If it lands in an acceptable position, record the `DatasetTrial`. This will give `dataset.py` initialization parameters.
 
 [Further documentation here.](doc/dataset/rehearsal.md)
 
