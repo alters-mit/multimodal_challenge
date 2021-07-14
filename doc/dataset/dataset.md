@@ -83,10 +83,11 @@ Example: `python3 dataset.py --random_seed 12345`
 
 **Result:** A directory dataset files. The dataset has a `random_seeds.npy` file that is used to select random seeds per trial.
 
-Each trial is saved in a `scene_layout` directory and has two files:
+Each trial is saved in a `scene_layout` directory and has three files:
 
 1. A .json file of the [`Trial` data](../api/trial.md).
-2. An audio .wave file.
+2. An audio .wav audio file.
+3. The occupancy map as a .npy numpy file.
 
 ```
 D:/multimodal_challenge/
@@ -94,8 +95,10 @@ D:/multimodal_challenge/
 ....mm_kitchen_1a_0/  # scene_layout
 ........00000.json
 ........00000.wav
+........00000.npy
 ........00001.json
 ........00001.wav
+........00001.npy
 ........(etc.)
 ....mm_kitchen_1a_1/
 ```

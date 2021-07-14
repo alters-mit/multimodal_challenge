@@ -32,5 +32,5 @@ Parameters for defining a trial for dataset generation.
 | force |  Dict[str, float] |  | The initial force of the target object as a Vector3 dictionary. |
 | magnebot_position |  Dict[str, float] |  | The initial position of the Magnebot. |
 | target_object_position |  Dict[str, float] |  | The final position of the target object. |
-| distractors |  List[MultiModalObjectInitData] |  | Initialization data for the distractor objects. |
+| distractors |  List[Union[dict, MultiModalObjectInitData] |  | Initialization data for the distractor objects. |
 

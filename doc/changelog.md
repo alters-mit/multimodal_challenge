@@ -1,14 +1,17 @@
 # 0.4.0
 
-- Required version of TDW: 1.8.18.1
+- Required version of TDW: 1.8.19.0
 - **Added distractor objects.** Objects are randomly placed on the floor during rehearsal.py
   - (Backend) rehearsal.py sets the initial Magnebot position based on where the objects (distractors and target object) have fallen
   - (Backend) `DatasetTrial` now includes initialization data for the distractor objects and the initial Magnebot position
   - (Backend) Added data file `distractor_objects.txt`
 - **Removed drop zones** (removed the Python class, all references to drop zones in the documentation, and the cached drop zone positions)
 - The target object is now dropped onto a free space of the occupancy map instead of a drop zone
+- `dataset.py` now saves occupancy maps as .npy files, which include the position of the target object and the distractor objects
 - Added API documentation for Magnebot arm articulation actions (although they have always been usable in this API)
+- Improved version checking for the `tdw` pip module, the `magnebot` pip module, and the TDW build
 - (Backend): Added `util/add_models.py` to update the model librarian json file
+- (Backend): Added `packaging` as a required pip module
 
 # 0.3.6
 

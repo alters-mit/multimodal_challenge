@@ -9,7 +9,8 @@ from tdw.object_init_data import TransformInitData
 from magnebot.scene_environment import SceneEnvironment
 from magnebot.constants import OCCUPANCY_CELL_SIZE
 from magnebot.util import get_data
-from multimodal_challenge.util import TARGET_OBJECTS, get_object_init_commands, get_scene_librarian, get_scene_layouts
+from multimodal_challenge.util import TARGET_OBJECTS, get_object_init_commands, get_scene_librarian, get_scene_layouts,\
+    check_pip_version, check_build_version
 from multimodal_challenge.paths import REHEARSAL_DIRECTORY, OCCUPANCY_MAPS_DIRECTORY, DISTRACTOR_OBJECTS_PATH
 from multimodal_challenge.dataset.dataset_trial import DatasetTrial
 from multimodal_challenge.encoder import Encoder
@@ -102,7 +103,7 @@ class Rehearsal(Controller):
     """:class_var
     The maximum distance from the center of the room that an object can be placed.
     """
-    DISTANCE_FROM_CENTER: float = 0.7
+    DISTANCE_FROM_CENTER: float = 0.8
     """:class_var
     The minimum number of distractors in the scene.
     """
@@ -132,7 +133,9 @@ class Rehearsal(Controller):
         :param random_seed: The seed used for random numbers. If None, this is chosen randomly.
         """
 
-        super().__init__(port=port, launch_build=False, check_version=True)
+        super().__init__(port=port, launch_build=False, check_version=False)
+        check_pip_version()
+        check_build_version(self._tdw_version)
         """:field
         The ID of the dropped object. This changes per trial.
         """

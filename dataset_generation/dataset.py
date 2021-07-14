@@ -10,10 +10,11 @@ import pyaudio
 from tqdm import tqdm
 from tdw.tdw_utils import AudioUtils, TDWUtils
 from tdw.py_impact import PyImpact, ObjectInfo, AudioMaterial
-from tdw.output_data import Rigidbodies, Transforms, AudioSources
+from tdw.output_data import OutputData, Rigidbodies, Transforms, AudioSources, Overlap
 from magnebot import ActionStatus
 from magnebot.scene_state import SceneState
 from magnebot.util import get_data
+from magnebot.constants import OCCUPANCY_CELL_SIZE
 from multimodal_challenge.multimodal_base import MultiModalBase
 from multimodal_challenge.paths import REHEARSAL_DIRECTORY, ENV_AUDIO_MATERIALS_PATH, DATASET_DIRECTORY,\
     OBJECT_INIT_DIRECTORY, SCENE_BOUNDS_DIRECTORY
@@ -108,10 +109,11 @@ class Dataset(MultiModalBase):
 
     **Result:** A directory dataset files. The dataset has a `random_seeds.npy` file that is used to select random seeds per trial.
 
-    Each trial is saved in a `scene_layout` directory and has two files:
+    Each trial is saved in a `scene_layout` directory and has three files:
     
     1. A .json file of the [`Trial` data](../api/trial.md).
-    2. An audio .wave file.
+    2. An audio .wav audio file.
+    3. The occupancy map as a .npy numpy file.
     
     ```
     D:/multimodal_challenge/
@@ -119,8 +121,10 @@ class Dataset(MultiModalBase):
     ....mm_kitchen_1a_0/  # scene_layout
     ........00000.json
     ........00000.wav
+    ........00000.npy
     ........00001.json
     ........00001.wav
+    ........00001.npy
     ........(etc.)
     ....mm_kitchen_1a_1/
     ```
@@ -190,6 +194,8 @@ class Dataset(MultiModalBase):
         # which allows us to pause/resume dataset generation without inadvertantly changing it.
         self._random_seeds: np.array = np.array([])
         self._random_seed_index: int = 0
+        # The IDs of the target object and the distractors.
+        self._extra_object_ids: List[int] = list()
 
     def run(self) -> None:
         """
@@ -375,6 +381,34 @@ class Dataset(MultiModalBase):
                 i.gravity = True
                 target_object_index = len(object_init_data)
             object_init_data.append(i)
+
+        # Update the occupancy map with the final positions of the distractors and target objects.
+        # Get overlap data per cell.
+        for idx, idy in np.ndindex(self.occupancy_map.shape):
+            if self.occupancy_map[idx][idy] < 0:
+                continue
+            # Get the ID for the overlap.
+            overlap_id: int = idx + (idy * 10000)
+            x, z = self.get_occupancy_position(idx, idy)
+            self._next_frame_commands.append({"$type": "send_overlap_sphere",
+                                              "radius": OCCUPANCY_CELL_SIZE / 2,
+                                              "position": {"x": x, "y": 0, "z": z},
+                                              "id": overlap_id})
+        resp = self.communicate([])
+        # Use the overlap output data to update the occupancy map.
+        for i in range(len(resp) - 1):
+            r_id = OutputData.get_data_type_id(resp[i])
+            if r_id == "over":
+                overlap = Overlap(resp[i])
+                # Mark this space as occupied.
+                for o_id in overlap.get_object_ids():
+                    if o_id in self._extra_object_ids:
+                        overlap_id = overlap.get_id()
+                        idx = overlap_id % 10000
+                        idz = int((overlap_id - (overlap_id % 10000)) / 10000)
+                        self.occupancy_map[idx][idz] = 1
+        # Update the scene state (just in case something actually moved).
+        state = SceneState(resp=resp)
         # Create the trial.
         trial = Trial(object_init_data=object_init_data,
                       target_object_index=target_object_index,
@@ -384,6 +418,8 @@ class Dataset(MultiModalBase):
         filename = get_trial_filename(self.trial_count)
         # Save the trial.
         output_directory.joinpath(f"{filename}.json").write_text(dumps(trial, cls=Encoder), encoding="utf-8")
+        # Save the occupancy map.
+        np.save(str(output_directory.joinpath(filename).resolve()), self.occupancy_map)
         # Use ffmpeg to remove the initial silence.
         with open(devnull, "w+") as f:
             call(["ffmpeg", "-i", str(Dataset.TEMP_AUDIO_PATH.resolve()),
@@ -413,10 +449,13 @@ class Dataset(MultiModalBase):
             self._object_init_commands[o_id] = o_commands
         # Add the target object.
         self.target_object_id, target_object_commands = self.trials[self.trial_count].target_object.get_commands()
+        self._extra_object_ids.clear()
+        self._extra_object_ids.append(self.target_object_id)
         self._object_init_commands[self.target_object_id] = target_object_commands
-        # Add the distractors.
+        # Add the distractor objects.
         for distractor in self.trials[self.trial_count].distractors:
             o_id, o_commands = distractor.get_commands()
+            self._extra_object_ids.append(o_id)
             self._object_init_commands[o_id] = o_commands
         # We need every frame for audio recording, but not right now, so let's speed things up.
         self._skip_frames = 10
