@@ -1,3 +1,8 @@
+# 0.3.7
+
+- Required version of TDW: 1.8.19.0
+- The initial rotation of the Magnebot is totally random (instead of randomly angled away from the target object)
+
 # 0.3.6
 
 - Required version of TDW: 1.8.14.0 (Includes size buckets for object audio info)
