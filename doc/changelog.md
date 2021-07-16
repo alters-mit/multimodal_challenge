@@ -1,3 +1,7 @@
+# 0.3.8
+
+- Required version of TDW: 1.8.19.1
+
 # 0.3.7
 
 - Required version of TDW: 1.8.19.0
