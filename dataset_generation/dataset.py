@@ -462,17 +462,8 @@ class Dataset(MultiModalBase):
         self._scene_bounds = loads(SCENE_BOUNDS_DIRECTORY.joinpath(f"{scene[:-1]}.json").read_text())
         # Initialize the scene.
         super().init_scene(scene=scene, layout=layout)
-        # Get the angle to the object.
-        angle = TDWUtils.get_angle_between(v1=self.state.magnebot_transform.forward,
-                                           v2=TDWUtils.vector3_to_array(self.trials[self.trial_count].target_object_position) - self.state.magnebot_transform.position)
-        if np.abs(angle) > 180:
-            if angle > 0:
-                angle -= 360
-            else:
-                angle += 360
-        # Flip the angle and add some randomness. Then turn by the angle to look away from the object.
-        angle += 180 + self._rng.uniform(-45, 45)
-        self.turn_by(angle=angle)
+        # Turn the Magnebot by a random angle.
+        self.turn_by(angle=self._rng.uniform(-179, 179))
         # Stop skipping frames now that we're done turning.
         self._skip_frames = 0
         # Let the object fall and apply the cached force.

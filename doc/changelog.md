@@ -1,6 +1,6 @@
 # 0.4.0
 
-- Required version of TDW: 1.8.19.0
+- Required version of TDW: 1.8.19.1
 - **Added distractor objects.** Objects are randomly placed on the floor during rehearsal.py
   - (Backend) rehearsal.py sets the initial Magnebot position based on where the objects (distractors and target object) have fallen
   - (Backend) `DatasetTrial` now includes initialization data for the distractor objects and the initial Magnebot position
@@ -12,6 +12,11 @@
 - Improved version checking for the `tdw` pip module, the `magnebot` pip module, and the TDW build
 - (Backend): Added `util/add_models.py` to update the model librarian json file
 - (Backend): Added `packaging` as a required pip module
+
+# 0.3.7
+
+- Required version of TDW: 1.8.19.0
+- The initial rotation of the Magnebot is totally random (instead of randomly angled away from the target object)
 
 # 0.3.6
 
