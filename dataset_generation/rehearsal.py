@@ -1,5 +1,6 @@
 from json import dumps
 from typing import Optional, List, Dict
+from pathlib import Path
 from tqdm import tqdm
 import numpy as np
 from tdw.controller import Controller
@@ -189,7 +190,7 @@ class Rehearsal(Controller):
         distractor_names: Dict[int, str] = dict()
         # This flag is used to determine if whether we should immediately discard the trial.
         good = True
-        # Drop the distractors one at a time to avoid interpentration.
+        # Drop the distractors one at a time to avoid interpenetration.
         # Each time, make sure that the distractors actually stop moving and actually land above floor level.
         for i in range(num_distractors):
             name = self.distractors[self.rng.randint(0, len(self.distractors))]
@@ -343,6 +344,13 @@ class Rehearsal(Controller):
         :param pbar: Progress bar.
         """
 
+        # Skip over existing rehearsal data.
+        output_path: Path = REHEARSAL_DIRECTORY.joinpath(f"{scene}_{layout}.json")
+        if output_path.exists():
+            if pbar is not None:
+                pbar.update(num_trials)
+            return
+
         scene_record = self.scene_librarian.get_record(scene)
         commands: List[dict] = [{"$type": "add_scene",
                                  "name": scene_record.name,
@@ -397,8 +405,8 @@ class Rehearsal(Controller):
                 dataset_trials.append(dataset_trial)
                 pbar.update(1)
         # Write the results to disk.
-        REHEARSAL_DIRECTORY.joinpath(f"{scene}_{layout}.json").write_text(dumps(dataset_trials, cls=Encoder),
-                                                                          encoding="utf-8")
+        output_path.write_text(dumps(dataset_trials, cls=Encoder),
+                               encoding="utf-8")
         if close_bar:
             pbar.close()
 
