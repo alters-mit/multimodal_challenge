@@ -155,7 +155,9 @@ class Dataset(MultiModalBase):
         :param random_seed: The seed for the random number generator.
         :param log: If True, log each list of commands sent.
         """
-
+        
+        if not DATASET_DIRECTORY.exists():
+            DATASET_DIRECTORY.mkdir(parents=True)
         self._log: bool = log
         self._log_path: Path = DATASET_DIRECTORY.joinpath("log.txt")
         if self._log_path.exists():
@@ -208,8 +210,6 @@ class Dataset(MultiModalBase):
         """
 
         random_seed_path = DATASET_DIRECTORY.joinpath("random_seeds.npy").resolve()
-        if not DATASET_DIRECTORY.exists():
-            DATASET_DIRECTORY.mkdir(parents=True)
         # Load existing random seeds.
         if random_seed_path.exists():
             self._random_seeds = np.load(str(random_seed_path))
