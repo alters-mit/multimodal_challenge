@@ -102,9 +102,13 @@ class Rehearsal(Controller):
     """
 
     """:class_var
-    The maximum distance from the center of the room that an object can be placed.
+    The maximum distance from the center of a large room that an object can be placed as a fraction of the half extents.
     """
-    DISTANCE_FROM_CENTER: float = 0.8
+    DISTANCE_FROM_CENTER_LARGE_ROOM: float = 0.7
+    """:class_var
+    The maximum distance from the center of a small room that an object can be placed as a fraction of the half extents.
+    """
+    DISTANCE_FROM_CENTER_SMALL_ROOM: float = 0.5
     """:class_var
     The minimum number of distractors in the scene.
     """
@@ -374,10 +378,15 @@ class Rehearsal(Controller):
         # Get the occupancy map.
         occupancy_map: np.array = np.load(str(OCCUPANCY_MAPS_DIRECTORY.joinpath(f"{scene}_{layout}.npy").resolve()))
         # Get the maximum distance from the center of the room that the objects can be dropped at.
-        max_distance = Rehearsal.DISTANCE_FROM_CENTER * min([np.abs(self.scene_environment.x_min),
-                                                             self.scene_environment.x_max,
-                                                             np.abs(self.scene_environment.z_min),
-                                                             self.scene_environment.z_max])
+        min_bound = min([np.abs(self.scene_environment.x_min),
+                         self.scene_environment.x_max,
+                         np.abs(self.scene_environment.z_min),
+                         self.scene_environment.z_max])
+        if min_bound >= 3:
+            distance_from_center = Rehearsal.DISTANCE_FROM_CENTER_LARGE_ROOM
+        else:
+            distance_from_center = Rehearsal.DISTANCE_FROM_CENTER_SMALL_ROOM
+        max_distance = distance_from_center * min_bound
         origin = np.array([0, 0])
         for ix, iy in np.ndindex(occupancy_map.shape):
             if occupancy_map[ix][iy] != 0:
