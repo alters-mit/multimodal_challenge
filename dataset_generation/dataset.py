@@ -147,16 +147,16 @@ class Dataset(MultiModalBase):
     """
     TEMP_AUDIO_PATH: Path = DATASET_DIRECTORY.joinpath("temp.wav")
 
-    def __init__(self, port: int = 1071, random_seed: int = 0, debug: bool = True):
+    def __init__(self, port: int = 1071, random_seed: int = 0, log: bool = True):
         """
         Create the network socket and bind the socket to the port.
 
         :param port: The port number.
         :param random_seed: The seed for the random number generator.
-        :param debug: If True, log each list of commands sent.
+        :param log: If True, log each list of commands sent.
         """
 
-        self._debug: bool = debug
+        self._log: bool = log
         self._log_path: Path = DATASET_DIRECTORY.joinpath("log.txt")
         if self._log_path.exists():
             self._log_path.unlink()
@@ -492,7 +492,7 @@ class Dataset(MultiModalBase):
 
     def communicate(self, commands: Union[dict, List[dict]]) -> List[bytes]:
         # Log the message.
-        if self._debug:
+        if self._log:
             if isinstance(commands, list):
                 msg = dumps(commands).encode('utf-8')
             else:
