@@ -1,6 +1,6 @@
 from os import devnull
 from time import sleep
-from typing import List, Optional
+from typing import List, Optional, Union
 from pathlib import Path
 from subprocess import call
 from json import loads, dumps
@@ -147,14 +147,19 @@ class Dataset(MultiModalBase):
     """
     TEMP_AUDIO_PATH: Path = DATASET_DIRECTORY.joinpath("temp.wav")
 
-    def __init__(self, port: int = 1071, random_seed: int = 0):
+    def __init__(self, port: int = 1071, random_seed: int = 0, debug: bool = True):
         """
         Create the network socket and bind the socket to the port.
 
         :param port: The port number.
         :param random_seed: The seed for the random number generator.
+        :param debug: If True, log each list of commands sent.
         """
 
+        self._debug: bool = debug
+        self._log_path: Path = DATASET_DIRECTORY.joinpath("log.txt")
+        if self._log_path.exists():
+            self._log_path.unlink()
         super().__init__(port=port, random_seed=random_seed, screen_height=128, screen_width=128, skip_frames=0)
         self.communicate([{"$type": "set_render_quality",
                            "render_quality": 0},
@@ -484,6 +489,17 @@ class Dataset(MultiModalBase):
         # Reset the modes here to discard any junk generated during setup.
         Dataset.PY_IMPACT.reset(initial_amp=Dataset.INITIAL_AMP)
         return ActionStatus.success
+
+    def communicate(self, commands: Union[dict, List[dict]]) -> List[bytes]:
+        # Log the message.
+        if self._debug:
+            if isinstance(commands, list):
+                msg = dumps(commands).encode('utf-8')
+            else:
+                msg = dumps([commands]).encode('utf-8')
+            with self._log_path.open("at", encoding="utf-8") as f:
+                f.write(msg + "\n")
+        return super().communicate(commands=commands)
 
     def _cache_static_data(self, resp: List[bytes]) -> None:
         super()._cache_static_data(resp=resp)
