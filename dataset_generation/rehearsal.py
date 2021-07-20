@@ -310,9 +310,14 @@ class Rehearsal(Controller):
                 mp = self.magnebot_positions[raycast_id]
                 magnebot_positions.append(np.array([mp[0], 0, mp[1]]))
         magnebot_positions = list(sorted(magnebot_positions, key=lambda p: np.linalg.norm(p - target_position)))
-        # Get the closer positions (to potentially stay away from obstacles).
-        magnebot_position = magnebot_positions[self.rng.randint(int(len(magnebot_positions) / 2),
-                                                                len(magnebot_positions))]
+        if len(magnebot_positions) == 0:
+            return None
+        elif len(magnebot_positions) == 1:
+            magnebot_position = magnebot_positions[0]
+        else:
+            # Get the closer positions (to potentially stay away from obstacles).
+            magnebot_position = magnebot_positions[self.rng.randint(int(len(magnebot_positions) / 2),
+                                                                    len(magnebot_positions))]
 
         return DatasetTrial(target_object=a,
                             force=force,
