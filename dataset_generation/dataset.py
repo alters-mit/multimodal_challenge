@@ -494,9 +494,9 @@ class Dataset(MultiModalBase):
         # Log the message.
         if self._log:
             if isinstance(commands, list):
-                msg = dumps(commands).encode('utf-8')
+                msg = dumps(commands)
             else:
-                msg = dumps([commands]).encode('utf-8')
+                msg = dumps([commands])
             with self._log_path.open("at", encoding="utf-8") as f:
                 f.write(msg + "\n")
         return super().communicate(commands=commands)

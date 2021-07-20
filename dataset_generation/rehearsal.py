@@ -112,11 +112,11 @@ class Rehearsal(Controller):
     """:class_var
     The minimum number of distractors in the scene.
     """
-    MIN_DISTRACTORS: int = 6
+    MIN_DISTRACTORS: int = 2
     """:class_var
     The maximum number of distractors in the scene.
     """
-    MAX_DISTRACTORS: int = 12
+    MAX_DISTRACTORS: int = 7
     """:class_var
     The minimum y value for the initial position of an object.
     """
@@ -186,8 +186,8 @@ class Rehearsal(Controller):
 
         # Add some distractors to the scene.
         num_distractors: int = self.rng.randint(Rehearsal.MIN_DISTRACTORS, Rehearsal.MAX_DISTRACTORS + 1)
-        if num_distractors >= len(self.object_positions):
-            num_distractors = len(self.object_positions) - 1
+        if num_distractors >= len(self.object_positions) - 1:
+            num_distractors = len(self.object_positions) - 2
 
         # Remember the IDs and names of the distractors.
         distractor_ids: List[int] = list()
@@ -295,18 +295,24 @@ class Rehearsal(Controller):
         # Get a spawn position for the Magnebot.
         magnebot_positions: List[np.array] = list()
         target_position = TDWUtils.vector3_to_array(target_object_position)
+        hits: Dict[int, List[bool]] = dict()
         for i in range(len(resp) - 1):
             r_id = OutputData.get_data_type_id(resp[i])
             if r_id == "rayc":
                 raycast = Raycast(resp[i])
-                # Get a free position.
-                if raycast.get_hit() and not raycast.get_hit_object():
-                    mp = self.magnebot_positions[raycast.get_raycast_id()]
-                    magnebot_positions.append(np.array([mp[0], 0, mp[1]]))
+                raycast_id = raycast.get_raycast_id()
+                if raycast_id not in hits:
+                    hits[raycast_id] = list()
+                hits[raycast_id].append(raycast.get_hit() and not raycast.get_hit_object())
+        # Get the free positions.
+        for raycast_id in hits:
+            if len([r for r in hits[raycast_id] if not r]) == 0:
+                mp = self.magnebot_positions[raycast_id]
+                magnebot_positions.append(np.array([mp[0], 0, mp[1]]))
         magnebot_positions = list(sorted(magnebot_positions, key=lambda p: np.linalg.norm(p - target_position)))
-        # Get the further away positions.
-        magnebot_positions = magnebot_positions[int(len(magnebot_positions) / 2):]
-        magnebot_position = magnebot_positions[self.rng.randint(0, len(magnebot_positions))]
+        # Get the closer positions (to potentially stay away from obstacles).
+        magnebot_position = magnebot_positions[self.rng.randint(int(len(magnebot_positions) / 2),
+                                                                len(magnebot_positions))]
 
         return DatasetTrial(target_object=a,
                             force=force,
@@ -398,6 +404,10 @@ class Rehearsal(Controller):
                 self.object_positions.append(p)
             else:
                 self.magnebot_positions.append(p)
+        # Ensure that there are at least two places to put objects.
+        if len(self.object_positions) == 0:
+            self.object_positions = self.magnebot_positions[:2]
+            self.magnebot_positions = self.magnebot_positions[:2]
 
         close_bar = pbar is None
         if pbar is None:
