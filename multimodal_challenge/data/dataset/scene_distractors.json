@@ -1,9 +1,0 @@
-{"mm_craftroom_1": {"distance": 0.7, "min_distractors": 2, "max_distractors": 6},
-  "mm_craftroom_2": {"distance": 0.7, "min_distractors": 2, "max_distractors": 7},
-  "mm_craftroom_3": {"distance": 0.5, "min_distractors": 1, "max_distractors": 3},
-  "mm_craftroom_4": {"distance": 0.7, "min_distractors": 2, "max_distractors": 7},
-  "mm_kitchen_1": {"distance": 0.7, "min_distractors": 2, "max_distractors": 6},
-  "mm_kitchen_2": {"distance": 0.5, "min_distractors": 1, "max_distractors": 4},
-  "mm_kitchen_3": {"distance": 0.5, "min_distractors": 1, "max_distractors": 3},
-  "mm_kitchen_4": {"distance": 0.7, "min_distractors": 2, "max_distractors": 7}
-}

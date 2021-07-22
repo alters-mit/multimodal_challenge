@@ -57,5 +57,5 @@ AUDIO_DATASET_DIRECTORY = DATA_DIRECTORY.joinpath("dataset")
 ENV_AUDIO_MATERIALS_PATH = AUDIO_DATASET_DIRECTORY.joinpath("audio_materials.json")
 # The path to the list of distractor objects.
 DISTRACTOR_OBJECTS_PATH = AUDIO_DATASET_DIRECTORY.joinpath("distractor_objects.txt")
-# The path to the scene distractors metadata.
-SCENE_DISTRACTORS_PATH = AUDIO_DATASET_DIRECTORY.joinpath("scene_distractors.json")
+# The path to the Magnebot occupancy maps.
+MAGNEBOT_OCCUPANCY_MAPS_DIRECTORY = AUDIO_DATASET_DIRECTORY.joinpath("magnebot_occupancy_maps")

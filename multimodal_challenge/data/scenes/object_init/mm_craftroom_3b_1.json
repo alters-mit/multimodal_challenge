@@ -481,26 +481,6 @@
   },
   {
     "kinematic": false,
-    "name": "vitra_meda_chair",
-    "position": {
-      "x": -0.2233256,
-      "y": 0.01799929,
-      "z": 0.05456797
-    },
-    "rotation": {
-      "w": -0.5861093,
-      "x": 0,
-      "y": 0.810232,
-      "z": 0
-    },
-    "scale_factor": {
-      "x": 1,
-      "y": 1,
-      "z": 1
-    }
-  },
-  {
-    "kinematic": false,
     "name": "bookend05",
     "position": {
       "x": 0.8935615,

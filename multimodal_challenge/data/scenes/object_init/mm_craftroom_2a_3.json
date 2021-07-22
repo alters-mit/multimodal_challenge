@@ -20,26 +20,6 @@
     }
   },
   {
-    "kinematic": false,
-    "name": "tan_purse",
-    "position": {
-      "x": 0.474,
-      "y": 0.4550191,
-      "z": -0.04999533
-    },
-    "rotation": {
-      "w": 0.8660273,
-      "x": 0,
-      "y": 0.4999967,
-      "z": 0
-    },
-    "scale_factor": {
-      "x": 1,
-      "y": 1,
-      "z": 1
-    }
-  },
-  {
     "kinematic": true,
     "name": "bakerparisfloorlamp03",
     "position": {
@@ -271,26 +251,6 @@
       "w": 1.3868e-06,
       "x": 0,
       "y": 1,
-      "z": 0
-    },
-    "scale_factor": {
-      "x": 1,
-      "y": 1,
-      "z": 1
-    }
-  },
-  {
-    "kinematic": false,
-    "name": "baton_table_lamp_dark",
-    "position": {
-      "x": 0.2539212,
-      "y": 0.4563772,
-      "z": -0.1100973
-    },
-    "rotation": {
-      "w": -0.7968914,
-      "x": 0,
-      "y": 0.6041226,
       "z": 0
     },
     "scale_factor": {
@@ -841,26 +801,6 @@
   },
   {
     "kinematic": false,
-    "name": "lint_roller01",
-    "position": {
-      "x": 0.182,
-      "y": 0.479838,
-      "z": -0.281
-    },
-    "rotation": {
-      "w": 0.4336175,
-      "x": 0,
-      "y": 0.9010971,
-      "z": 0
-    },
-    "scale_factor": {
-      "x": 1,
-      "y": 1,
-      "z": 1
-    }
-  },
-  {
-    "kinematic": false,
     "name": "jug03",
     "position": {
       "x": -2.109,
@@ -1031,26 +971,6 @@
       "w": 2.936521e-06,
       "x": 0,
       "y": 1,
-      "z": 0
-    },
-    "scale_factor": {
-      "x": 1,
-      "y": 1,
-      "z": 1
-    }
-  },
-  {
-    "kinematic": false,
-    "name": "de_castelli_placas_table",
-    "position": {
-      "x": 0.3039939,
-      "y": 0.001650035,
-      "z": -0.1400033
-    },
-    "rotation": {
-      "w": 1,
-      "x": 0,
-      "y": 2.645254e-06,
       "z": 0
     },
     "scale_factor": {

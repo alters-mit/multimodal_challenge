@@ -5,9 +5,15 @@
   - (Backend) `DatasetTrial` now includes initialization data for the distractor objects and the initial Magnebot position
   - (Backend) Added data file `distractor_objects.txt`
 - The target object is now dropped onto a free space of the occupancy map instead of a drop zone
+- Updated some of the layouts to include less furniture
+- Updated occupancy maps for every scene_layout combination
 - Added API documentation for Magnebot arm articulation actions (although they have always been usable in this API)
 - Improved version checking for the `tdw` pip module, the `magnebot` pip module, and the TDW build
-- (Backend): Added optional parameter `debug` to the `Dataset` constructor; if True, log messages.
+- (Backend): Added `AddOn` and `OccupancyMap` add-ons. These scripts are from a future version of TDW (1.9.0).
+- (Backend): Removed the old `OccupancyMapper` and created a new one in `dataset_generation/occupancy_mapper.py`. This script generates far more accurate occupancy maps using the new add-ons.
+  - Removed occupancy map generation from `init_data.py`
+- (Backend) Added Magnebot occupancy maps (used in `rehearsal.py` to set an initial Magnebot position)
+- (Backend): Added optional parameter `log` to the `Dataset` constructor; if True, log messages.
 - (Backend): **Removed drop zones** (removed the Python class, all references to drop zones in the documentation, and the cached drop zone positions)
 - (Backend): `dataset.py` now saves occupancy maps as .npy files, which include the position of the target object and the distractor objects
 - (Backend): It's now possible to resume `rehearsal.py` rather than having to restart from the beginning

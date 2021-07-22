@@ -8,7 +8,6 @@ if __name__ == "__main__":
                                                                          "dataset/env_audio_materials.py",
                                                                          "multimodal_object_init_data.py",
                                                                          "multimodal_base.py",
-                                                                         "occupancy_mapper.py",
                                                                          "trial.py"])
     md.get_docs(output_directory=Path("../doc/api"))
 

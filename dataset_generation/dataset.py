@@ -10,7 +10,7 @@ import pyaudio
 from tqdm import tqdm
 from tdw.tdw_utils import AudioUtils, TDWUtils
 from tdw.py_impact import PyImpact, ObjectInfo, AudioMaterial
-from tdw.output_data import OutputData, Rigidbodies, Transforms, AudioSources, Overlap
+from tdw.output_data import Rigidbodies, Transforms, AudioSources
 from magnebot import ActionStatus
 from magnebot.scene_state import SceneState
 from magnebot.util import get_data
@@ -24,6 +24,7 @@ from multimodal_challenge.trial import Trial
 from multimodal_challenge.encoder import Encoder
 from multimodal_challenge.dataset.dataset_trial import DatasetTrial
 from multimodal_challenge.dataset.env_audio_materials import EnvAudioMaterials
+from multimodal_challenge.dataset.add_ons.occupancy_map import OccupancyMap
 
 
 class Dataset(MultiModalBase):
@@ -387,31 +388,16 @@ class Dataset(MultiModalBase):
                 target_object_index = len(object_init_data)
             object_init_data.append(i)
 
-        # Update the occupancy map with the final positions of the distractors and target objects.
-        # Get overlap data per cell.
-        for idx, idy in np.ndindex(self.occupancy_map.shape):
-            if self.occupancy_map[idx][idy] < 0:
-                continue
-            # Get the ID for the overlap.
-            overlap_id: int = idx + (idy * 10000)
-            x, z = self.get_occupancy_position(idx, idy)
-            self._next_frame_commands.append({"$type": "send_overlap_sphere",
-                                              "radius": OCCUPANCY_CELL_SIZE / 2,
-                                              "position": {"x": x, "y": 0, "z": z},
-                                              "id": overlap_id})
-        resp = self.communicate([])
-        # Use the overlap output data to update the occupancy map.
-        for i in range(len(resp) - 1):
-            r_id = OutputData.get_data_type_id(resp[i])
-            if r_id == "over":
-                overlap = Overlap(resp[i])
-                # Mark this space as occupied.
-                for o_id in overlap.get_object_ids():
-                    if o_id in self._extra_object_ids:
-                        overlap_id = overlap.get_id()
-                        idx = overlap_id % 10000
-                        idz = int((overlap_id - (overlap_id % 10000)) / 10000)
-                        self.occupancy_map[idx][idz] = 1
+        # Re-create the occupancy map to include the distractors and the target object.
+        occupancy_mapper = OccupancyMap(cell_size=OCCUPANCY_CELL_SIZE)
+        resp = self.communicate(occupancy_mapper.get_initialization_commands())
+        occupancy_mapper.initialized = True
+        occupancy_mapper.on_send(resp=resp)
+        occupancy_mapper.generate()
+        resp = self.communicate(occupancy_mapper.commands)
+        occupancy_mapper.on_send(resp=resp)
+        self.occupancy_map = occupancy_mapper.occupancy_map
+
         # Update the scene state (just in case something actually moved).
         state = SceneState(resp=resp)
         # Create the trial.

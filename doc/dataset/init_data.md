@@ -42,7 +42,7 @@ _Returns:_  A list of commands to add objects to the scene.
 
 #### get_init_data
 
-**`InitData.get_init_data(scene, layout, occupancy_map)`**
+**`InitData.get_init_data(scene, layout)`**
 
 _This is a static function._
 
@@ -54,5 +54,4 @@ Update the scene and model metadata records in this repo's librarians.
 | --- | --- | --- | --- |
 | scene |  str |  | The name of the scene. |
 | layout |  int |  | The layout index. |
-| occupancy_map |  str |  | If True, generate an occupancy map. |
 

@@ -88,9 +88,8 @@ D:/multimodal_challenge/
 
 | Variable | Type | Description |
 | --- | --- | --- |
-| `DISTANCE_FROM_CENTER` | float | The maximum distance from the center of the room that an object can be placed. |
-| `MIN_DISTRACTORS` | int | The minimum number of distractors in the scene. |
-| `MAX_DISTRACTORS` | int | The maximum number of distractors in the scene. |
+| `MIN_DISTRACTORS` | int | The minimum number of distractors per scene (assuming there are enough free spaces). |
+| `MAX_DISTRACTORS` | int | The maximum number of distractors per scene (assuming there are enough free spaces). |
 | `MIN_DROP_Y` | float | The minimum y value for the initial position of an object. |
 | `MAX_DROP_Y` | float | The maximum y value for the initial position of an object. |
 | `SKIPPED_FRAMES` | int | The amount of frames skipped while objects are falling. |

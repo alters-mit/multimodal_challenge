@@ -10,7 +10,6 @@ from multimodal_challenge.paths import OBJECT_INIT_DIRECTORY, OBJECT_LIBRARY_PAT
     SCENE_LIBRARY_PATH, KINEMATIC_OBJECTS_PATH
 from multimodal_challenge.multimodal_object_init_data import MultiModalObjectInitData
 from multimodal_challenge.encoder import Encoder
-from multimodal_challenge.occupancy_mapper import OccupancyMapper
 
 
 class InitData:
@@ -57,7 +56,7 @@ class InitData:
         return commands
 
     @staticmethod
-    def get_init_data(scene: str, layout: int, occupancy_map: str) -> None:
+    def get_init_data(scene: str, layout: int) -> None:
         """
         Create object initialization data.
 
@@ -65,14 +64,7 @@ class InitData:
 
         :param scene: The name of the scene.
         :param layout: The layout index.
-        :param occupancy_map: If True, generate an occupancy map.
         """
-
-        # Update an occupancy map.
-        if occupancy_map == "update":
-            m = OccupancyMapper()
-            m.create(scene=scene, layout=layout, image_dir=Path("../doc/images"))
-            return
 
         bucket: str = "https://tdw-public.s3.amazonaws.com"
         # Update the scene library.
@@ -137,11 +129,6 @@ class InitData:
                 i += 3
         OBJECT_INIT_DIRECTORY.joinpath(f"{scene}_{layout}.json").write_text(dumps(objects, cls=Encoder, indent=2,
                                                                                   sort_keys=True))
-        # Generate an occupancy map.
-        if occupancy_map == "create":
-            m = OccupancyMapper()
-            m.create(scene=scene, layout=layout, image_dir=Path("../doc/images"))
-        return
 
 
 if __name__ == "__main__":
@@ -150,11 +137,6 @@ if __name__ == "__main__":
     parser.add_argument("--layout", type=int, help="The layout number.")
     parser.add_argument("--load_scene", action="store_true", help="If included load the scene. "
                                                                   "Don't update the init data.")
-    parser.add_argument("--occupancy_map", type=str, choices=["create", "update", "skip"], default="create",
-                        help="Create an occupancy map. "
-                             "create=Create a new occupancy map. "
-                             "update=Use existing init data to update an occupancy map. "
-                             "skip=Don't create an occupancy map.")
     args = parser.parse_args()
     if args.load_scene:
         c = Controller(launch_build=False)
@@ -162,4 +144,4 @@ if __name__ == "__main__":
         cmds.extend(InitData.get_commands(scene=args.scene, layout=args.layout))
         c.communicate(cmds)
     else:
-        InitData.get_init_data(scene=args.scene, layout=args.layout, occupancy_map=args.occupancy_map)
+        InitData.get_init_data(scene=args.scene, layout=args.layout)

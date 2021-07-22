@@ -140,7 +140,7 @@ D:/multimodal_challenge/
 
 **`Dataset()`**
 
-**`Dataset(port=1071, random_seed=0)`**
+**`Dataset(port=1071, random_seed=0, log=True)`**
 
 Create the network socket and bind the socket to the port.
 
@@ -148,6 +148,7 @@ Create the network socket and bind the socket to the port.
 | --- | --- | --- | --- |
 | port |  int  | 1071 | The port number. |
 | random_seed |  int  | 0 | The seed for the random number generator. |
+| log |  bool  | True | If True, log each list of commands sent. |
 
 #### run
 
@@ -196,4 +197,12 @@ Initialize the scene. Turn the Magnebot away from the object. Let the object fal
 | layout |  int |  | The layout index. |
 
 _Returns:_  An `ActionStatus` (always success).
+
+#### communicate
+
+**`self.communicate()`**
+
+Source: https://stackoverflow.com/questions/892199/detect-record-audio-in-python
+
+Loop until audio stops playing.
 
