@@ -1,18 +1,19 @@
-from json import dumps
+from json import dumps, loads
 from typing import Optional, List, Dict
 from pathlib import Path
 from tqdm import tqdm
 import numpy as np
 from tdw.controller import Controller
 from tdw.tdw_utils import TDWUtils
-from tdw.output_data import OutputData, Transforms, Raycast
+from tdw.output_data import OutputData, Transforms, Overlap
 from tdw.object_init_data import TransformInitData
 from magnebot.scene_environment import SceneEnvironment
 from magnebot.constants import OCCUPANCY_CELL_SIZE
 from magnebot.util import get_data
 from multimodal_challenge.util import TARGET_OBJECTS, get_object_init_commands, get_scene_librarian, get_scene_layouts,\
     check_pip_version, check_build_version
-from multimodal_challenge.paths import REHEARSAL_DIRECTORY, OCCUPANCY_MAPS_DIRECTORY, DISTRACTOR_OBJECTS_PATH
+from multimodal_challenge.paths import REHEARSAL_DIRECTORY, OCCUPANCY_MAPS_DIRECTORY, DISTRACTOR_OBJECTS_PATH, \
+    SCENE_DISTRACTORS_PATH
 from multimodal_challenge.dataset.dataset_trial import DatasetTrial
 from multimodal_challenge.encoder import Encoder
 from multimodal_challenge.multimodal_object_init_data import MultiModalObjectInitData
@@ -102,22 +103,6 @@ class Rehearsal(Controller):
     """
 
     """:class_var
-    The maximum distance from the center of a large room that an object can be placed as a fraction of the half extents.
-    """
-    DISTANCE_FROM_CENTER_LARGE_ROOM: float = 0.7
-    """:class_var
-    The maximum distance from the center of a small room that an object can be placed as a fraction of the half extents.
-    """
-    DISTANCE_FROM_CENTER_SMALL_ROOM: float = 0.5
-    """:class_var
-    The minimum number of distractors in the scene.
-    """
-    MIN_DISTRACTORS: int = 2
-    """:class_var
-    The maximum number of distractors in the scene.
-    """
-    MAX_DISTRACTORS: int = 7
-    """:class_var
     The minimum y value for the initial position of an object.
     """
     MIN_DROP_Y: float = 1.5
@@ -173,10 +158,15 @@ class Rehearsal(Controller):
         """
         self.magnebot_positions: List[np.array] = list()
 
-    def do_trial(self) -> Optional[DatasetTrial]:
+        # Scene distractor metadata.
+        self._scene_distractors: dict = loads(SCENE_DISTRACTORS_PATH.read_text(encoding="utf-8"))
+
+    def do_trial(self, scene: str) -> Optional[DatasetTrial]:
         """
         Choose a random object. Assign a random (constrained) scale, position, rotation, and force.
         Let the object fall. When it stops moving, determine if the object is in an acceptable location.
+
+        :param scene: The name of the scene.
 
         :return: A `DatasetTrial` if this is a good trial.
         """
@@ -185,7 +175,8 @@ class Rehearsal(Controller):
         self.rng.shuffle(self.object_positions)
 
         # Add some distractors to the scene.
-        num_distractors: int = self.rng.randint(Rehearsal.MIN_DISTRACTORS, Rehearsal.MAX_DISTRACTORS + 1)
+        num_distractors = self.rng.randint(self._scene_distractors[scene[:-1]]["min_distractors"],
+                                           self._scene_distractors[scene[:-1]]["max_distractors"] + 1)
         if num_distractors >= len(self.object_positions) - 1:
             num_distractors = len(self.object_positions) - 2
 
@@ -253,25 +244,19 @@ class Rehearsal(Controller):
         object_ids.append(self.target_object_id)
         commands = [{"$type": "send_transforms",
                      "frequency": "once",
-                     "ids": object_ids},
-                    {"$type": "set_floorplan_roof",
-                     "show": False}]
+                     "ids": object_ids}]
+        # Get overlaps to check if the Magnebot can be placed in these cells.
         for i, position in enumerate(self.magnebot_positions):
-            commands.append({"$type": "send_spherecast",
-                             "origin": {"x": float(position[0]),
-                                        "y": 4,
-                                        "z": float(position[1])},
-                             "destination": {"x": float(position[0]),
-                                             "y": 0,
-                                             "z": float(position[1])},
-                             "radius": OCCUPANCY_CELL_SIZE / 2,
+            commands.append({"$type": "send_overlap_sphere",
+                             "radius": (OCCUPANCY_CELL_SIZE / 2) * 1.2,
+                             "position": {"x": float(position[0]),
+                                          "y": 0,
+                                          "z": float(position[1])},
                              "id": i})
         resp = self.communicate(commands)
         # Destroy all non-floorplan objects and re-enable the roof.
         destroy_objects.extend([{"$type": "destroy_object",
-                                "id": self.target_object_id},
-                                {"$type": "set_floorplan_roof",
-                                 "show": True}])
+                                "id": self.target_object_id}])
         self.communicate(destroy_objects)
         if not good:
             return None
@@ -294,30 +279,20 @@ class Rehearsal(Controller):
         a.kinematic = True
         # Get a spawn position for the Magnebot.
         magnebot_positions: List[np.array] = list()
-        target_position = TDWUtils.vector3_to_array(target_object_position)
-        hits: Dict[int, List[bool]] = dict()
         for i in range(len(resp) - 1):
             r_id = OutputData.get_data_type_id(resp[i])
-            if r_id == "rayc":
-                raycast = Raycast(resp[i])
-                raycast_id = raycast.get_raycast_id()
-                if raycast_id not in hits:
-                    hits[raycast_id] = list()
-                hits[raycast_id].append(raycast.get_hit() and not raycast.get_hit_object())
-        # Get the free positions.
-        for raycast_id in hits:
-            if len([r for r in hits[raycast_id] if not r]) == 0:
-                mp = self.magnebot_positions[raycast_id]
-                magnebot_positions.append(np.array([mp[0], 0, mp[1]]))
-        magnebot_positions = list(sorted(magnebot_positions, key=lambda p: np.linalg.norm(p - target_position)))
+            if r_id == "over":
+                overlap = Overlap(resp[i])
+                if len(overlap.get_object_ids()) == 0:
+                    mp = self.magnebot_positions[overlap.get_id()]
+                    magnebot_positions.append(np.array([mp[0], 0, mp[1]]))
         if len(magnebot_positions) == 0:
             return None
         elif len(magnebot_positions) == 1:
             magnebot_position = magnebot_positions[0]
         else:
             # Get the closer positions (to potentially stay away from obstacles).
-            magnebot_position = magnebot_positions[self.rng.randint(int(len(magnebot_positions) / 2),
-                                                                    len(magnebot_positions))]
+            magnebot_position = magnebot_positions[self.rng.randint(0, len(magnebot_positions))]
 
         return DatasetTrial(target_object=a,
                             force=force,
@@ -389,15 +364,11 @@ class Rehearsal(Controller):
         # Get the occupancy map.
         occupancy_map: np.array = np.load(str(OCCUPANCY_MAPS_DIRECTORY.joinpath(f"{scene}_{layout}.npy").resolve()))
         # Get the maximum distance from the center of the room that the objects can be dropped at.
-        min_bound = min([np.abs(self.scene_environment.x_min),
-                         self.scene_environment.x_max,
-                         np.abs(self.scene_environment.z_min),
-                         self.scene_environment.z_max])
-        if min_bound >= 3:
-            distance_from_center = Rehearsal.DISTANCE_FROM_CENTER_LARGE_ROOM
-        else:
-            distance_from_center = Rehearsal.DISTANCE_FROM_CENTER_SMALL_ROOM
-        max_distance = distance_from_center * min_bound
+        distance = self._scene_distractors[scene[:-1]]["distance"]
+        max_distance = distance * min([np.abs(self.scene_environment.x_min),
+                                       self.scene_environment.x_max,
+                                       np.abs(self.scene_environment.z_min),
+                                       self.scene_environment.z_max])
         origin = np.array([0, 0])
         for ix, iy in np.ndindex(occupancy_map.shape):
             if occupancy_map[ix][iy] != 0:
@@ -422,7 +393,7 @@ class Rehearsal(Controller):
         dataset_trials: List[DatasetTrial] = list()
         while len(dataset_trials) < num_trials:
             # Do a trial.
-            dataset_trial = self.do_trial()
+            dataset_trial = self.do_trial(scene=scene)
             # If we got an object back, then this was a good trial.
             if dataset_trial is not None:
                 # Save the data.

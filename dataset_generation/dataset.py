@@ -275,7 +275,7 @@ class Dataset(MultiModalBase):
             for i in range(self.trial_count, len(self.trials)):
                 self.do_trial(output_directory=output_directory)
                 pbar.update(1)
-        # Close the audio thread, stop fmedia, and stop the progress bar.
+        # Stop fmedia from recording.
         finally:
             AudioUtils.stop()
 
@@ -575,6 +575,7 @@ if __name__ == "__main__":
     from argparse import ArgumentParser
     parser = ArgumentParser()
     parser.add_argument("--random_seed", type=int, default=0, help="The total number of trials.")
+    parser.add_argument("--log", action="store_true", help="Log all commands sent to the build.")
     args = parser.parse_args()
-    dataset_generator = Dataset(random_seed=args.random_seed)
+    dataset_generator = Dataset(random_seed=args.random_seed, log=args.log)
     dataset_generator.run()
