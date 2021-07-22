@@ -7,7 +7,7 @@ from tdw.controller import Controller
 from tdw.tdw_utils import TDWUtils
 from tdw.output_data import Transforms
 from tdw.object_init_data import TransformInitData
-from magnebot.scene_environment import SceneEnvironment
+from tdw.scene.scene_bounds import SceneBounds
 from magnebot.constants import OCCUPANCY_CELL_SIZE
 from magnebot.util import get_data
 from multimodal_challenge.util import TARGET_OBJECTS, get_object_init_commands, get_scene_librarian, get_scene_layouts,\
@@ -151,7 +151,7 @@ class Rehearsal(Controller):
         """:field
         Environment data used for setting drop positions.
         """
-        self.scene_environment: Optional[SceneEnvironment] = None
+        self.scene_bounds: Optional[SceneBounds] = None
         lib = list(TransformInitData.LIBRARIES.values())[-1]
         """:field
         Metadata for distractor objects.
@@ -343,7 +343,7 @@ class Rehearsal(Controller):
                 commands[i]["is_kinematic"] = True
         resp = self.communicate(commands)
         # Set the scene environment.
-        self.scene_environment = SceneEnvironment(resp=resp)
+        self.scene_bounds = SceneBounds(resp=resp)
 
         # Get all object positions. A valid position is a free position not too far from the center of the room.
         self.object_positions.clear()
@@ -354,15 +354,15 @@ class Rehearsal(Controller):
         magnebot_occupancy_map: np.array = np.load(str(MAGNEBOT_OCCUPANCY_MAPS_DIRECTORY.joinpath(np_filename).resolve()))
         for ix, iy in np.ndindex(magnebot_occupancy_map.shape):
             if magnebot_occupancy_map[ix][iy] == 0:
-                x = self.scene_environment.x_min + (ix * OCCUPANCY_CELL_SIZE)
-                z = self.scene_environment.z_min + (iy * OCCUPANCY_CELL_SIZE)
+                x = self.scene_bounds.x_min + (ix * OCCUPANCY_CELL_SIZE)
+                z = self.scene_bounds.z_min + (iy * OCCUPANCY_CELL_SIZE)
                 self.magnebot_positions.append(np.array([x, 0, z]))
         # Get the occupancy map.
         occupancy_map: np.array = np.load(str(OCCUPANCY_MAPS_DIRECTORY.joinpath(np_filename).resolve()))
         for ix, iy in np.ndindex(occupancy_map.shape):
             if occupancy_map[ix][iy] == 0:
-                x = self.scene_environment.x_min + (ix * OCCUPANCY_CELL_SIZE)
-                z = self.scene_environment.z_min + (iy * OCCUPANCY_CELL_SIZE)
+                x = self.scene_bounds.x_min + (ix * OCCUPANCY_CELL_SIZE)
+                z = self.scene_bounds.z_min + (iy * OCCUPANCY_CELL_SIZE)
                 self.object_positions.append(np.array([x, 0, z]))
 
         close_bar = pbar is None
