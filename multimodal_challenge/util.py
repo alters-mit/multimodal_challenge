@@ -16,7 +16,7 @@ TARGET_OBJECTS: List[str] = TARGET_OBJECTS_PATH.read_text(encoding="utf-8").spli
 # The required version of TDW.
 TDW_REQUIRED_VERSION = "1.8.20.0"
 # The required version of Magnebot.
-MAGNEBOT_REQUIRED_VERSION = "1.2.1"
+MAGNEBOT_REQUIRED_VERSION = "1.2.2"
 
 
 def get_scene_librarian() -> SceneLibrarian:
