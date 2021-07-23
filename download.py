@@ -22,6 +22,9 @@ def download() -> None:
     if dst.exists():
         pbar.update(1)
         return
+    if record.do_not_use:
+        pbar.update(1)
+        return
     if not dst.parent.exists():
         dst.parent.mkdir(parents=True)
     # Download the asset bundle.
