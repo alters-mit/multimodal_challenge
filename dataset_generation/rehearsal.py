@@ -184,13 +184,17 @@ class Rehearsal(Controller):
             if np.linalg.norm(magnebot_position - op) >= MIN_OBJECT_DISTANCE_FROM_MAGNEBOT:
                 object_positions.append(op)
         # Get the number of distractors in the scene.
-        num_object_positions: int = len(object_positions)
-        if num_object_positions < Rehearsal.MIN_DISTRACTORS:
+        max_num_distractors: int = len(object_positions) - 1
+        min_num_distractors: int = Rehearsal.MIN_DISTRACTORS
+        if min_num_distractors >= max_num_distractors:
+            min_num_distractors = 0
+        if max_num_distractors > Rehearsal.MAX_DISTRACTORS:
+            max_num_distractors = Rehearsal.MAX_DISTRACTORS
+        if min_num_distractors >= max_num_distractors:
             num_distractors: int = 0
-        elif num_object_positions >= Rehearsal.MAX_DISTRACTORS:
-            num_distractors = self.rng.randint(Rehearsal.MIN_DISTRACTORS, num_object_positions)
         else:
-            num_distractors = self.rng.randint(Rehearsal.MIN_DISTRACTORS, Rehearsal.MAX_DISTRACTORS)
+            num_distractors: int = self.rng.randint(min_num_distractors, max_num_distractors)
+
         # Randomize the starting positions.
         self.rng.shuffle(object_positions)
         # Remember the IDs and names of the distractors.
