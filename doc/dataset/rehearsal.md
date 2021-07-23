@@ -102,7 +102,7 @@ D:/multimodal_challenge/
 
 - `rng` The random number generator.
 
-- `scene_environment` Environment data used for setting drop positions.
+- `scene_bounds` Environment data used for setting drop positions.
 
 - `distractors` Metadata for distractor objects.
 
