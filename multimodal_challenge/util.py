@@ -14,7 +14,7 @@ from multimodal_challenge.multimodal_object_init_data import MultiModalObjectIni
 # A list of the names of target objects models.
 TARGET_OBJECTS: List[str] = TARGET_OBJECTS_PATH.read_text(encoding="utf-8").split("\n")
 # The required version of TDW.
-TDW_REQUIRED_VERSION = "1.8.20.0"
+TDW_REQUIRED_VERSION = "1.8.21.0"
 # The required version of Magnebot.
 MAGNEBOT_REQUIRED_VERSION = "1.2.2"
 

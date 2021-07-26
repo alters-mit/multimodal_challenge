@@ -22,7 +22,6 @@ This is a backend tool for TDW  developers to convert saved [TDW commands](https
 | `--scene` | str | The name of the scene. |
 | `--layout` | int | The layout index. |
 | `--load_scene` | | If included, load the scene. Don't update the init data. |
-| `--occupancy_map` | str | Set how the occupancy map will be generated. `create`=Create an occupancy map from the list of commands. `update`=Update an occupancy map from existing init data (and don't overwrite that init data). `skip`=Don't modify the existing occupancy map. |
 
 ***
 

@@ -5,9 +5,10 @@ Search for a dropped object in a room using the [Magnebot API](https://github.co
 # Setup
 
 1. `git clone https://github.com/alters-mit/multimodal_challenge.git`
-2. `cd path/to/multimodal_challenge` (replace `path/to` with the actual path)
-3. `pip3 install -e .`
-4. (Optional) Download the asset bundles (read [this](doc/api/multimodal.md) for more information).
+2. `cd multimodal_challenge`
+3. `git checkout distractors`
+4. `pip3 install -e .`
+5. (Optional) Download the asset bundles (read [this](doc/api/multimodal.md) for more information).
 
 # `MultiModal` challenge controller
 
@@ -28,13 +29,22 @@ m.init_scene(scene="mm_kitchen_1a", layout=0, trial=57)
 
 ## `init_data.py`
 
-This is a backend tool for TDW  developers to convert saved [TDW commands](https://github.com/threedworld-mit/tdw/blob/master/Documentation/api/command_api.md) into [initialization instructions](doc/api/multimodal_object_init_data.md). It will also create [metadata records](https://github.com/threedworld-mit/tdw/blob/master/Documentation/python/librarian/librarian.md) and occupancy maps.
+This is a backend tool for TDW  developers to convert saved [TDW commands](https://github.com/threedworld-mit/tdw/blob/master/Documentation/api/command_api.md) into [initialization instructions](doc/api/multimodal_object_init_data.md).
 
 [Further documentation here.](doc/dataset/init_data.md)
 
+## `occupancy_mapper.py`
+
+This script generates and saves two occupancy maps:
+
+1. An occupancy map indicating which cells are free, occupied by an object, or not within the scene
+2. An occupancy map indicating where a Magnebot can be added to the scene.
+
+[Further documentation here.](doc/dataset/occupancy_mapper.md)
+
 ## `rehearsal.py`
 
-Define [`DatasetTrial`](doc/api/dataset_trial.md) initialization parameters for target objects. Drop the object. If it lands in an acceptable position, record the `DatasetTrial`. This will give `dataset.py` initialization parameters.
+Define [`DatasetTrial`](doc/api/dataset_trial.md) initialization parameters for distractor objects and the target object. Drop the objects. If they land in acceptable positions, and if there is a position to add the Magnebot in the scene, record the `DatasetTrial`. This will give `dataset.py` initialization parameters.
 
 [Further documentation here.](doc/dataset/rehearsal.md)
 

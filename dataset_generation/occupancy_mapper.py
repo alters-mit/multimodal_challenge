@@ -13,7 +13,7 @@ from multimodal_challenge.dataset.add_ons.occupancy_map import OccupancyMap
 class OccupancyMapper(Controller):
     """
     For each scene_layout combination, create occupancy maps for object placement and for spawning the Magnebot.
-    Verify that there are enough valids places for the Magnebot and objects.
+    Verify that there are enough valid places for the Magnebot and objects.
     """
 
     def __init__(self, port: int = 1071):
