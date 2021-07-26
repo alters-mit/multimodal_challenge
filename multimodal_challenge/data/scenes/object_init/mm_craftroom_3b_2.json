@@ -81,46 +81,6 @@
   },
   {
     "kinematic": false,
-    "name": "chair_annabelle",
-    "position": {
-      "x": 0.3058665,
-      "y": 0.005427927,
-      "z": 2.362925
-    },
-    "rotation": {
-      "w": 0.6755914,
-      "x": 0,
-      "y": 0.7372763,
-      "z": 0
-    },
-    "scale_factor": {
-      "x": 1,
-      "y": 1,
-      "z": 1
-    }
-  },
-  {
-    "kinematic": false,
-    "name": "table_square",
-    "position": {
-      "x": 1.072062,
-      "y": 0.002954721,
-      "z": 0.241422
-    },
-    "rotation": {
-      "w": 0.7071091,
-      "x": 0,
-      "y": 0.7071046,
-      "z": 0
-    },
-    "scale_factor": {
-      "x": 1,
-      "y": 1,
-      "z": 1
-    }
-  },
-  {
-    "kinematic": false,
     "name": "sm_table_white",
     "position": {
       "x": -1.169214,
@@ -451,26 +411,6 @@
       "w": 1,
       "x": 0,
       "y": -1.537715e-05,
-      "z": 0
-    },
-    "scale_factor": {
-      "x": 1,
-      "y": 1,
-      "z": 1
-    }
-  },
-  {
-    "kinematic": false,
-    "name": "white_club_chair",
-    "position": {
-      "x": 1.091368,
-      "y": 0.0807513,
-      "z": -0.5072238
-    },
-    "rotation": {
-      "w": -0.7070758,
-      "x": 0,
-      "y": 0.7071378,
       "z": 0
     },
     "scale_factor": {

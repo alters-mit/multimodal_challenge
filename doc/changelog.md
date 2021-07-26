@@ -1,7 +1,10 @@
 # 0.3.9
 
-- Required version of TDW: 1.8.20.0
+- Required version of TDW: 1.8.21.0
 - Required version of Magnebot: 1.2.2
+- Updated furniture layouts to make it easier for the Magnebot to move around 
+- (Backend) **Fixed: Crash in `dataset.py` to desktop due to bad Magnebot starting positions.** 
+- (Backend): There are now separate Magnebot occupancy maps for spawn positions. These were generated in the `distractors` branch (0.4.0)
 
 # 0.3.8
 
