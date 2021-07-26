@@ -8,16 +8,16 @@ from array import array
 import numpy as np
 import pyaudio
 from tqdm import tqdm
-from scipy.signal import convolve2d
 from tdw.tdw_utils import AudioUtils, TDWUtils
 from tdw.py_impact import PyImpact, ObjectInfo, AudioMaterial
 from tdw.output_data import Rigidbodies, Transforms, AudioSources
 from magnebot import ActionStatus
 from magnebot.scene_state import SceneState
+from magnebot.constants import OCCUPANCY_CELL_SIZE
 from magnebot.util import get_data
 from multimodal_challenge.multimodal_base import MultiModalBase
 from multimodal_challenge.paths import REHEARSAL_DIRECTORY, ENV_AUDIO_MATERIALS_PATH, DATASET_DIRECTORY,\
-    OBJECT_INIT_DIRECTORY, SCENE_BOUNDS_DIRECTORY
+    OBJECT_INIT_DIRECTORY, SCENE_BOUNDS_DIRECTORY, MAGNEBOT_OCCUPANCY_MAPS_DIRECTORY
 from multimodal_challenge.util import get_scene_layouts, get_trial_filename
 from multimodal_challenge.multimodal_object_init_data import MultiModalObjectInitData
 from multimodal_challenge.trial import Trial
@@ -468,33 +468,21 @@ class Dataset(MultiModalBase):
 
     def _get_magnebot_position(self) -> np.array:
         # Get all free occupancy map positions.
-        occupancy_positions: List[np.array] = list()
         target_object_position = TDWUtils.vector3_to_array(self.trials[self.trial_count].init_data.position)
-        # Prevent the Magnebot from spawning at edges of the occupancy map.
-        spawn_map = np.zeros_like(self.occupancy_map)
-        spawn_map.fill(1)
-        spawn_map[self.occupancy_map == 0] = 0
-        conv = np.ones((3, 3))
-        spawn_map = convolve2d(spawn_map, conv, mode="same", boundary="fill")
-        for ix, iy in np.ndindex(spawn_map.shape):
-            if spawn_map[ix][iy] != 0:
+
+        magnebot_occupancy_map = np.load(MAGNEBOT_OCCUPANCY_MAPS_DIRECTORY.joinpath(f"{self.scene}_{self.layout}.npy"))
+        magnebot_positions: List[np.array] = list()
+        for ix, iy in np.ndindex(magnebot_occupancy_map.shape):
+            if magnebot_occupancy_map[ix][iy] == 0:
                 continue
             px, pz = self.get_occupancy_position(ix, iy)
-            occupancy_positions.append(np.array([px, 0, pz]))
-        # If the convolve function shrunk the occupancy map too much, just use the original occupancy map.
-        if len(occupancy_positions) == 0:
-            for ix, iy in np.ndindex(spawn_map.shape):
-                if self.occupancy_map[ix][iy] != 0:
-                    continue
-                px, pz = self.get_occupancy_position(ix, iy)
-                occupancy_positions.append(np.array([px, 0, pz]))
-        # Sort the occupancy map positions by distance to the target object.
-        occupancy_positions = list(sorted(occupancy_positions,
-                                          key=lambda p: np.linalg.norm(p - target_object_position)))
-        # Get the latter half of the positions (the further positions).
-        occupancy_positions = occupancy_positions[int(len(occupancy_positions) / 2.0):]
+            # Ignore positions close to the target object.
+            p = np.array([px, 0, pz])
+            if np.linalg.norm(p - target_object_position) < OCCUPANCY_CELL_SIZE * 1.1:
+                continue
+            magnebot_positions.append(p)
         # Pick a random position.
-        return occupancy_positions[self._rng.randint(0, len(occupancy_positions))]
+        return magnebot_positions[self._rng.randint(0, len(magnebot_positions))]
 
     def _listen_for_audio(self) -> None:
         """

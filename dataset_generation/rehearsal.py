@@ -5,7 +5,7 @@ import numpy as np
 from tdw.controller import Controller
 from tdw.tdw_utils import TDWUtils
 from tdw.output_data import Transforms, Raycast
-from magnebot.scene_environment import SceneEnvironment
+from tdw.scene.scene_bounds import SceneBounds
 from magnebot.util import get_data
 from multimodal_challenge.util import TARGET_OBJECTS, get_object_init_commands, get_scene_librarian, get_drop_zones, \
     get_scene_layouts
@@ -122,7 +122,7 @@ class Rehearsal(Controller):
         """:field
         Environment data used for setting drop positions.
         """
-        self.scene_environment: Optional[SceneEnvironment] = None
+        self.scene_environment: Optional[SceneBounds] = None
         """:field
         The drop zones for the current scene.
         """
@@ -265,7 +265,7 @@ class Rehearsal(Controller):
                 commands[i]["is_kinematic"] = True
         resp = self.communicate(commands)
         # Set the scene environment.
-        self.scene_environment = SceneEnvironment(resp=resp)
+        self.scene_environment = SceneBounds(resp=resp)
         close_bar = pbar is None
         if pbar is None:
             pbar = tqdm(total=num_trials)

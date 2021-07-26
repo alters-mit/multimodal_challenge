@@ -1,3 +1,8 @@
+# 0.3.9
+
+- Required version of TDW: 1.8.20.0
+- Required version of Magnebot: 1.2.2
+
 # 0.3.8
 
 - Required version of TDW: 1.8.19.1
