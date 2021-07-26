@@ -417,7 +417,6 @@ class Dataset(MultiModalBase):
         self._object_init_commands[self.target_object_id] = target_object_commands
         # We need every frame for audio recording, but not right now, so let's speed things up.
         self._skip_frames = 10
-        self._scene_bounds = loads(SCENE_BOUNDS_DIRECTORY.joinpath(f"{scene[:-1]}.json").read_text())
         # Initialize the scene.
         super().init_scene(scene=scene, layout=layout)
         # Turn the Magnebot by a random angle.
@@ -467,15 +466,18 @@ class Dataset(MultiModalBase):
                 {"$type": "add_environ_audio_sensor"}]
 
     def _get_magnebot_position(self) -> np.array:
+
+        scene_bounds = loads(SCENE_BOUNDS_DIRECTORY.joinpath(f"{self.scene[:-1]}.json").read_text())
         # Get all free occupancy map positions.
         target_object_position = TDWUtils.vector3_to_array(self.trials[self.trial_count].init_data.position)
 
         magnebot_occupancy_map = np.load(MAGNEBOT_OCCUPANCY_MAPS_DIRECTORY.joinpath(f"{self.scene}_{self.layout}.npy"))
         magnebot_positions: List[np.array] = list()
         for ix, iy in np.ndindex(magnebot_occupancy_map.shape):
-            if magnebot_occupancy_map[ix][iy] == 0:
+            if magnebot_occupancy_map[ix][iy] != 0:
                 continue
-            px, pz = self.get_occupancy_position(ix, iy)
+            px = scene_bounds["x_min"] + (ix * OCCUPANCY_CELL_SIZE)
+            pz = scene_bounds["z_min"] + (iy * OCCUPANCY_CELL_SIZE)
             # Ignore positions close to the target object.
             p = np.array([px, 0, pz])
             if np.linalg.norm(p - target_object_position) < OCCUPANCY_CELL_SIZE * 1.1:
