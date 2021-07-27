@@ -141,26 +141,6 @@
   },
   {
     "kinematic": false,
-    "name": "meridiani_freeman_sofa",
-    "position": {
-      "x": 0.9279822,
-      "y": 0.001776874,
-      "z": -0.029377
-    },
-    "rotation": {
-      "w": -0.7065184,
-      "x": 0,
-      "y": 0.7076947,
-      "z": 0
-    },
-    "scale_factor": {
-      "x": 1,
-      "y": 1,
-      "z": 1
-    }
-  },
-  {
-    "kinematic": false,
     "name": "side_table_wood",
     "position": {
       "x": -1.312,

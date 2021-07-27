@@ -57,3 +57,5 @@ AUDIO_DATASET_DIRECTORY = DATA_DIRECTORY.joinpath("dataset")
 DROP_ZONE_DIRECTORY = AUDIO_DATASET_DIRECTORY.joinpath("drop_zones")
 # The path to the environment audio materials.
 ENV_AUDIO_MATERIALS_PATH = AUDIO_DATASET_DIRECTORY.joinpath("audio_materials.json")
+# The path to the Magnebot spawn positions directory.
+MAGNEBOT_OCCUPANCY_MAPS_DIRECTORY = AUDIO_DATASET_DIRECTORY.joinpath("magnebot_occupancy_maps")
