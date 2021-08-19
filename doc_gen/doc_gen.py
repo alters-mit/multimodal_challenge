@@ -5,11 +5,9 @@ import re
 if __name__ == "__main__":
     # API documentation.
     md = PyMdDoc(input_directory=Path("../multimodal_challenge"), files=["dataset/dataset_trial.py",
-                                                                         "dataset/drop_zone.py",
                                                                          "dataset/env_audio_materials.py",
                                                                          "multimodal_object_init_data.py",
                                                                          "multimodal_base.py",
-                                                                         "occupancy_mapper.py",
                                                                          "trial.py"])
     md.get_docs(output_directory=Path("../doc/api"))
 
@@ -32,8 +30,11 @@ if __name__ == "__main__":
                                         "`self.init_floorplan_scene()`.\n\n\n", "")
     # Get all of the movement actions from the Magnebot API.
     api_txt = re.search(r"(### Movement((.|\n)*?))#", magnebot_api, flags=re.MULTILINE).group(1)
-    actions = []
     for action in ["turn_by", "turn_to", "move_by", "move_to"]:
+        api_txt += re.search(f"(#### {action}((.|\n)*?))#", magnebot_api, flags=re.MULTILINE).group(1)
+    # Get all of the movement actions from the Magnebot API.
+    api_txt = re.search(r"(### Arm Articulation((.|\n)*?))#", magnebot_api, flags=re.MULTILINE).group(1)
+    for action in ["reach_for", "grasp", "drop", "reset_arm"]:
         api_txt += re.search(f"(#### {action}((.|\n)*?))#", magnebot_api, flags=re.MULTILINE).group(1)
     # Append the movement actions before the Torso section.
     doc = re.sub(r"((.|\n)*?)(### Torso)", r"\1" + api_txt + "***\n\n" + r"\3", doc)
@@ -67,5 +68,6 @@ if __name__ == "__main__":
     Path("../doc/api/multimodal.md").write_text(doc, encoding="utf-8")
 
     # Dataset generation documentation.
-    md = PyMdDoc(input_directory=Path("../dataset_generation"), files=["dataset.py", "rehearsal.py", "init_data.py"])
+    md = PyMdDoc(input_directory=Path("../dataset_generation"), files=["dataset.py", "rehearsal.py",
+                                                                       "occupancy_mapper.py", "init_data.py"])
     md.get_docs(output_directory=Path("../doc/dataset"))

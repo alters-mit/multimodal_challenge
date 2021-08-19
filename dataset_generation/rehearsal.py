@@ -1,19 +1,23 @@
 from json import dumps
-from typing import Optional, List, Tuple
+from typing import Optional, List, Dict
+from pathlib import Path
 from tqdm import tqdm
 import numpy as np
 from tdw.controller import Controller
 from tdw.tdw_utils import TDWUtils
-from tdw.output_data import Transforms, Raycast
+from tdw.output_data import Transforms
+from tdw.object_init_data import TransformInitData
 from tdw.scene.scene_bounds import SceneBounds
+from magnebot.constants import OCCUPANCY_CELL_SIZE
 from magnebot.util import get_data
-from multimodal_challenge.util import TARGET_OBJECTS, get_object_init_commands, get_scene_librarian, get_drop_zones, \
-    get_scene_layouts
-from multimodal_challenge.paths import REHEARSAL_DIRECTORY
+from multimodal_challenge.util import TARGET_OBJECTS, get_object_init_commands, get_scene_librarian, get_scene_layouts,\
+    check_pip_version, check_build_version
+from multimodal_challenge.paths import REHEARSAL_DIRECTORY, OCCUPANCY_MAPS_DIRECTORY, DISTRACTOR_OBJECTS_PATH, \
+    MAGNEBOT_OCCUPANCY_MAPS_DIRECTORY
 from multimodal_challenge.dataset.dataset_trial import DatasetTrial
-from multimodal_challenge.dataset.drop_zone import DropZone
 from multimodal_challenge.encoder import Encoder
 from multimodal_challenge.multimodal_object_init_data import MultiModalObjectInitData
+from multimodal_challenge.dataset.constants import MIN_OBJECT_DISTANCE_FROM_MAGNEBOT
 
 
 class Rehearsal(Controller):
@@ -22,9 +26,10 @@ class Rehearsal(Controller):
 
     This is meant only for backend developers; the Python module already has cached rehearsal data.
 
-    Each scene has a corresponding list of [`DropZones`](../api/drop_zone.md). These are already cached.
-    If the target object lands in a `DropZone`, then this was a valid trial.
-    As a result, this script will cut down on dev time and generation time.
+    Per trial, a random number of random "distractor objects" will be dropped on the floor.
+    Then, a random "target object" will be dropped on the floor.
+
+    The trial is considered good if all of the objects land on a surface and stop moving after a reasonable length of time; if not, the trial is discarded.
 
     There will be a small discrepancy in physics behavior when running `dataset.py` because in this controller,
     all objects are kinematic (non-moveable) in order to avoid re-initializing the scene per trial (which is slow).
@@ -77,14 +82,15 @@ class Rehearsal(Controller):
 
     **Per scene_layout combination** (i.e. scene `mm_kitchen_1_a` layout `0`):
 
-    1. Load the corresponding object init data and `DropZone` data.
+    1. Load the corresponding object init data.
     2. Run trials per scene_layout combination until there's enough (for example, 2000 per scene_layout combination).
 
     **Per trial:**
 
     1. Randomly set the parameters of a new [`DatasetTrial`](../api/dataset_trial.md) for initialization.
-    2. Let the target object fall. **The only output data is the `Transform` of the target object.**
-    3. When the target object stops falling, if it's is in a `DropZone`, record the `DatasetTrial`.
+    2. Let each distractor object fall, one at a time (to avoid interpentration). If the objects fall in acceptable positions, continue.
+    3. Let the target object fall.
+    4. If the target object is in an acceptable position, generate a `DatasetTrial` object.
 
     **Result:** A list of `DatasetTrial` initialization objects per scene_layout combination:
 
@@ -97,6 +103,27 @@ class Rehearsal(Controller):
     ```
     """
 
+    """:class_var
+    The minimum number of distractors per scene (assuming there are enough free spaces).
+    """
+    MIN_DISTRACTORS: int = 2
+    """:class_var
+    The maximum number of distractors per scene (assuming there are enough free spaces).
+    """
+    MAX_DISTRACTORS: int = 7
+    """:class_var
+    The minimum y value for the initial position of an object.
+    """
+    MIN_DROP_Y: float = 1.5
+    """:class_var
+    The maximum y value for the initial position of an object.
+    """
+    MAX_DROP_Y: float = 2.8
+    """:class_var
+    The amount of frames skipped while objects are falling.
+    """
+    SKIPPED_FRAMES: int = 20
+
     def __init__(self, port: int = 1071, random_seed: int = None):
         """
         Create the network socket and bind the socket to the port.
@@ -105,7 +132,9 @@ class Rehearsal(Controller):
         :param random_seed: The seed used for random numbers. If None, this is chosen randomly.
         """
 
-        super().__init__(port=port, launch_build=False, check_version=True)
+        super().__init__(port=port, launch_build=False, check_version=False)
+        check_pip_version()
+        check_build_version(self._tdw_version)
         """:field
         The ID of the dropped object. This changes per trial.
         """
@@ -122,57 +151,100 @@ class Rehearsal(Controller):
         """:field
         Environment data used for setting drop positions.
         """
-        self.scene_environment: Optional[SceneBounds] = None
+        self.scene_bounds: Optional[SceneBounds] = None
+        lib = list(TransformInitData.LIBRARIES.values())[-1]
         """:field
-        The drop zones for the current scene.
+        Metadata for distractor objects.
         """
-        self.drop_zones: List[DropZone] = list()
+        self.distractors: List[str] = [lib.get_record(d).name for d in
+                                       DISTRACTOR_OBJECTS_PATH.read_text().strip().split("\n")]
+        """:field
+        A list of all possible initial object positions per trial.
+        """
+        self.object_positions: List[np.array] = list()
+        """:field
+        A list of all possible initial Magnebot positions per trial.
+        """
+        self.magnebot_positions: List[np.array] = list()
 
-    def do_trial(self) -> Tuple[Optional[DatasetTrial], int]:
+    def do_trial(self) -> Optional[DatasetTrial]:
         """
         Choose a random object. Assign a random (constrained) scale, position, rotation, and force.
-        Let the object fall. When it stops moving, determine if the object is in a drop zone.
+        Let the object fall. When it stops moving, determine if the object is in an acceptable location.
 
-        :return: Tuple: A `DatasetTrial` if the object landed in the drop zone, otherwise None; drop zone ID.
+        :return: A `DatasetTrial` if this is a good trial.
         """
 
-        commands = []
-        # Get a random room.
-        # Get a random starting position.
-        position = {"x": float(self.rng.uniform(self.scene_environment.x_min, self.scene_environment.x_max)),
-                    "y": 2.8,
-                    "z": float(self.rng.uniform(self.scene_environment.z_min, self.scene_environment.z_max))}
-        # Raycast down from the position.
-        commands.append({"$type": "send_raycast",
-                         "origin": position,
-                         "destination": {"x": position["x"], "y": 0, "z": position["z"]}})
-        resp = self.communicate(commands)
-        raycast = get_data(resp=resp, d_type=Raycast)
-        # This is outside of the scene.
-        if not raycast.get_hit():
-            return None, -1
-        min_y = raycast.get_point()[1] + 0.2
-        if min_y > position["y"]:
-            min_y = raycast.get_point()[1]
-        # Get a random y value for the starting position.
-        position["y"] = self.rng.uniform(min_y, position["y"])
-        commands.clear()
+        # Randomly choose a Magnebot position.
+        magnebot_position = self.magnebot_positions[self.rng.randint(0, len(self.magnebot_positions))]
+
+        # Get far away object positions.
+        object_positions: List[np.array] = list()
+        for op in self.object_positions:
+            if np.linalg.norm(magnebot_position - op) >= MIN_OBJECT_DISTANCE_FROM_MAGNEBOT:
+                object_positions.append(op)
+        # Get the number of distractors in the scene.
+        max_num_distractors: int = len(object_positions) - 1
+        min_num_distractors: int = Rehearsal.MIN_DISTRACTORS
+        if min_num_distractors >= max_num_distractors:
+            min_num_distractors = 0
+        if max_num_distractors > Rehearsal.MAX_DISTRACTORS:
+            max_num_distractors = Rehearsal.MAX_DISTRACTORS
+        if min_num_distractors >= max_num_distractors:
+            num_distractors: int = 0
+        else:
+            num_distractors: int = self.rng.randint(min_num_distractors, max_num_distractors)
+
+        # Randomize the starting positions.
+        self.rng.shuffle(object_positions)
+        # Remember the IDs and names of the distractors.
+        distractor_ids: List[int] = list()
+        distractor_names: Dict[int, str] = dict()
+        # This flag is used to determine if whether we should immediately discard the trial.
+        good = True
+        # Drop the distractors one at a time to avoid interpenetration.
+        # Each time, make sure that the distractors actually stop moving and actually land above floor level.
+        for i in range(num_distractors):
+            name = self.distractors[self.rng.randint(0, len(self.distractors))]
+            init_data: MultiModalObjectInitData = MultiModalObjectInitData(
+                name=name,
+                position=self._get_position(object_positions[i]),
+                rotation=self._get_rotation(),
+                kinematic=False)
+            # Get the commands and the object ID.
+            o_id, commands = init_data.get_commands()
+            distractor_names[o_id] = name
+            distractor_ids.append(o_id)
+            # Request Transforms data per frame for this object only.
+            commands.extend([{"$type": "send_transforms",
+                              "frequency": "always",
+                              "ids": [o_id]},
+                             {"$type": "step_physics",
+                              "frames": Rehearsal.SKIPPED_FRAMES}])
+            resp = self.communicate(commands)
+            good = self._wait_for_object_to_fall(resp=resp)
+            if not good:
+                break
+        # A list of commands for destroying the non-floorplan objects in the scene.
+        destroy_objects = [{"$type": "destroy_object", "id": o_id} for o_id in distractor_ids]
+        # If this isn't a good trial, stop here.
+        if not good:
+            # Remove the distractor objects.
+            self.communicate(destroy_objects)
+            return None
         # Get the next object.
         name = self.rng.choice(TARGET_OBJECTS)
         # Get the init data.
         a = MultiModalObjectInitData(name=name,
-                                     position=position,
-                                     rotation={"x": float(self.rng.uniform(-360, 360)),
-                                               "y": float(self.rng.uniform(-360, 360)),
-                                               "z": float(self.rng.uniform(-360, 360))},
+                                     position=self._get_position(object_positions[-1]),
+                                     rotation=self._get_rotation(),
                                      kinematic=False)
         # Define the drop force.
         force = {"x": float(self.rng.uniform(-0.1, 0.1)),
                  "y": float(self.rng.uniform(-0.05, 0.05)),
                  "z": float(self.rng.uniform(-0.1, 0.1))}
         # Add the initialization commands.
-        self.target_object_id, object_commands = a.get_commands()
-        commands.extend(object_commands)
+        self.target_object_id, commands = a.get_commands()
         # Apply the force. Request Transforms data for this object.
         commands.extend([{"$type": "apply_force_to_object",
                           "id": self.target_object_id,
@@ -182,38 +254,42 @@ class Rehearsal(Controller):
                           "frequency": "always"}])
         # Send the commands!
         resp = self.communicate(commands)
-        p_0 = np.array(get_data(resp=resp, d_type=Transforms).get_position(0))
-        done = False
-        good = False
-        num_frames = 0
-        while not done:
-            # Skip some frames because we only care about where the object lands, not its trajectory.
-            # This will make the simulation much faster.
-            resp = self.communicate([{"$type": "step_physics",
-                                      "frames": 10}])
-            p_1 = np.array(get_data(resp=resp, d_type=Transforms).get_position(0))
-            # The object fell below the floor or took to long to settle.
-            if p_1[1] < -0.1 or num_frames >= 1000:
-                done = True
-                good = False
-            # The object stopped moving.
-            elif np.linalg.norm(p_0 - p_1) < 0.001:
-                done = True
-                good = True
-            num_frames += 1
-            p_0 = p_1
-        self.communicate({"$type": "destroy_object",
-                          "id": self.target_object_id})
+        # Wait for the object to finish falling.
+        good = self._wait_for_object_to_fall(resp=resp)
+        # Get the transform data for the final state.
+        object_ids = distractor_ids[:]
+        object_ids.append(self.target_object_id)
+        resp = self.communicate({"$type": "send_transforms",
+                                 "frequency": "once",
+                                 "ids": object_ids})
+        # Destroy all of the objects.
+        destroy_objects.extend([{"$type": "destroy_object",
+                                "id": self.target_object_id}])
+        self.communicate(destroy_objects)
         if not good:
-            return None, -1
-        # Check if this object is in a drop zone.
-        for i, drop_zone in enumerate(self.drop_zones):
-            if drop_zone.center[1] + 0.1 >= p_0[1] >= drop_zone.center[1] and \
-                    np.linalg.norm(p_0 - drop_zone.center) < drop_zone.radius:
-                # In dataset generation, we don't want the object to fall right away, so we make it kinematic.
-                a.kinematic = True
-                return DatasetTrial(init_data=a, force=force, position=TDWUtils.array_to_vector3(p_0)), i
-        return None, -1
+            return None
+        # Get the positions of the distractors and the target object.
+        distractor_init_data: List[MultiModalObjectInitData] = list()
+        target_object_position: Dict[str, float] = dict()
+        tr = get_data(resp=resp, d_type=Transforms)
+        for i in range(tr.get_num()):
+            object_id = tr.get_id(i)
+            if object_id == self.target_object_id:
+                target_object_position = TDWUtils.array_to_vector3(tr.get_position(i))
+            # Get distractor initialization data.
+            elif object_id in distractor_ids:
+                distractor_init_data.append(MultiModalObjectInitData(name=distractor_names[object_id],
+                                                                     position=TDWUtils.array_to_vector3(
+                                                                         tr.get_position(i)),
+                                                                     rotation=TDWUtils.array_to_vector4(
+                                                                         tr.get_rotation(i))))
+        # We don't want the target object to fall right away.
+        a.kinematic = True
+        return DatasetTrial(target_object=a,
+                            force=force,
+                            magnebot_position=TDWUtils.array_to_vector3(magnebot_position),
+                            distractors=distractor_init_data,
+                            target_object_position=target_object_position)
 
     def run(self, num_trials: int = 10000) -> None:
         """
@@ -239,8 +315,8 @@ class Rehearsal(Controller):
 
     def do_trials(self, scene: str, layout: int, num_trials: int, pbar: tqdm = None) -> None:
         """
-        Load a scene_layout combination, and its objects, and its drop zones.
-        Run random trials until we have enough "good" trials, where "good" means that the object landed in a drop zone.
+        Load a scene_layout combination and its objects.
+        Run random trials until we have enough "good" trials.
         Save the result to disk.
 
         :param scene: The scene name.
@@ -249,7 +325,13 @@ class Rehearsal(Controller):
         :param pbar: Progress bar.
         """
 
-        self.drop_zones = get_drop_zones(filename=f"{scene}_{layout}.json")
+        # Skip over existing rehearsal data.
+        output_path: Path = REHEARSAL_DIRECTORY.joinpath(f"{scene}_{layout}.json")
+        if output_path.exists():
+            if pbar is not None:
+                pbar.update(num_trials)
+            return
+
         scene_record = self.scene_librarian.get_record(scene)
         commands: List[dict] = [{"$type": "add_scene",
                                  "name": scene_record.name,
@@ -265,28 +347,90 @@ class Rehearsal(Controller):
                 commands[i]["is_kinematic"] = True
         resp = self.communicate(commands)
         # Set the scene environment.
-        self.scene_environment = SceneBounds(resp=resp)
+        self.scene_bounds = SceneBounds(resp=resp)
+
+        # Get all object positions. A valid position is a free position not too far from the center of the room.
+        self.object_positions.clear()
+        self.magnebot_positions.clear()
+
+        np_filename = f"{scene}_{layout}.npy"
+        # Get the positions where the Magnebot can spawn.
+        magnebot_occupancy_map: np.array = np.load(str(MAGNEBOT_OCCUPANCY_MAPS_DIRECTORY.joinpath(np_filename).resolve()))
+        for ix, iy in np.ndindex(magnebot_occupancy_map.shape):
+            if magnebot_occupancy_map[ix][iy] == 0:
+                x = self.scene_bounds.x_min + (ix * OCCUPANCY_CELL_SIZE)
+                z = self.scene_bounds.z_min + (iy * OCCUPANCY_CELL_SIZE)
+                self.magnebot_positions.append(np.array([x, 0, z]))
+        # Get the occupancy map.
+        occupancy_map: np.array = np.load(str(OCCUPANCY_MAPS_DIRECTORY.joinpath(np_filename).resolve()))
+        for ix, iy in np.ndindex(occupancy_map.shape):
+            if occupancy_map[ix][iy] == 0:
+                x = self.scene_bounds.x_min + (ix * OCCUPANCY_CELL_SIZE)
+                z = self.scene_bounds.z_min + (iy * OCCUPANCY_CELL_SIZE)
+                self.object_positions.append(np.array([x, 0, z]))
+
         close_bar = pbar is None
         if pbar is None:
             pbar = tqdm(total=num_trials)
         pbar.set_description(f"{scene}_{layout}")
         # Remember all good drops.
         dataset_trials: List[DatasetTrial] = list()
-        drop_zone_indices: List[int] = list()
         while len(dataset_trials) < num_trials:
             # Do a trial.
-            dataset_trial, drop_zone_index = self.do_trial()
+            dataset_trial = self.do_trial()
             # If we got an object back, then this was a good trial.
             if dataset_trial is not None:
                 # Save the data.
                 dataset_trials.append(dataset_trial)
-                drop_zone_indices.append(drop_zone_index)
                 pbar.update(1)
         # Write the results to disk.
-        REHEARSAL_DIRECTORY.joinpath(f"{scene}_{layout}.json").write_text(dumps(dataset_trials, cls=Encoder),
-                                                                          encoding="utf-8")
+        output_path.write_text(dumps(dataset_trials, cls=Encoder),
+                               encoding="utf-8")
         if close_bar:
             pbar.close()
+
+    @staticmethod
+    def _get_distractor_position(resp: List[bytes]) -> np.array:
+        """
+        :param resp: The response from the build.
+
+        :return: The position of the distractor object currently being dropped.
+        """
+
+        return np.array(get_data(resp=resp, d_type=Transforms).get_position(0))
+
+    def _get_position(self, p: np.array) -> Dict[str, float]:
+        return {"x": float(p[0]) + float(self.rng.uniform(-OCCUPANCY_CELL_SIZE * 0.5,
+                                                          OCCUPANCY_CELL_SIZE * 0.5)),
+                "y": float(self.rng.uniform(Rehearsal.MIN_DROP_Y, Rehearsal.MAX_DROP_Y)),
+                "z": float(p[2]) + float(self.rng.uniform(-OCCUPANCY_CELL_SIZE * 0.5,
+                                                          OCCUPANCY_CELL_SIZE * 0.5))}
+
+    def _get_rotation(self) -> Dict[str, float]:
+        return {"x": float(self.rng.uniform(-360, 360)),
+                "y": float(self.rng.uniform(-360, 360)),
+                "z": float(self.rng.uniform(-360, 360))}
+
+    def _wait_for_object_to_fall(self, resp: List[bytes]) -> bool:
+        position_0 = Rehearsal._get_distractor_position(resp=resp)
+        num_frames = 0
+        while num_frames < 1000:
+            # Skip some frames because we only care about where the objects land.
+            resp = self.communicate([{"$type": "step_physics",
+                                      "frames": Rehearsal.SKIPPED_FRAMES}])
+            position_1 = Rehearsal._get_distractor_position(resp=resp)
+            # If the object is below the floor, this is a bad trial.
+            if position_1[1] < -0.1:
+                return False
+            # If the object stopped moving, this is a (potentially) good trial.
+            elif np.linalg.norm(position_0 - position_1) <= 0.001:
+                return True
+            # The object is still moving.
+            else:
+                num_frames += 1
+                position_0 = position_1
+        # The object took too long to fall.
+        return False
 
 
 if __name__ == "__main__":

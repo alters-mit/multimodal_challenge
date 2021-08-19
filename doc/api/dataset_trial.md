@@ -8,11 +8,15 @@ Parameters for defining a trial for dataset generation.
 
 ## Fields
 
-- `init_data` A [`MultiModalObjectInitData` object](multimodal_object_init_data.md) for the dropped object.
+- `target_object` target_object: [`MultiModalObjectInitData` initialization data](multimodal_object_init_data.md) for the target object.
 
-- `force` The initial force of the dropped object object as a Vector3 dictionary.
+- `force` The initial force of the target object as a Vector3 dictionary.
 
-- `position` The position of the object after it falls. This is used to set a valid initial Magnebot pose.
+- `magnebot_position` The initial position of the Magnebot.
+
+- `target_object_position` The final position of the target object.
+
+- `distractors` Initialization data for the distractor objects.
 
 ***
 
@@ -20,11 +24,13 @@ Parameters for defining a trial for dataset generation.
 
 #### \_\_init\_\_
 
-**`DatasetTrial(init_data, force, position)`**
+**`DatasetTrial(target_object, force, magnebot_position, target_object_position, distractors)`**
 
 | Parameter | Type | Default | Description |
 | --- | --- | --- | --- |
-| init_data |  MultiModalObjectInitData |  | A [`MultiModalObjectInitData` object](multimodal_object_init_data.md). |
-| force |  Dict[str, float] |  | The initial force of the object as a Vector3 dictionary. |
-| position |  Dict[str, float] |  | The position of the object after it falls. This is used to set a valid initial Magnebot pose. |
+| target_object |  MultiModalObjectInitData |  | [`MultiModalObjectInitData` initialization data](multimodal_object_init_data.md) for the target object. |
+| force |  Dict[str, float] |  | The initial force of the target object as a Vector3 dictionary. |
+| magnebot_position |  Dict[str, float] |  | The initial position of the Magnebot. |
+| target_object_position |  Dict[str, float] |  | The final position of the target object. |
+| distractors |  List[Union[dict, MultiModalObjectInitData] |  | Initialization data for the distractor objects. |
 

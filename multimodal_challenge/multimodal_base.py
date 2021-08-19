@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 import numpy as np
 from tdw.tdw_utils import TDWUtils
 from magnebot import Magnebot, ActionStatus
-from multimodal_challenge.util import get_scene_librarian
+from multimodal_challenge.util import get_scene_librarian, check_pip_version, check_build_version
 from multimodal_challenge.paths import OCCUPANCY_MAPS_DIRECTORY
 
 
@@ -24,7 +24,10 @@ class MultiModalBase(Magnebot, ABC):
         """
 
         super().__init__(port=port, launch_build=False, screen_width=screen_width, screen_height=screen_height,
-                         auto_save_images=False, random_seed=random_seed, img_is_png=False, skip_frames=skip_frames)
+                         auto_save_images=False, random_seed=random_seed, img_is_png=False, skip_frames=skip_frames,
+                         check_pypi_version=False)
+        check_pip_version()
+        check_build_version(self._tdw_version)
         """:field
         The ID of the target object.
         """

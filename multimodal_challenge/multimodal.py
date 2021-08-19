@@ -133,10 +133,11 @@ class MultiModal(MultiModalBase):
                 self.target_object_id = object_id
         # Load the scene.
         super().init_scene(scene=scene, layout=layout)
+        # Load the occupancy map.
+        self.occupancy_map = np.load(str(DATASET_DIRECTORY.joinpath(f"{scene}_{layout}/{trial_filename}.npy").resolve()))
         # Turn the Magnebot. We don't want to set the rotation in case the joints intersect with something.
         angle = QuaternionUtils.get_y_angle(QuaternionUtils.IDENTITY, self.__trial.magnebot_rotation)
-        self.turn_by(angle, aligned_at=0.5)
-        return ActionStatus.success
+        return self.turn_by(angle, aligned_at=0.5)
 
     def set_torso(self, position: float) -> ActionStatus:
         """

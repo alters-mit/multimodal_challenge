@@ -6,11 +6,10 @@ from tdw.py_impact import PyImpact
 from tdw.object_init_data import TransformInitData
 from tdw.librarian import ModelLibrarian, SceneLibrarian
 from tdw.controller import Controller
-from multimodal_challenge.paths import DROP_ZONE_DIRECTORY, OBJECT_INIT_DIRECTORY, OBJECT_LIBRARY_PATH, \
+from multimodal_challenge.paths import OBJECT_INIT_DIRECTORY, OBJECT_LIBRARY_PATH, \
     SCENE_LIBRARY_PATH, KINEMATIC_OBJECTS_PATH
 from multimodal_challenge.multimodal_object_init_data import MultiModalObjectInitData
 from multimodal_challenge.encoder import Encoder
-from multimodal_challenge.occupancy_mapper import OccupancyMapper
 
 
 class InitData:
@@ -20,9 +19,7 @@ class InitData:
     # Requirements
 
     - The `multimodal_challenge` Python module.
-    - Two files of initialization data:
-        - `~/tdw_config/scene_layout.txt` The object initialization data
-        - `~/tdw_config/scene_layout.json` The drop zone data
+    - `~/tdw_config/scene_layout.txt` The object initialization data
 
     `~` is the home directory and `scene_layout` is the scene_layout combination, e.g. `mm_kitchen_1_a_0`.
 
@@ -37,18 +34,15 @@ class InitData:
     | `--scene` | str | The name of the scene. |
     | `--layout` | int | The layout index. |
     | `--load_scene` | | If included, load the scene. Don't update the init data. |
-    | `--drop_zones` | | If included, show the drop zones. Ignored unless there is a `--load_scene` flag present. |
-    | `--occupancy_map` | str | Set how the occupancy map will be generated. `create`=Create an occupancy map from the list of commands. `update`=Update an occupancy map from existing init data (and don't overwrite that init data). `skip`=Don't modify the existing occupancy map. |
     """
 
     @staticmethod
-    def get_commands(scene: str, layout: int, drop_zones: bool) -> List[dict]:
+    def get_commands(scene: str, layout: int) -> List[dict]:
         """
         :param scene: The name of the scene.
         :param layout: The layout index.
-        :param drop_zones: If True, append commands to show the drop zones.
 
-        :return: A list of commands to add objects to the scene and optionally to show the drop zones.
+        :return: A list of commands to add objects to the scene.
         """
 
         root_dir = Path.home().joinpath(f"tdw_config")
@@ -58,40 +52,18 @@ class InitData:
         for i in range(len(commands)):
             if commands[i]["$type"] == "add_object":
                 commands[i]["scale_factor"] = 1
-        # Update the drop zone data.
-        drop_zone_src = root_dir.joinpath(f"{filename}.json")
-        drop_zone_dst = DROP_ZONE_DIRECTORY.joinpath(f"{filename}.json")
-        drop_zone_data = loads(drop_zone_src.read_text(encoding="utf-8"))
-        drop_zone_dst.write_text(dumps(drop_zone_data["position_markers"]), encoding="utf-8")
-        # Show the drop zones.
-        if drop_zones:
-            dzs = loads(drop_zone_dst.read_text(encoding="utf-8"))
-            for dz in dzs:
-                commands.append({"$type": "add_position_marker",
-                                 "position": dz["position"],
-                                 "shape": "circle",
-                                 "scale": dz["size"]})
-            commands.append({"$type": "set_floorplan_roof",
-                             "show": False})
         return commands
 
     @staticmethod
-    def get_init_data(scene: str, layout: int, occupancy_map: str) -> None:
+    def get_init_data(scene: str, layout: int) -> None:
         """
-        Create object initialization data and update drop zone data.
+        Create object initialization data.
 
         Update the scene and model metadata records in this repo's librarians.
 
         :param scene: The name of the scene.
         :param layout: The layout index.
-        :param occupancy_map: If True, generate an occupancy map.
         """
-
-        # Update an occupancy map.
-        if occupancy_map == "update":
-            m = OccupancyMapper()
-            m.create(scene=scene, layout=layout, image_dir=Path("../doc/images"))
-            return
 
         bucket: str = "https://tdw-public.s3.amazonaws.com"
         # Update the scene library.
@@ -131,7 +103,7 @@ class InitData:
         # Get a list of kinematic objects.
         kinematic_objects = KINEMATIC_OBJECTS_PATH.read_text(encoding="utf-8").split("\n")
         # Get the commands.
-        commands = InitData.get_commands(scene=scene, layout=layout, drop_zones=False)
+        commands = InitData.get_commands(scene=scene, layout=layout)
         objects: List[MultiModalObjectInitData] = list()
         # Convert the commands to TransformInitData.
         i = 0
@@ -156,11 +128,6 @@ class InitData:
                 i += 3
         OBJECT_INIT_DIRECTORY.joinpath(f"{scene}_{layout}.json").write_text(dumps(objects, cls=Encoder, indent=2,
                                                                                   sort_keys=True))
-        # Generate an occupancy map.
-        if occupancy_map == "create":
-            m = OccupancyMapper()
-            m.create(scene=scene, layout=layout, image_dir=Path("../doc/images"))
-        return
 
 
 if __name__ == "__main__":
@@ -169,19 +136,11 @@ if __name__ == "__main__":
     parser.add_argument("--layout", type=int, help="The layout number.")
     parser.add_argument("--load_scene", action="store_true", help="If included load the scene. "
                                                                   "Don't update the init data.")
-    parser.add_argument("--drop_zones", action="store_true", help="If included, show the drop zones. Ignored unless "
-                                                                  "there is a `--load_scene` flag present.")
-    parser.add_argument("--occupancy_map", type=str, choices=["create", "update", "skip"], default="create",
-                        help="Create an occupancy map. "
-                             "create=Create a new occupancy map. "
-                             "update=Use existing init data to update an occupancy map. "
-                             "skip=Don't create an occupancy map.")
     args = parser.parse_args()
     if args.load_scene:
         c = Controller(launch_build=False)
         cmds = [c.get_add_scene(scene_name=args.scene)]
-        cmds.extend(InitData.get_commands(scene=args.scene, layout=args.layout,
-                                          drop_zones=args.drop_zones is not None))
+        cmds.extend(InitData.get_commands(scene=args.scene, layout=args.layout))
         c.communicate(cmds)
     else:
-        InitData.get_init_data(scene=args.scene, layout=args.layout, occupancy_map=args.occupancy_map)
+        InitData.get_init_data(scene=args.scene, layout=args.layout)

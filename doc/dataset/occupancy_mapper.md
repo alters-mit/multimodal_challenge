@@ -2,70 +2,36 @@
 
 `from dataset_generation.occupancy_mapper import OccupancyMapper`
 
-Create the occupancy maps and images of scenes.
+For each scene_layout combination, create occupancy maps for object placement and for spawning the Magnebot.
+Verify that there are enough valid places for the Magnebot and objects.
 
 ***
 
-#### get_islands
+#### \_\_init\_\_
 
-**`OccupancyMapper(FloorplanController).get_islands(occupancy_map)`**
+**`OccupancyMapper(scene, layout)`**
 
-_This is a static function._
-
-
-| Parameter | Type | Default | Description |
-| --- | --- | --- | --- |
-| occupancy_map |  np.array |  | The occupancy map. |
-
-_Returns:_  A list of all islands, i.e. continuous zones of traversability on the occupancy map.
-
-#### get_island
-
-**`OccupancyMapper(FloorplanController).get_island(occupancy_map, p)`**
-
-_This is a static function._
-
-Fill the island (a continuous zone) that position `p` belongs to.
-
+Create occupancy maps for a scene_layout combination.
 
 | Parameter | Type | Default | Description |
 | --- | --- | --- | --- |
-| occupancy_map |  np.array |  | The occupancy map. |
-| p |  np.array |  | The position. |
-
-_Returns:_  An island of positions as a list of (x, z) tuples.
-
-#### get_occupancy_position
-
-**`OccupancyMapper(FloorplanController).get_occupancy_position(scene_env, ix, iy)`**
-
-_This is a static function._
-
-Convert an occupancy map position to a worldspace position.
-
-
-
-| Parameter | Type | Default | Description |
-| --- | --- | --- | --- |
-| scene_env |  SceneEnvironment |  | The scene environment. |
-| ix |  int |  | The x coordinate of the occupancy map position. |
-| iy |  int |  | The y coordinate of the occupancy map position. |
-
-_Returns:_  The `(x, z)` position in worldspace corresponding to `(ix, iy`) on the occupancy map.
+| scene |  |  | The scene name. |
+| layout |  |  | The layout index. |
 
 #### create
 
-**`self.create()`**
+**`self.create(scene, layout)`**
 
-Create the following:
+Create occupancy maps for a scene_layout combination.
 
-- Occupancy maps as numpy arrays.
-- Images of each occupancy map with markers showing which positions are navigable.
-- Images of each scene+layout combination.
-- Images of where the rooms are in a scene.
-- Spawn position data as a json file.
+| Parameter | Type | Default | Description |
+| --- | --- | --- | --- |
+| scene |  str |  | The scene name. |
+| layout |  int |  | The layout index. |
 
-#### get_scene_init_commands
+#### run
 
-**`self.get_scene_init_commands()`**
+**`self.run()`**
+
+Create occupancy maps for each scene_layout combination.
 

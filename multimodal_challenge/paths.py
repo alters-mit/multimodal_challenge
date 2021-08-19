@@ -53,9 +53,9 @@ SCENE_BOUNDS_DIRECTORY = SCENE_DATA_DIRECTORY.joinpath("bounds")
 
 # The path to the audio dataset files.
 AUDIO_DATASET_DIRECTORY = DATA_DIRECTORY.joinpath("dataset")
-# The path to the .json files containing drop zone data.
-DROP_ZONE_DIRECTORY = AUDIO_DATASET_DIRECTORY.joinpath("drop_zones")
 # The path to the environment audio materials.
 ENV_AUDIO_MATERIALS_PATH = AUDIO_DATASET_DIRECTORY.joinpath("audio_materials.json")
-# The path to the Magnebot spawn positions directory.
+# The path to the list of distractor objects.
+DISTRACTOR_OBJECTS_PATH = AUDIO_DATASET_DIRECTORY.joinpath("distractor_objects.txt")
+# The path to the Magnebot occupancy maps.
 MAGNEBOT_OCCUPANCY_MAPS_DIRECTORY = AUDIO_DATASET_DIRECTORY.joinpath("magnebot_occupancy_maps")
