@@ -14,9 +14,9 @@ from multimodal_challenge.multimodal_object_init_data import MultiModalObjectIni
 # A list of the names of target objects models.
 TARGET_OBJECTS: List[str] = TARGET_OBJECTS_PATH.read_text(encoding="utf-8").split("\n")
 # The required version of TDW.
-TDW_REQUIRED_VERSION = "1.8.21.0"
+TDW_REQUIRED_VERSION = "1.8.25.0"
 # The required version of Magnebot.
-MAGNEBOT_REQUIRED_VERSION = "1.2.2"
+MAGNEBOT_REQUIRED_VERSION = "1.3.1"
 
 
 def get_scene_librarian() -> SceneLibrarian:
@@ -93,7 +93,7 @@ def check_pip_version() -> bool:
     # Use the __version__ variable because it's more likely to be accurate.
     # The version returned by get_distribution can be wrong if this is a test branch.
     # We don't really need to worry about this re: magnebot because that repo isn't updated as frequently.
-    if version.parse(TDW_REQUIRED_VERSION) != version.parse(__version__):
+    if version.parse(TDW_REQUIRED_VERSION) > version.parse(__version__):
         print(f"WARNING! You have tdw {__version__} but you need tdw {TDW_REQUIRED_VERSION}. "
               f"To install the correct version:"
               f"\nIf you installed tdw from the GitHub repo (pip3 install -e .): "
@@ -102,7 +102,7 @@ def check_pip_version() -> bool:
               f"pip3 install tdw=={TDW_REQUIRED_VERSION}")
         ok = False
     magnebot_installed_version = get_distribution("magnebot").version
-    if version.parse(MAGNEBOT_REQUIRED_VERSION) != version.parse(magnebot_installed_version):
+    if version.parse(MAGNEBOT_REQUIRED_VERSION) >= version.parse(magnebot_installed_version):
         print(f"WARNING! You have magnebot {magnebot_installed_version} but you need magnebot {MAGNEBOT_REQUIRED_VERSION}. "
               f"To install the correct version:"
               f"\nIf you installed tdw from the GitHub repo (pip3 install -e .): "

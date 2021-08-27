@@ -1,3 +1,8 @@
+# 0.4.2
+
+- Required version of TDW: >= 1.8.25.0
+- Required version of Magnebot: >= 1.3.1
+
 # 0.4.1
 
 - Required version of TDW is now handled by the Magnebot API. Currently, the required version is 1.8.24.0
