@@ -1,3 +1,10 @@
+# 0.3.10
+
+- Required version of TDW: 1.8.25.0
+- Required version of Magnebot: 1.3.1
+- Removed some drop zones that often generated trials where the object can't be seen
+- Removed some target objects that tend to be too hard to see
+
 # 0.3.9
 
 - Required version of TDW: 1.8.21.0
