@@ -4,11 +4,14 @@ Search for a dropped object in a room using the [Magnebot API](https://github.co
 
 # Setup
 
-1. `git clone https://github.com/alters-mit/multimodal_challenge.git`
-2. `cd multimodal_challenge`
-3. `git checkout distractors`
-4. `pip3 install -e .`
-5. (Optional) Download the asset bundles (read [this](doc/api/multimodal.md) for more information).
+1. If you currently have `tdw` installed: `pip3 uninstall tdw`
+2. If you currently have `magnebot` installed: `pip3 uninstall magnebot`
+3. `git clone https://github.com/alters-mit/multimodal_challenge.git`
+4. `cd multimodal_challenge`
+5. `git checkout distractors`
+6. `pip3 install -e .`
+7. Download [TDW build 1.8.29](https://github.com/threedworld-mit/tdw/releases/tag/v1.8.29)
+8. (Optional) Download the asset bundles (read [this](doc/api/multimodal.md) for more information).
 
 # `MultiModal` challenge controller
 
