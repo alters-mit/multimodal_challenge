@@ -1,3 +1,7 @@
+# 0.4.4
+
+- Fixed: Crash if the trial doesn't have an occupancy map.
+
 # 0.4.3
 
 - Required version of TDW: 1.8.29
