@@ -4,7 +4,7 @@ from json import loads, dumps
 from tdw.tdw_utils import TDWUtils
 from tdw.controller import Controller
 from tdw.py_impact import PyImpact
-from tdw.output_data import OutputData, AvatarKinematic, Keyboard, ImageSensors, SegmentationColors
+from tdw.output_data import OutputData, AvatarKinematic, Keyboard, ImageSensors, SegmentationColors, Rigidbodies
 from multimodal_challenge.paths import ENV_AUDIO_MATERIALS_PATH, OBJECT_INIT_DIRECTORY
 from multimodal_challenge.multimodal_object_init_data import MultiModalObjectInitData
 from multimodal_challenge.dataset.env_audio_materials import EnvAudioMaterials
@@ -35,6 +35,7 @@ class DatasetDemo(Controller):
         # Load object initialization data.
         object_init_data = loads(OBJECT_INIT_DIRECTORY.joinpath(f"{scene}_{layout}.json").read_text(encoding="utf-8"))
         for o in object_init_data:
+            o["kinematic"] = True
             o_id, o_commands = MultiModalObjectInitData(**o).get_commands()
             commands.extend(o_commands)
         # Load the trial.
@@ -43,10 +44,38 @@ class DatasetDemo(Controller):
         target_object_init_data.kinematic = False
         target_object_init_data.gravity = True
         target_object_id, target_object_commands = target_object_init_data.get_commands()
+        # Get Rigidbody data.
+        commands.extend([{"$type": "send_rigidbodies",
+                         "frequency": "always"},
+                         {"$type": "send_audio_sources",
+                          "frequency": "always"}])
+        # Highlight the target object.
+        if show_target_object:
+            commands.append({"$type": "add_position_marker",
+                             "scale": 0.5,
+                             "position": target_object_init_data.position})
+        resp = self.communicate(commands)
+        # Wait for all objects to stop moving.
+        sleeping = False
+        while not sleeping:
+            sleeping = True
+            for i in range(len(resp) - 1):
+                r_id = OutputData.get_data_type_id(resp[i])
+                if r_id == "rigi":
+                    rigi = Rigidbodies(resp[i])
+                    for j in range(rigi.get_num()):
+                        if rigi.get_sleeping(j):
+                            sleeping = False
+                            break
+            # Iterate to the next frame.
+            if not sleeping:
+                resp = self.communicate([])
+        commands.clear()
+        # Add the target object.
         commands.extend(target_object_commands)
+        # Apply a force. Set the reverb space. Get data.
         data = loads(ENV_AUDIO_MATERIALS_PATH.read_text(encoding="utf-8"))
         env_audio_materials = EnvAudioMaterials(**data[scene])
-        # Apply the force. Enable collision detection.
         commands.extend([{"$type": "apply_force_to_object",
                           "id": target_object_id,
                           "force": trial_data[trial]["force"]},
@@ -68,11 +97,6 @@ class DatasetDemo(Controller):
                          {"$type": "send_segmentation_colors"},
                          {"$type": "send_keyboard",
                           "frequency": "always"}])
-        # Highlight the target object.
-        if show_target_object:
-            commands.append({"$type": "add_position_marker",
-                             "scale": 0.5,
-                             "position": target_object_init_data.position})
         floor = EnvAudioMaterials.RESONANCE_AUDIO_TO_PY_IMPACT[env_audio_materials.floor]
         # Add an avatar.
         avatar_position_directory = Path("avatar_positions")
