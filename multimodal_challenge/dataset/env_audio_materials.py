@@ -1,5 +1,5 @@
 from typing import Dict
-from tdw.py_impact import AudioMaterial
+from tdw.physics_audio.audio_material import AudioMaterial
 
 
 class EnvAudioMaterials:

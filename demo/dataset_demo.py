@@ -3,16 +3,25 @@ from pathlib import Path
 from json import loads, dumps
 from tdw.tdw_utils import TDWUtils
 from tdw.controller import Controller
-from tdw.py_impact import PyImpact
-from tdw.output_data import OutputData, AvatarKinematic, Keyboard, ImageSensors, SegmentationColors, Rigidbodies
+from tdw.add_ons.py_impact import PyImpact
+from tdw.add_ons.resonance_audio_initializer import ResonanceAudioInitializer
+from tdw.output_data import OutputData, AvatarKinematic, Keyboard, ImageSensors
 from multimodal_challenge.paths import ENV_AUDIO_MATERIALS_PATH, OBJECT_INIT_DIRECTORY
-from multimodal_challenge.multimodal_object_init_data import MultiModalObjectInitData
 from multimodal_challenge.dataset.env_audio_materials import EnvAudioMaterials
 
 
 class DatasetDemo(Controller):
     def do_trial(self, scene: str, layout: int, trial: int, show_target_object: bool, initial_amp: float) -> None:
-        py_impact = PyImpact(initial_amp=initial_amp)
+        data = loads(ENV_AUDIO_MATERIALS_PATH.read_text(encoding="utf-8"))
+        env_audio_materials = EnvAudioMaterials(**data[scene])
+        py_impact = PyImpact(initial_amp=initial_amp,
+                             floor=ResonanceAudioInitializer.AUDIO_MATERIALS[env_audio_materials.floor])
+        audio = ResonanceAudioInitializer(floor=env_audio_materials.floor,
+                                          right_wall=env_audio_materials.wall,
+                                          left_wall=env_audio_materials.wall,
+                                          front_wall=env_audio_materials.wall,
+                                          back_wall=env_audio_materials.wall)
+        self.add_ons.extend([py_impact, audio])
         # Set the next random seed.
         commands = [{"$type": "set_render_quality",
                      "render_quality": 5},
@@ -31,73 +40,37 @@ class DatasetDemo(Controller):
                     {"$type": "set_ambient_occlusion_intensity",
                      "intensity": 0.175},
                     {"$type": "set_ambient_occlusion_thickness_modifier",
-                     "thickness": 3.5}]
+                     "thickness": 3.5},
+                    {"$type": "send_keyboard",
+                     "frequency": "always"}]
         # Load object initialization data.
         object_init_data = loads(OBJECT_INIT_DIRECTORY.joinpath(f"{scene}_{layout}.json").read_text(encoding="utf-8"))
         for o in object_init_data:
-            o["kinematic"] = True
-            o_id, o_commands = MultiModalObjectInitData(**o).get_commands()
-            commands.extend(o_commands)
-        # Load the trial.
+            commands.extend(self.get_add_physics_object(model_name=o["name"],
+                                                        position=o["position"],
+                                                        rotation=o["rotation"],
+                                                        kinematic=True,
+                                                        scale_factor=o["scale_factor"],
+                                                        object_id=self.get_unique_id()))
+        # Add the target object.
         trial_data = loads(Path(f"rehearsal/{scene}_{layout}.json").read_text(encoding="utf-8"))
-        target_object_init_data = MultiModalObjectInitData(**trial_data[trial]["init_data"])
-        target_object_init_data.kinematic = False
-        target_object_init_data.gravity = True
-        target_object_id, target_object_commands = target_object_init_data.get_commands()
-        # Get Rigidbody data.
-        commands.extend([{"$type": "send_rigidbodies",
-                         "frequency": "always"},
-                         {"$type": "send_audio_sources",
-                          "frequency": "always"}])
+        target_object_id = self.get_unique_id()
+        target_object_data = trial_data[trial]["init_data"]
+        commands.extend(self.get_add_physics_object(model_name=target_object_data["name"],
+                                                    position=target_object_data["position"],
+                                                    rotation=target_object_data["rotation"],
+                                                    kinematic=False,
+                                                    scale_factor=target_object_data["scale_factor"],
+                                                    object_id=target_object_id))
+        # Apply the force.
+        commands.append({"$type": "apply_force_to_object",
+                         "id": target_object_id,
+                         "force": trial_data[trial]["force"]})
         # Highlight the target object.
         if show_target_object:
             commands.append({"$type": "add_position_marker",
                              "scale": 0.5,
-                             "position": target_object_init_data.position})
-        resp = self.communicate(commands)
-        # Wait for all objects to stop moving.
-        sleeping = False
-        while not sleeping:
-            sleeping = True
-            for i in range(len(resp) - 1):
-                r_id = OutputData.get_data_type_id(resp[i])
-                if r_id == "rigi":
-                    rigi = Rigidbodies(resp[i])
-                    for j in range(rigi.get_num()):
-                        if rigi.get_sleeping(j):
-                            sleeping = False
-                            break
-            # Iterate to the next frame.
-            if not sleeping:
-                resp = self.communicate([])
-        commands.clear()
-        # Add the target object.
-        commands.extend(target_object_commands)
-        # Apply a force. Set the reverb space. Get data.
-        data = loads(ENV_AUDIO_MATERIALS_PATH.read_text(encoding="utf-8"))
-        env_audio_materials = EnvAudioMaterials(**data[scene])
-        commands.extend([{"$type": "apply_force_to_object",
-                          "id": target_object_id,
-                          "force": trial_data[trial]["force"]},
-                         {"$type": "send_collisions",
-                          "enter": True,
-                          "stay": True,
-                          "exit": True,
-                          "collision_types": ["obj", "env"]},
-                         {"$type": "send_rigidbodies",
-                          "frequency": "always"},
-                         {"$type": "set_reverb_space_simple",
-                          "env_id": -1,
-                          "reverb_floor_material": env_audio_materials.floor,
-                          "reverb_ceiling_material": "acousticTile",
-                          "reverb_front_wall_material": env_audio_materials.wall,
-                          "reverb_back_wall_material": env_audio_materials.wall,
-                          "reverb_left_wall_material": env_audio_materials.wall,
-                          "reverb_right_wall_material": env_audio_materials.wall},
-                         {"$type": "send_segmentation_colors"},
-                         {"$type": "send_keyboard",
-                          "frequency": "always"}])
-        floor = EnvAudioMaterials.RESONANCE_AUDIO_TO_PY_IMPACT[env_audio_materials.floor]
+                             "position": target_object_data["position"]})
         # Add an avatar.
         avatar_position_directory = Path("avatar_positions")
         if not avatar_position_directory.exists():
@@ -133,15 +106,8 @@ class DatasetDemo(Controller):
         while not done:
             for i in range(len(resp) - 1):
                 r_id = OutputData.get_data_type_id(resp[i])
-                # Cache default audio info.
-                if r_id == "segm":
-                    segm = SegmentationColors(resp[i])
-                    object_names = dict()
-                    for j in range(segm.get_num()):
-                        object_names[segm.get_object_id(j)] = segm.get_object_name(j).lower()
-                    py_impact.set_default_audio_info(object_names=object_names)
                 # Get keyboard input.
-                elif r_id == "keyb":
+                if r_id == "keyb":
                     keyb = Keyboard(resp[i])
                     for j in range(keyb.get_num_pressed()):
                         k = keyb.get_pressed(j)
@@ -162,8 +128,7 @@ class DatasetDemo(Controller):
                     if imse.get_avatar_id() == "a":
                         sensor_container_rotation = TDWUtils.array_to_vector4(imse.get_sensor_rotation(0))
             if not done:
-                resp = self.communicate(py_impact.get_audio_commands(resp=resp, floor=floor, wall=floor,
-                                                                     resonance_audio=True))
+                resp = self.communicate([])
         # Log the avatar position.
         if got_avatar_position:
             avatar_data = {"position": avatar_position,
