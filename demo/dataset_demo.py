@@ -72,7 +72,7 @@ class DatasetDemo(Controller):
                              "scale": 0.5,
                              "position": target_object_data["position"]})
         # Add an avatar.
-        avatar_position_directory = Path("avatar_positions")
+        avatar_position_directory = Path("D:/multimodal_paper_demo/avatar_positions")
         if not avatar_position_directory.exists():
             avatar_position_directory.mkdir()
         commands.append({"$type": "create_avatar",
