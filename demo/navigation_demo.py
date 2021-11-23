@@ -54,6 +54,8 @@ class NavigationDemo(MultiModal):
                                                 self.state.object_transforms[self.target_object_id].position[2]]))
         if self.state.object_transforms[self.target_object_id].position[1] > 0.1:
             self.set_torso(MultiModal._TORSO_MAX_Y)
+        else:
+            self.set_torso(MultiModal._TORSO_MIN_Y)
         self.communicate({"$type": "terminate"})
         # Create the videos.
         for camera in ["egocentric", "top_down"]:
